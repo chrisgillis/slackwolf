@@ -80,35 +80,97 @@ $client->on('message', function ($data) use ($client, $registry) {
                 /** @var $player \Slack\User */
 
                 // If the player DMing the bot is the Seer
-                if($data['user'] == $player->getId() && $player->role == 'Seer') {
+                if ($data['user'] == $player->getId() && $player->role == 'Seer' && !$game->hasSeerSeen()) {
                     $foundPlayer = false;
                     // And the message contains one of the player Id's
-                    foreach($game->getPlayers() as $player2) {
-                        if(strpos($data['text'], $player2->getId()) !== false) {
+                    foreach ($game->getPlayers() as $player2) {
+                        if (strpos($data['text'], $player2->getId()) !== false) {
                             $foundPlayer = true;
+
+                            $game->setSeerSeen(true);
 
                             // Then thats the player the seer wants to See but seer can only see villagers and werewolves
                             if ($player2->role == 'Villager' || $player2->role == 'Seer') {
-                                $client->getDMByUserId($player->getId())->then(function(\Slack\DirectMessageChannel $dm) use ($player2, $client) {
-                                    $client->send($player2->getUsername().' is a Villager', $dm);
-                                });
+                                $client->getDMByUserId($player->getId())->then(
+                                    function (\Slack\DirectMessageChannel $dm) use ($player2, $client) {
+                                        $client->send($player2->getUsername() . ' is a Villager', $dm);
+                                    }
+                                );
                             }
                             if ($player2->role == 'Werewolf') {
-                                $client->getDMByUserId($player->getId())->then(function(\Slack\DirectMessageChannel $dm) use ($player2, $client) {
-                                    $client->send($player2->getUsername().' is a Werewolf', $dm);
-                                });
+                                $client->getDMByUserId($player->getId())->then(
+                                    function (\Slack\DirectMessageChannel $dm) use ($player2, $client) {
+                                        $client->send($player2->getUsername() . ' is a Werewolf', $dm);
+                                    }
+                                );
+                            }
+
+                            if($game->getWolvesVoted()) {
+                                // if the wolves have voted then this method needs to run the game logic
+
+                                $votes = $game->getVotes();
+                                $players = $game->getPlayers();
+
+                                foreach ($votes as $lynch_id => $voters) {
+                                    $game->removePlayer($lynch_id);
+
+                                    $pretty_lynch_text = "The werewolves have mauled " . $players[$lynch_id]->getUsername(
+                                        ) . "(" . $players[$lynch_id]->role . ") to death.";
+
+                                    $client->getGroupById($game->getChannel())->then(
+                                        function (\Slack\Channel $channel) use ($client, $pretty_lynch_text) {
+                                            /**@var $player \Slack\User */
+                                            $client->send($pretty_lynch_text, $channel);
+                                        }
+                                    );
+
+                                    if ($game->isOver()) {
+                                        $winning_team = $game->whoWon();
+
+                                        $client->getGroupById($game->getChannel())->then(
+                                            function (\Slack\Channel $channel) use ($client, $winning_team) {
+                                                /**@var $player \Slack\User */
+                                                $client->send(
+                                                    "The game is over. The {$winning_team} are victorious!",
+                                                    $channel
+                                                );
+                                            }
+                                        );
+
+                                        $registry->clear();
+
+                                        return false;
+                                    }
+
+                                    $game->setState('day');
+                                    $game->clearVotes();
+
+                                    $client->getGroupById($game->getChannel())->then(
+                                        function (\Slack\Channel $channel) use ($client) {
+                                            /**@var $player \Slack\User */
+                                            $client->send("The sun rises and the village wakes up...", $channel);
+                                        }
+                                    );
+                                }
                             }
 
                             break;
                         }
                     }
-                    if(!$foundPlayer) {
-                        $client->getDMByUserId($player->getId())->then(function(\Slack\DirectMessageChannel $dm) use ($player, $client) {
-                            $client->send('Sorry, didnt catch that.', $dm);
-                        });
+                    if (!$foundPlayer) {
+                        $client->getDMByUserId($player->getId())->then(
+                            function (\Slack\DirectMessageChannel $dm) use ($player, $client) {
+                                $client->send('Sorry, didnt catch that.', $dm);
+                            }
+                        );
                     }
                 }
+            }
+        }
 
+        if($game && $game->getState() == 'night') {
+            foreach ($game->getPlayers() as $player) {
+                /** @var $player \Slack\User */
                 if($data['user'] == $player->getId() && $player->role == 'Werewolf') {
                     $foundPlayer = false;
                     // And the message contains one of the player Id's
@@ -206,6 +268,12 @@ $client->on('message', function ($data) use ($client, $registry) {
                                     return false;
                                 }
 
+                                $game->setWolvesVoted(true);
+
+                                if ( $game->gameHasSeer() && !$game->hasSeerSeen()) {
+                                    return false;
+                                }
+
                                 foreach ($votes as $lynch_id => $voters) {
                                     $game->removePlayer($lynch_id);
 
@@ -264,6 +332,10 @@ $client->on('message', function ($data) use ($client, $registry) {
         return false;
     }
 
+    if (!isset($input[0])) {
+        return false; // users editing messages
+    }
+
     if($input[0] !== '!') {
         return false;
     }
@@ -272,7 +344,7 @@ $client->on('message', function ($data) use ($client, $registry) {
         $client->disconnect();
     }
 
-    $input_array = explode(' ', $input);
+    $input_array = explode(' ', trim($input));
 
     $game = $registry->get();
     /** @var $game Game */
@@ -466,8 +538,32 @@ $client->on('message', function ($data) use ($client, $registry) {
             return false;
         }
 
-        $client->getGroupById($data['channel'])->then(function (\Slack\Channel $channel) use ($client, $registry, $data) {
-            $channel->getMembers()->then(function($users) use($registry,$data,$client,$channel){
+        $client->getGroupById($data['channel'])->then(function (\Slack\Channel $channel) use ($client, $registry, $data,$input_array) {
+            $channel->getMembers()->then(function($users) use($registry,$data,$client,$channel,$input_array){
+                $user_whitelist = [];
+
+                foreach($input_array as $i => $input_user){
+                    if($i == 0) { continue; } // Skip the command itself
+
+                    $user_whitelist[$input_user] = $input_user;
+                }
+
+                if(count($user_whitelist) > 0) {
+                    foreach($users as $key => $user) {
+                        $userFound = false;
+
+                        foreach($user_whitelist as $uw) {
+                            if(strpos($uw, $user->getId()) !== false) {
+                                $userFound = true;
+                            }
+                        }
+
+                        if ( ! $userFound) {
+                            unset($users[$key]);
+                        }
+                    }
+                }
+
                 $game = new Game($data['channel'], $users);
                 $registry->set($game);
 

@@ -18,6 +18,8 @@ class Game
     protected $state;
     protected $votes = [];
     protected $winning_team;
+    protected $seen = false;
+    protected $wolvesVoted = false;
 
     public function __construct($channel, $players)
     {
@@ -92,6 +94,8 @@ class Game
     public function setState($state)
     {
         $this->state = $state;
+        $this->seen = false;
+        $this->wolvesVoted = false;
     }
 
     public function clearVotes()
@@ -181,5 +185,35 @@ class Game
     public function whoWon()
     {
         return $this->winning_team;
+    }
+
+    public function hasSeerSeen()
+    {
+        return $this->seen;
+    }
+
+    public function setSeerSeen($seen)
+    {
+        $this->seen = $seen;
+    }
+
+    public function gameHasSeer()
+    {
+        foreach ($this->players as $player) {
+            if ($player->role == 'Seer') {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getWolvesVoted()
+    {
+        return $this->wolvesVoted;
+    }
+
+    public function setWolvesVoted($voted) {
+        $this->wolvesVoted = $voted;
     }
 }
