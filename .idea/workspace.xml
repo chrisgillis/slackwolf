@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="960c164f-5e5c-4f66-be0c-0288e491e4d9" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Game.php" afterPath="$PROJECT_DIR$/src/Game.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bot.php" afterPath="$PROJECT_DIR$/bot.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="slackwolf.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -44,8 +44,8 @@
       <file leaf-file-name="bot.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/bot.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.44689655">
-              <caret line="585" column="92" selection-start-line="585" selection-start-column="92" selection-end-line="585" selection-end-column="92" />
+            <state vertical-scroll-proportion="-0.36551723">
+              <caret line="577" column="125" selection-start-line="577" selection-start-column="125" selection-end-line="577" selection-end-column="125" />
               <folding>
                 <element signature="e#46#65#0#PHP" expanded="true" />
                 <element signature="e#2990#3158#2#PHP" expanded="true" />
@@ -58,9 +58,10 @@
                 <element signature="e#22684#22918#2#PHP" expanded="true" />
                 <element signature="e#24413#24694#2#PHP" expanded="true" />
                 <element signature="e#24868#25007#2#PHP" expanded="true" />
-                <element signature="e#27543#27689#2#PHP" expanded="true" />
-                <element signature="e#27826#27947#2#PHP" expanded="true" />
-                <element signature="e#28009#28047#2#PHP" expanded="true" />
+                <element signature="e#27593#27739#2#PHP" expanded="true" />
+                <element signature="e#27876#27997#2#PHP" expanded="true" />
+                <element signature="e#29808#29927#2#PHP" expanded="true" />
+                <element signature="e#29989#30027#2#PHP" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -175,8 +176,8 @@
         <option value="$PROJECT_DIR$/vendor/coderstephen/slack-client/src/ApiClient.php" />
         <option value="$PROJECT_DIR$/src/GameRegistry.php" />
         <option value="$PROJECT_DIR$/.env" />
-        <option value="$PROJECT_DIR$/bot.php" />
         <option value="$PROJECT_DIR$/src/Game.php" />
+        <option value="$PROJECT_DIR$/bot.php" />
       </list>
     </option>
   </component>
@@ -527,8 +528,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bot.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.44689655">
-          <caret line="585" column="92" selection-start-line="585" selection-start-column="92" selection-end-line="585" selection-end-column="92" />
+        <state vertical-scroll-proportion="-0.36551723">
+          <caret line="577" column="125" selection-start-line="577" selection-start-column="125" selection-end-line="577" selection-end-column="125" />
           <folding>
             <element signature="e#46#65#0#PHP" expanded="true" />
             <element signature="e#2990#3158#2#PHP" expanded="true" />
@@ -541,9 +542,10 @@
             <element signature="e#22684#22918#2#PHP" expanded="true" />
             <element signature="e#24413#24694#2#PHP" expanded="true" />
             <element signature="e#24868#25007#2#PHP" expanded="true" />
-            <element signature="e#27543#27689#2#PHP" expanded="true" />
-            <element signature="e#27826#27947#2#PHP" expanded="true" />
-            <element signature="e#28009#28047#2#PHP" expanded="true" />
+            <element signature="e#27593#27739#2#PHP" expanded="true" />
+            <element signature="e#27876#27997#2#PHP" expanded="true" />
+            <element signature="e#29808#29927#2#PHP" expanded="true" />
+            <element signature="e#29989#30027#2#PHP" expanded="true" />
           </folding>
         </state>
       </provider>

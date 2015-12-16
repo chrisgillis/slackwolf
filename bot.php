@@ -575,7 +575,7 @@ $client->on('message', function ($data) use ($client, $registry) {
 
                 $roles = implode(',', $roles);
 
-                $client->send("Starting a new game with roles: {$roles}\r\nWhen the Seer has a vision, the game may begin.", $channel);
+                $client->send("Starting a new game with roles: {$roles}\r\nType !help if its your first time playing.\r\n\r\nWhen the Seer has a vision, the game may begin.", $channel);
 
                 foreach($game->getPlayers() as $player) {
                     /** @var $player \Slack\User */
@@ -611,6 +611,26 @@ $client->on('message', function ($data) use ($client, $registry) {
 
         $client->getGroupById($data['channel'])->then(function (\Slack\Channel $channel) use ($client) {
             $client->send('Game has been ended!', $channel);
+        });
+    }
+
+    if ($input_array[0] == '!help') {
+        $help_msg =  "How to Play #Werewolf\r\n------------------------\r\n";
+        $help_msg .= "Werewolf is a party game of social deduction. Players are private messaged their role when the game beings. ";
+        $help_msg .= "If you are a Villager, you must find out who the werewolves are based on their voting and your social deduction skills. ";
+        $help_msg .= "if you are a Werewolf, you must pretend you are not a werewolf by lying as best as you can.\r\n";
+        $help_msg .= "The game takes place over several Days and Nights. Each Day all players vote on a player to lynch. If there is a tie, the tied players are lynched. ";
+        $help_msg .= "Each night, the werewolves will be allowed to vote privately on one player to kill. The decision must be unanimous. If its not, you'll keep voting until it is. The bot will private message you.\r\n";
+        $help_msg .= "The villagers win if they eliminate all the werewolves. The werewolves win if they equal or outnumber the remaining players.\r\n\r\n";
+        $help_msg .= "Special Roles\r\n------------------------\r\n";
+        $help_msg .= " |_ Seer - A villager who, once each night, is allowed to see the role of another player. The bot will private message you.\r\n\r\n";
+        $help_msg .= "Available Commands\r\n------------------------\r\n";
+        $help_msg .= "|_  !start - Starts a new game with everyone in the channel participating\r\n";
+        $help_msg .= "|_  !start @user1 @user2 @user3 - Starts a new game with the three specified users participating\r\n";
+        $help_msg .= "|_  !vote @user1 - Vote for a player during the Day\r\n";
+        $help_msg .= "|_  !end - Cause the game to end prematurely\r\n";
+        $client->getGroupById($data['channel'])->then(function (\Slack\Channel $channel) use ($help_msg, $client) {
+            $client->send($help_msg, $channel);
         });
     }
 
