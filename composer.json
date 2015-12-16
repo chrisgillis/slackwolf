@@ -1,0 +1,16 @@
+{
+    "name": "chrisgillis/slackwolf",
+    "description": "A werewolf bot for Slack",
+    "authors": [
+        {
+            "name": "Chris Gillis",
+            "email": "chris@stitchlabs.com"
+        }
+    ],
+    "require": {
+        "coderstephen/slack-client": "^0.2.2",
+        "vlucas/phpdotenv": "^2.1"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
