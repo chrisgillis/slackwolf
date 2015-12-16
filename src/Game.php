@@ -141,6 +141,23 @@ class Game
         return $num_werewolves;
     }
 
+    public function getNamesOfWerewolves($ignore_player_id = null)
+    {
+        $names = [];
+
+        foreach($this->players as $player) {
+            if($ignore_player_id && $player->getId() == $ignore_player_id) {
+                continue;
+            }
+
+            if ($player->role == 'Werewolf') {
+                $names[] = $player->getUsername();
+            }
+        }
+
+        return $names;
+    }
+
     public function getNumVillagers()
     {
         $num_villagers = 0;

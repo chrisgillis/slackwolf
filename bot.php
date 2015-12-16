@@ -579,8 +579,13 @@ $client->on('message', function ($data) use ($client, $registry) {
 
                 foreach($game->getPlayers() as $player) {
                     /** @var $player \Slack\User */
-                    $client->getDMByUserId($player->getId())->then(function(\Slack\DirectMessageChannel $dm) use ($player, $client) {
+                    $client->getDMByUserId($player->getId())->then(function(\Slack\DirectMessageChannel $dm) use ($game,$player, $client) {
                         $client->send('Your role is: ' . $player->role, $dm);
+
+                        if ($player->role == 'Werewolf' && $game->getNumWerewolves() > 1) {
+                            $client->send("Other werewolves are: " . implode(',', $game->getNamesOfWerewolves($player->getId())), $dm);
+
+                        }
 
                         if ($player->role == 'Seer') {
                             $client->send('Seer, who would you like to See? (type a username ex: @chris)', $dm);
