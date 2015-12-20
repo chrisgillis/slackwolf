@@ -176,7 +176,7 @@ class GameManager
         $winningTeam = $game->whoWon();
 
         if($winningTeam !== null) {
-            $winMsg = ":clipboard: Role Summary\r\n------------------------------------------------\r\n{$playerList}\r\n\r\n:tada: The game is over. The ";
+            $winMsg = ":clipboard: Role Summary\r\n--------------------------------------------------------------\r\n{$playerList}\r\n\r\n:tada: The game is over. The ";
             if ($winningTeam == Role::VILLAGER) {
                 $winMsg .= "Townsfolk ";
             }
@@ -316,7 +316,7 @@ class GameManager
         $msg .= "Players: {$playerList}\r\n";
         $msg .= "Roles: {$roleList}\r\n\r\n";
 
-        $msg .= ":crescent_moon: :zzz: It is the middle of the night and the village is sleeping.";
+        $msg .= ":crescent_moon: :zzz: It is the middle of the night and the village is sleeping. The game will begin when the Seer chooses someone.";
 
         $this->client->getChannelGroupOrDMByID($game->getId())
             ->then(function (Channel $channel) use ($msg, $client) {

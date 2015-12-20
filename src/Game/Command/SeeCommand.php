@@ -125,6 +125,7 @@ class SeeCommand extends Command
                          $this->client->send(":warning: You aren't a seer in the specified game.", $dmc);
                      }
                  );
+            throw new Exception("Player is not the seer but is trying to see.");
         }
 
         if (! in_array($this->game->getState(), [GameState::FIRST_NIGHT, GameState::NIGHT])) {
