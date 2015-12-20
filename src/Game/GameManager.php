@@ -336,7 +336,7 @@ class GameManager
 
         $remainingPlayers = PlayerListFormatter::format($game->getPlayers());
 
-        $dayBreakMsg = ":sunrise: The sun rises from the horizon and the villagers awake.\r\n";
+        $dayBreakMsg = ":sunrise: The sun rises and the villagers awake.\r\n";
         $dayBreakMsg .= "Remaining Players: {$remainingPlayers}\r\n\r\n";
         $dayBreakMsg .= "Villagers, find the Werewolves! Type !vote @username to vote to lynch a player.";
 
