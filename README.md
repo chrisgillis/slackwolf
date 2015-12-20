@@ -1,5 +1,5 @@
 # Slackwolf
-Slackwolf is a bot for Slack. After inviting the bot to a channel, you can play the timeless game of Werewolf (also called Mafia).
+Slackwolf is a bot for Slack. After inviting the bot to a channel, you can play the timeless game of [Werewolf (also called Mafia)](https://en.wikipedia.org/wiki/Mafia_(party_game)).
 
 ![ProjectImage](http://i.imgur.com/0Kwd8oe.png)
 
