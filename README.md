@@ -16,7 +16,6 @@ Slackwolf requires PHP 5.5+ and [Composer](https://getcomposer.org/). It may not
 git clone http://github.com/chrisgillis/slackwolf
 cd slackwolf
 composer install
-cp .env.default .env
 ```
 
 Edit the `.env` file with a valid real-time messaging bot token from Slack. Get a valid token from the "Custom Integrations" tab of your Slack "Configure Apps" page. Also be sure to put the correct bot name in the `.env` file as well.
