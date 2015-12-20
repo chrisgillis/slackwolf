@@ -155,7 +155,7 @@ class Game
 
         $numGood = $numVillagers + $numSeers;
 
-        if ($numWerewolves == 1) {
+        if ($numWerewolves == 0) {
             $this->winningTeam = Role::VILLAGER;
             return true;
         }
