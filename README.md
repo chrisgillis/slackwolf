@@ -1,7 +1,7 @@
 # Slackwolf
 Slackwolf is a bot for Slack. After inviting the bot to a channel, you can play the timeless game of Werewolf (also called Mafia).
 
-![ProjectImage](http://i.imgur.com/1L9YYAV.png)
+![ProjectImage](http://i.imgur.com/0Kwd8oe.png)
 
 ## Roles
 Slackwolf currently supports Seer, Villager, and Werewolf. The roles needed to play a fun game.
@@ -10,9 +10,10 @@ Slackwolf currently supports Seer, Villager, and Werewolf. The roles needed to p
 `/invite` the bot and type !help
 
 ## Installation
-Slackwolf requires PHP 5.5+ and Composer. It may not work with PHP7 due to one of its dependencies.
+Slackwolf requires PHP 5.5+ and [Composer](https://getcomposer.org/). It may not work with PHP7 due to one of its dependencies.
 
-```git clone http://github.com/chrisgillis/slackwolf
+```
+git clone http://github.com/chrisgillis/slackwolf
 cd slackwolf
 composer install
 cp .env.default .env
