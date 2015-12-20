@@ -12,6 +12,8 @@ class Game
     private $winningTeam;
     private $seerSeen;
     private $wolvesVoted;
+    private $guardedUserId;
+    private $lastGuardedUserId;
 
     /**
      * @param                       $id
@@ -206,5 +208,23 @@ class Game
         $this->wolvesVoted = $wolvesVoted;
     }
 
+    public function getGuardedUserId()
+    {
+        return $this->guardedUserId;
+    }
 
+    public function setGuardedUserId($id)
+    {
+        $this->guardedUserId = $id;
+    }
+
+    public function getLastGuardedUserId()
+    {
+        return $this->lastGuardedUserId;
+    }
+
+    public function setLastGuardedUserId($id)
+    {
+        $this->lastGuardedUserId = $id;
+    }
 }

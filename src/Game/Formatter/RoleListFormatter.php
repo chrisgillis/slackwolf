@@ -16,6 +16,8 @@ class RoleListFormatter
             $roleList[] = $player->role;
         }
 
+        shuffle($roleList);
+
         return implode(', ', $roleList);
     }
 }

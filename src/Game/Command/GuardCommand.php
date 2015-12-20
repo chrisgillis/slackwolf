@@ -4,13 +4,12 @@ use Exception;
 use InvalidArgumentException;
 use Slack\Channel;
 use Slack\DirectMessageChannel;
-use Slackwolf\Game\Formatter\KillFormatter;
 use Slackwolf\Game\Formatter\UserIdFormatter;
 use Slackwolf\Game\Game;
 use Slackwolf\Game\GameState;
 use Slackwolf\Game\Role;
 
-class KillCommand extends Command
+class GuardCommand extends Command
 {
     /**
      * @var Game
@@ -22,13 +21,13 @@ class KillCommand extends Command
         $client = $this->client;
 
         if ($this->channel[0] != 'D') {
-            throw new Exception("You may only !kill privately.");
+            throw new Exception("You may only !guard privately.");
         }
 
         if (count($this->args) < 2) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (Channel $channel) use ($client) {
-                       $client->send(":warning: Invalid command. Usage: !kill #channel @user", $channel);
+                       $client->send(":warning: Invalid command. Usage: !guard #channel @user", $channel);
                    });
             throw new InvalidArgumentException("Not enough arguments");
         }
@@ -100,9 +99,9 @@ class KillCommand extends Command
         if ($this->game->getState() != GameState::NIGHT) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (Channel $channel) use ($client) {
-                       $client->send(":warning: You can only kill at night.", $channel);
+                       $client->send(":warning: You can only guard at night.", $channel);
                    });
-            throw new Exception("Killing occurs only during the night.");
+            throw new Exception("Guarding occurs only during the night.");
         }
 
         // Voter should be alive
@@ -111,7 +110,7 @@ class KillCommand extends Command
                    ->then(function (Channel $channel) use ($client) {
                        $client->send(":warning: You aren't alive in the specified channel.", $channel);
                    });
-            throw new Exception("Can't kill if dead.");
+            throw new Exception("Can't guard if dead.");
         }
 
         // Person player is voting for should also be alive
@@ -126,54 +125,36 @@ class KillCommand extends Command
         // Person should be werewolf
         $player = $this->game->getPlayerById($this->userId);
 
-        if ($player->role != Role::WEREWOLF) {
+        if ($player->role != Role::BODYGUARD) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (Channel $channel) use ($client) {
-                       $client->send(":warning: YOu have to be a werewolf to kill.", $channel);
+                       $client->send(":warning: You have to be a bodyguard to guard.", $channel);
                    });
-            throw new Exception("Only werewolves can kill.");
+            throw new Exception("Only bodyguard can guard.");
         }
 
-        if ($this->game->hasPlayerVoted($this->userId)) {
+        if ($this->game->getGuardedUserId() !== null) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (Channel $channel) use ($client) {
-                       $client->send(":warning: You have already voted.", $channel);
+                       $client->send(":warning: You have already guarded.", $channel);
                    });
-            throw new Exception("You have already voted.");
+            throw new Exception("You have already guarded.");
         }
 
-        $this->game->vote($this->userId, $this->args[1]);
-
-        $msg = KillFormatter::format($this->game);
-
-        foreach($this->game->getPlayersOfRole(Role::WEREWOLF) as $player) {
-            $client->getDMByUserID($player->getId())
-                ->then(function(DirectMessageChannel $channel) use ($client,$msg) {
-                    $client->send($msg,$channel);
-                });
+        if ($this->game->getLastGuardedUserId() == $this->args[1]) {
+            $client->getChannelGroupOrDMByID($this->channel)
+                   ->then(function (Channel $channel) use ($client) {
+                       $client->send(":warning: You cant guard the same player as last night.", $channel);
+                   });
+            throw new Exception("You cant guard the same player as last night");
         }
 
-        foreach ($this->game->getPlayersOfRole(Role::WEREWOLF) as $player)
-        {
-            if ( ! $this->game->hasPlayerVoted($player->getId())) {
-                return;
-            }
-        }
+        $this->game->setGuardedUserId($this->args[1]);
 
-        $votes = $this->game->getVotes();
-
-        if (count($votes) > 1) {
-            $this->game->clearVotes();
-            foreach($this->game->getPlayersOfRole(Role::WEREWOLF) as $player) {
-                $client->getDMByUserID($player->getId())
-                       ->then(function(DirectMessageChannel $channel) use ($client) {
-                           $client->send(":warning: The werewolves did not unanimously vote on a member of the town. Vote again.",$channel);
-                       });
-            }
-            return;
-        }
-
-        $this->game->setWolvesVoted(true);
+        $client->getChannelGroupOrDMByID($this->channel)
+               ->then(function (Channel $channel) use ($client) {
+                   $client->send("Guarding successful.", $channel);
+               });
 
         $this->gameManager->changeGameState($this->game->getId(), GameState::DAY);
     }

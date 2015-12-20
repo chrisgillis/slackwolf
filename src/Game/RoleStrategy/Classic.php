@@ -7,13 +7,20 @@ class Classic implements RoleStrategyInterface
 
     public function assign(array $players)
     {
-        $num_players = count($players);
-        $num_evil = floor($num_players / 3);
-        $num_good = $num_players - $num_evil;
+        $num_players = count($players); // 6
+        $num_evil = floor($num_players / 3); // 2
+        $num_good = $num_players - $num_evil; // 4
 
         $roles = [
-            Role::SEER => 1,
-            Role::VILLAGER => max($num_good - 1, 0),
+            Role::SEER => 1
+        ];
+
+        if ($num_players >= 5) {
+            $roles[Role::BODYGUARD] = 1;
+        }
+
+        $roles = [
+            Role::VILLAGER => max($num_good - count($roles), 0),
             Role::WEREWOLF => $num_evil
         ];
 

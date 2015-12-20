@@ -3,6 +3,7 @@
 use React\EventLoop\Factory;
 use Slack\RealTimeClient;
 use Slackwolf\Game\Command\EndCommand;
+use Slackwolf\Game\Command\GuardCommand;
 use Slackwolf\Game\Command\HelpCommand;
 use Slackwolf\Game\Command\KillCommand;
 use Slackwolf\Game\Command\SeeCommand;
@@ -43,7 +44,8 @@ class Slackwolf
             'end'   => EndCommand::class,
             'see'   => SeeCommand::class,
             'vote'  => VoteCommand::class,
-            'kill'  => KillCommand::class
+            'kill'  => KillCommand::class,
+            'guard' => GuardCommand::class
         ];
 
         /*

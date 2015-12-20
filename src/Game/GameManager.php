@@ -110,6 +110,12 @@ class GameManager
                 return;
             }
 
+            $numBodyguard = $game->getNumRole(Role::BODYGUARD);
+
+            if ($numBodyguard && ! $game->getGuardedUserId()) {
+                return;
+            }
+
             $this->onNightEnd($game);
 
             if ($game->isOver()) {
@@ -373,6 +379,17 @@ class GameManager
                      $client->send($seerMsg, $channel);
                  });
         }
+
+        $bodyGuardMsg = ":muscle: Bodyguard, you may guard someone once per night. That player cannot be eliminated. Type !guard #channel @user";
+
+        $bodyguards = $game->getPlayersOfRole(Role::BODYGUARD);
+
+        foreach ($bodyguards as $bodyguard) {
+            $this->client->getDMByUserId($bodyguard->getId())
+                 ->then(function (DirectMessageChannel $channel) use ($client,$bodyGuardMsg) {
+                     $client->send($bodyGuardMsg, $channel);
+                 });
+        }
     }
 
     private function onNightEnd(Game $game)
@@ -383,9 +400,15 @@ class GameManager
 
         foreach ($votes as $lynch_id => $voters) {
             $player = $game->getPlayerById($lynch_id);
-            $game->removePlayer($lynch_id);
 
-            $killMsg = ":skull_and_crossbones: @{$player->getUsername()} was killed during the night.";
+            if ($lynch_id == $game->getGuardedUserId()) {
+                $killMsg = ":muscle: @{$player->getUsername()} was protected from being killed during the night.";
+                $game->setLastGuardedUserId($game->getGuardedUserId());
+                $game->setGuardedUserId(null);
+            } else {
+                $killMsg = ":skull_and_crossbones: @{$player->getUsername()} was killed during the night.";
+                $game->removePlayer($lynch_id);
+            }
 
             $client->getChannelGroupOrDMByID($game->getId())
                 ->then(function(Channel $channel) use ($client,$killMsg) {
