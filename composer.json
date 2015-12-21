@@ -15,5 +15,10 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": {"Slackwolf\\": "src/"}
+    },
+    "scripts": {
+        "post-root-package-install": [
+            "php -r \"copy('.env.default', '.env');\""
+        ]
     }
 }
