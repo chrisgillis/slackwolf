@@ -1,5 +1,7 @@
 <?php namespace Slackwolf\Game\Command;
 
+use Slack\DirectMessageChannel;
+
 class HelpCommand extends Command
 {
     public function fire()
@@ -25,7 +27,7 @@ class HelpCommand extends Command
         $help_msg .= "|_  !guard #channel @user1 - Bodyguard only. The bodyguard can protect a player from being eliminated once each night. Cant select the same user two nights in a row.\r\n";
         $help_msg .= "|_  !end - Cause the game to end prematurely\r\n";
 
-        $this->client->getDMByUserId($this->userId)->then(function($dm) use ($client, $help_msg) {
+        $this->client->getDMByUserId($this->userId)->then(function(DirectMessageChannel $dm) use ($client, $help_msg) {
             $client->send($help_msg, $dm);
         });
     }
