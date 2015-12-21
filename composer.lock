@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b47d9eb359c1b3ddc49a73f359b73316",
-    "content-hash": "015ef1650ff0fb8b23b094f556f026b1",
+    "hash": "a6d078ffaeb893b43ba896ac5e78eb05",
+    "content-hash": "eb461c9466c660ccf0ff9625e9d3cc53",
     "packages": [
         {
             "name": "coderstephen/slack-client",
-            "version": "v0.2.2",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/coderstephen/slack-client.git",
-                "reference": "e0d4615e641e498e5f3ad9feb426b52cec9f50c6"
+                "reference": "8996cf21cc62ef303b3c639639068f60f076d2a4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coderstephen/slack-client/zipball/e0d4615e641e498e5f3ad9feb426b52cec9f50c6",
-                "reference": "e0d4615e641e498e5f3ad9feb426b52cec9f50c6",
+                "url": "https://api.github.com/repos/coderstephen/slack-client/zipball/8996cf21cc62ef303b3c639639068f60f076d2a4",
+                "reference": "8996cf21cc62ef303b3c639639068f60f076d2a4",
                 "shasum": ""
             },
             "require": {
@@ -56,7 +56,7 @@
                 "realtime",
                 "slack"
             ],
-            "time": "2015-11-16 17:39:26"
+            "time": "2015-12-15 22:35:40"
         },
         {
             "name": "container-interop/container-interop",
@@ -1260,7 +1260,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "coderstephen/slack-client": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": [],

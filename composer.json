@@ -8,7 +8,7 @@
         }
     ],
     "require": {
-        "coderstephen/slack-client": "^0.2.2",
+        "coderstephen/slack-client": "dev-master",
         "vlucas/phpdotenv": "^2.1"
     },
     "minimum-stability": "dev",
