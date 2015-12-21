@@ -1,6 +1,7 @@
 <?php namespace Slackwolf;
 
 use React\EventLoop\Factory;
+use Slack\ConnectionException;
 use Slack\RealTimeClient;
 use Slackwolf\Game\Command\EndCommand;
 use Slackwolf\Game\Command\GuardCommand;
@@ -66,6 +67,9 @@ class Slackwolf
         echo "Connecting...\r\n";
         $client->connect()->then(function() {
             echo "Connected.\n";
+        }, function(ConnectionException $e) {
+            echo $e->getMessage();
+            exit();
         });
 
         /*
