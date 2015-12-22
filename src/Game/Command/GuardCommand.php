@@ -26,7 +26,7 @@ class GuardCommand extends Command
 
         if (count($this->args) < 2) {
             $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (Channel $channel) use ($client) {
+                   ->then(function (DirectMessageChannel $channel) use ($client) {
                        $client->send(":warning: Invalid command. Usage: !guard #channel @user", $channel);
                    });
             throw new InvalidArgumentException("Not enough arguments");
@@ -50,7 +50,7 @@ class GuardCommand extends Command
         if ($channelId == null) {
             $this->client->getChannelByName($channelName)
                          ->then(
-                             function (Channel $channel) use (&$channelId) {
+                             function (DirectMessageChannel $channel) use (&$channelId) {
                                  $channelId = $channel->getId();
                              },
                              function (Exception $e) {
@@ -62,7 +62,7 @@ class GuardCommand extends Command
         if ($channelId == null) {
             $this->client->getGroupByName($channelName)
                          ->then(
-                             function (Channel $channel) use (&$channelId) {
+                             function (DirectMessageChannel $channel) use (&$channelId) {
                                  $channelId = $channel->getId();
                              },
                              function (Exception $e) {
