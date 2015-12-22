@@ -30,8 +30,6 @@ class Classic implements RoleStrategyInterface
                 $rolePool[] = $role;
             }
         }
-		
-		print_r($rolePool);
 
         shuffle($rolePool);
 
