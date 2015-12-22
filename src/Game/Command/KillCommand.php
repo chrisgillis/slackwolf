@@ -86,7 +86,7 @@ class KillCommand extends Command
 
         if ( ! $this->game) {
             $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (Channel $channel) use ($client) {
+                   ->then(function (DirectMessageChannel $channel) use ($client) {
                        $client->send(":warning: No game in progress.", $channel);
                    });
             throw new Exception("No game in progress.");
