@@ -85,7 +85,7 @@ class GuardCommand extends Command
 
         if ( ! $this->game) {
             $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (Channel $channel) use ($client) {
+                   ->then(function (DirectMessageChannel $channel) use ($client) {
                        $client->send(":warning: No game in progress.", $channel);
                    });
             throw new Exception("No game in progress.");
@@ -98,7 +98,7 @@ class GuardCommand extends Command
 
         if ($this->game->getState() != GameState::NIGHT) {
             $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (Channel $channel) use ($client) {
+                   ->then(function (DirectMessageChannel $channel) use ($client) {
                        $client->send(":warning: You can only guard at night.", $channel);
                    });
             throw new Exception("Guarding occurs only during the night.");
@@ -107,7 +107,7 @@ class GuardCommand extends Command
         // Voter should be alive
         if ( ! $this->game->hasPlayer($this->userId)) {
             $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (Channel $channel) use ($client) {
+                   ->then(function (DirectMessageChannel $channel) use ($client) {
                        $client->send(":warning: You aren't alive in the specified channel.", $channel);
                    });
             throw new Exception("Can't guard if dead.");
@@ -116,7 +116,7 @@ class GuardCommand extends Command
         // Person player is voting for should also be alive
         if ( ! $this->game->hasPlayer($this->args[0])) {
             $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (Channel $channel) use ($client) {
+                   ->then(function (DirectMessageChannel $channel) use ($client) {
                        $client->send(":warning: Could not find that player.", $channel);
                    });
             throw new Exception("Voted player not found in game.");
@@ -127,7 +127,7 @@ class GuardCommand extends Command
 
         if ($player->role != Role::BODYGUARD) {
             $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (Channel $channel) use ($client) {
+                   ->then(function (DirectMessageChannel $channel) use ($client) {
                        $client->send(":warning: You have to be a bodyguard to guard.", $channel);
                    });
             throw new Exception("Only bodyguard can guard.");
@@ -135,7 +135,7 @@ class GuardCommand extends Command
 
         if ($this->game->getGuardedUserId() !== null) {
             $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (Channel $channel) use ($client) {
+                   ->then(function (DirectMessageChannel $channel) use ($client) {
                        $client->send(":warning: You have already guarded.", $channel);
                    });
             throw new Exception("You have already guarded.");
@@ -143,7 +143,7 @@ class GuardCommand extends Command
 
         if ($this->game->getLastGuardedUserId() == $this->args[1]) {
             $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (Channel $channel) use ($client) {
+                   ->then(function (DirectMessageChannel $channel) use ($client) {
                        $client->send(":warning: You cant guard the same player as last night.", $channel);
                    });
             throw new Exception("You cant guard the same player as last night");
@@ -152,7 +152,7 @@ class GuardCommand extends Command
         $this->game->setGuardedUserId($this->args[1]);
 
         $client->getChannelGroupOrDMByID($this->channel)
-               ->then(function (Channel $channel) use ($client) {
+               ->then(function (DirectMessageChannel $channel) use ($client) {
                    $client->send("Guarding successful.", $channel);
                });
 
