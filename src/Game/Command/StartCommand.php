@@ -2,6 +2,7 @@
 
 use Exception;
 use Slack\Channel;
+use Slack\ChannelInterface;
 use Slackwolf\Game\RoleStrategy;
 
 class StartCommand extends Command
@@ -21,7 +22,7 @@ class StartCommand extends Command
 
         // Check to see that a game does not currently exist
         if ($this->gameManager->hasGame($this->channel)) {
-            $this->client->getChannelGroupOrDMByID($this->channel)->then(function (Channel $channel) use ($client) {
+            $this->client->getChannelGroupOrDMByID($this->channel)->then(function (ChannelInterface $channel) use ($client) {
                 $client->send('A game is already in progress.', $channel);
             });
 
@@ -29,7 +30,7 @@ class StartCommand extends Command
         }
 
         $this->client->getChannelGroupOrDMByID($this->channel)
-            ->then(function (Channel $channel) {
+            ->then(function (ChannelInterface $channel) {
                 return $channel->getMembers();
             })
             ->then(function (array $users) use ($gameManager, $message, $client) {
@@ -38,7 +39,7 @@ class StartCommand extends Command
 
                 if(count($users) < 1) {
                     $this->client->getChannelGroupOrDMByID($this->channel)
-                        ->then(function (Channel $channel) use ($client) {
+                        ->then(function (ChannelInterface $channel) use ($client) {
                             $client->send("Cannot start a game without any users.", $channel);
                         });
                     return;
@@ -47,7 +48,7 @@ class StartCommand extends Command
                 try {
                     $gameManager->newGame($message->getChannel(), $users, new RoleStrategy\Classic());
                 } catch (Exception $e) {
-                    $this->client->getChannelGroupOrDMByID($this->channel)->then(function (Channel $channel) use ($client,$e) {
+                    $this->client->getChannelGroupOrDMByID($this->channel)->then(function (ChannelInterface $channel) use ($client,$e) {
                         $client->send($e->getMessage(), $channel);
                     });
                 }

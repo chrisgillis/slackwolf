@@ -3,6 +3,7 @@
 use Exception;
 use InvalidArgumentException;
 use Slack\Channel;
+use Slack\ChannelInterface;
 use Slack\DirectMessageChannel;
 use Slackwolf\Game\Formatter\KillFormatter;
 use Slackwolf\Game\Formatter\UserIdFormatter;
@@ -27,7 +28,7 @@ class KillCommand extends Command
 
         if (count($this->args) < 2) {
             $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (Channel $channel) use ($client) {
+                   ->then(function (ChannelInterface $channel) use ($client) {
                        $client->send(":warning: Invalid command. Usage: !kill #channel @user", $channel);
                    });
             throw new InvalidArgumentException("Not enough arguments");
@@ -51,7 +52,7 @@ class KillCommand extends Command
         if ($channelId == null) {
             $this->client->getChannelByName($channelName)
                          ->then(
-                             function (Channel $channel) use (&$channelId) {
+                             function (ChannelInterface $channel) use (&$channelId) {
                                  $channelId = $channel->getId();
                              },
                              function (Exception $e) {
@@ -63,7 +64,7 @@ class KillCommand extends Command
         if ($channelId == null) {
             $this->client->getGroupByName($channelName)
                          ->then(
-                             function (Channel $channel) use (&$channelId) {
+                             function (ChannelInterface $channel) use (&$channelId) {
                                  $channelId = $channel->getId();
                              },
                              function (Exception $e) {
@@ -86,7 +87,7 @@ class KillCommand extends Command
 
         if ( ! $this->game) {
             $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (Channel $channel) use ($client) {
+                   ->then(function (ChannelInterface $channel) use ($client) {
                        $client->send(":warning: No game in progress.", $channel);
                    });
             throw new Exception("No game in progress.");
@@ -99,7 +100,7 @@ class KillCommand extends Command
 
         if ($this->game->getState() != GameState::NIGHT) {
             $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (Channel $channel) use ($client) {
+                   ->then(function (ChannelInterface $channel) use ($client) {
                        $client->send(":warning: You can only kill at night.", $channel);
                    });
             throw new Exception("Killing occurs only during the night.");
@@ -108,16 +109,16 @@ class KillCommand extends Command
         // Voter should be alive
         if ( ! $this->game->hasPlayer($this->userId)) {
             $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (Channel $channel) use ($client) {
+                   ->then(function (ChannelInterface $channel) use ($client) {
                        $client->send(":warning: You aren't alive in the specified channel.", $channel);
                    });
             throw new Exception("Can't kill if dead.");
         }
 
         // Person player is voting for should also be alive
-        if ( ! $this->game->hasPlayer($this->args[0])) {
+        if ( ! $this->game->hasPlayer($this->args[1])) {
             $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (Channel $channel) use ($client) {
+                   ->then(function (ChannelInterface $channel) use ($client) {
                        $client->send(":warning: Could not find that player.", $channel);
                    });
             throw new Exception("Voted player not found in game.");
@@ -128,7 +129,7 @@ class KillCommand extends Command
 
         if ($player->role != Role::WEREWOLF) {
             $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (Channel $channel) use ($client) {
+                   ->then(function (ChannelInterface $channel) use ($client) {
                        $client->send(":warning: YOu have to be a werewolf to kill.", $channel);
                    });
             throw new Exception("Only werewolves can kill.");
@@ -136,7 +137,7 @@ class KillCommand extends Command
 
         if ($this->game->hasPlayerVoted($this->userId)) {
             $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (Channel $channel) use ($client) {
+                   ->then(function (ChannelInterface $channel) use ($client) {
                        $client->send(":warning: You have already voted.", $channel);
                    });
             throw new Exception("You have already voted.");

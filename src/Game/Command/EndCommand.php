@@ -2,6 +2,7 @@
 
 use Exception;
 use Slack\Channel;
+use Slack\ChannelInterface;
 use Slackwolf\Game\Formatter\PlayerListFormatter;
 
 class EndCommand extends Command
@@ -19,7 +20,7 @@ class EndCommand extends Command
 
         if ( ! $this->gameManager->hasGame($this->channel)) {
             $client->getChannelGroupOrDMByID($this->channel)
-               ->then(function (Channel $channel) use ($client) {
+               ->then(function (ChannelInterface $channel) use ($client) {
                    $client->send(":warning: No game in progress.", $channel);
                });
             return;

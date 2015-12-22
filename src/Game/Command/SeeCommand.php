@@ -2,6 +2,7 @@
 
 use Exception;
 use Slack\Channel;
+use Slack\ChannelInterface;
 use Slack\DirectMessageChannel;
 use Slackwolf\Game\Game;
 use Slackwolf\Game\GameState;
@@ -58,7 +59,7 @@ class SeeCommand extends Command
         if ($channelId == null) {
             $this->client->getChannelByName($channelName)
                          ->then(
-                             function (Channel $channel) use (&$channelId) {
+                             function (ChannelInterface $channel) use (&$channelId) {
                                  $channelId = $channel->getId();
                              },
                              function (Exception $e) {
@@ -70,7 +71,7 @@ class SeeCommand extends Command
         if ($channelId == null) {
             $this->client->getGroupByName($channelName)
                          ->then(
-                             function (Channel $channel) use (&$channelId) {
+                             function (ChannelInterface $channel) use (&$channelId) {
                                  $channelId = $channel->getId();
                              },
                              function (Exception $e) {

@@ -2,6 +2,7 @@
 
 use Exception;
 use Slack\Channel;
+use Slack\ChannelInterface;
 use Slack\DirectMessageChannel;
 use Slack\RealTimeClient;
 use Slackwolf\Game\Command\Command;
@@ -194,7 +195,7 @@ class GameManager
             }
             $winMsg .= "are victorious!";
             $client->getChannelGroupOrDMByID($id)
-                ->then(function (Channel $channel) use ($client, $playerList, $winMsg) {
+                ->then(function (ChannelInterface $channel) use ($client, $playerList, $winMsg) {
                     $client->send($winMsg, $channel);
                 });
         }
@@ -203,7 +204,7 @@ class GameManager
 
         if ($enderUserId !== null) {
             $client->getChannelGroupOrDMByID($id)
-                   ->then(function (Channel $channel) use ($client, $playerList, $enderUserId) {
+                   ->then(function (ChannelInterface $channel) use ($client, $playerList, $enderUserId) {
                        $client->getUserById($enderUserId)
                               ->then(function (\Slack\User $user) use ($client, $playerList, $channel) {
                                   $client->send(":triangular_flag_on_post: The game was ended by @{$user->getUsername()}.\r\n\r\nRole Summary:\r\n----------------\r\n{$playerList}", $channel);
@@ -233,7 +234,7 @@ class GameManager
         $client = $this->client;
 
         $client->getChannelGroupOrDMByID($game->getId())
-            ->then(function (Channel $channel) use ($client,$voteMsg) {
+            ->then(function (ChannelInterface $channel) use ($client,$voteMsg) {
                 $client->send($voteMsg, $channel);
             });
 
@@ -278,7 +279,7 @@ class GameManager
         $lynchMsg .= implode(', ', $lynchedNames). "\r\n";
 
         $client->getChannelGroupOrDMByID($game->getId())
-               ->then(function (Channel $channel) use ($client,$lynchMsg) {
+               ->then(function (ChannelInterface $channel) use ($client,$lynchMsg) {
                    $client->send($lynchMsg, $channel);
                });
 
@@ -325,7 +326,7 @@ class GameManager
         $msg .= ":crescent_moon: :zzz: It is the middle of the night and the village is sleeping. The game will begin when the Seer chooses someone.";
 
         $this->client->getChannelGroupOrDMByID($game->getId())
-            ->then(function (Channel $channel) use ($msg, $client) {
+            ->then(function (ChannelInterface $channel) use ($msg, $client) {
                 $client->send($msg, $channel);
             });
     }
@@ -341,7 +342,7 @@ class GameManager
         $dayBreakMsg .= "Villagers, find the Werewolves! Type !vote @username to vote to lynch a player.";
 
         $this->client->getChannelGroupOrDMByID($game->getId())
-            ->then(function (Channel $channel) use ($client, $dayBreakMsg) {
+            ->then(function (ChannelInterface $channel) use ($client, $dayBreakMsg) {
                 $client->send($dayBreakMsg, $channel);
             });
     }
@@ -352,7 +353,7 @@ class GameManager
         $nightMsg = ":crescent_moon: :zzz: The sun sets and the villagers go to sleep.";
 
         $this->client->getChannelGroupOrDMByID($game->getId())
-             ->then(function (Channel $channel) use ($client, $nightMsg) {
+             ->then(function (ChannelInterface $channel) use ($client, $nightMsg) {
                  $client->send($nightMsg, $channel);
              });
 
@@ -411,7 +412,7 @@ class GameManager
             }
 
             $client->getChannelGroupOrDMByID($game->getId())
-                ->then(function(Channel $channel) use ($client,$killMsg) {
+                ->then(function(ChannelInterface $channel) use ($client,$killMsg) {
                     $client->send($killMsg, $channel);
                 });
         }
