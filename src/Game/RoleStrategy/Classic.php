@@ -19,10 +19,9 @@ class Classic implements RoleStrategyInterface
             $roles[Role::BODYGUARD] = 1;
         }
 
-        $roles += [
-            Role::VILLAGER => max($num_good - count($roles), 0),
-            Role::WEREWOLF => $num_evil
-        ];
+		
+        $roles[Role::VILLAGER] = max($num_good - count($roles), 0);
+		$roles[Role::WEREWOLF] = $num_evil;
 
         $rolePool = [];
 
