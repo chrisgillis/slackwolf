@@ -34,7 +34,7 @@ class KillCommand extends Command
             throw new InvalidArgumentException("Not enough arguments");
         }
 
-        $this->args[1] = UserIdFormatter::format($this->args[0]);
+        $this->args[1] = UserIdFormatter::format($this->args[1]);
 
         $client = $this->client;
 
