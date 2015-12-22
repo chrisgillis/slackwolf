@@ -51,7 +51,7 @@ class KillCommand extends Command
         if ($channelId == null) {
             $this->client->getChannelByName($channelName)
                          ->then(
-                             function (DirectMessageChannel $channel) use (&$channelId) {
+                             function (Channel $channel) use (&$channelId) {
                                  $channelId = $channel->getId();
                              },
                              function (Exception $e) {
@@ -63,7 +63,7 @@ class KillCommand extends Command
         if ($channelId == null) {
             $this->client->getGroupByName($channelName)
                          ->then(
-                             function (DirectMessageChannel $channel) use (&$channelId) {
+                             function (Channel $channel) use (&$channelId) {
                                  $channelId = $channel->getId();
                              },
                              function (Exception $e) {
