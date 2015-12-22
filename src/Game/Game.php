@@ -153,9 +153,10 @@ class Game
     {
         $numSeers = $this->getNumRole(Role::SEER);
         $numVillagers = $this->getNumRole(Role::VILLAGER);
+        $numBodyguard = $this->getNumRole(Role::BODYGUARD);
         $numWerewolves = $this->getNumRole(Role::WEREWOLF);
 
-        $numGood = $numVillagers + $numSeers;
+        $numGood = $numVillagers + $numSeers + $numBodyguard;
 
         if ($numWerewolves == 0) {
             $this->winningTeam = Role::VILLAGER;
