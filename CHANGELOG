@@ -1,8 +1,11 @@
 2015-12-22
 ----------
+
 * Fixed issue with !guard and !kill not being able to find the targeted user
 * Fixed issue where game ends prematurely when Bodyguard is in the role pool
 * Fixed issue where it is known for certain if Lycan is in game
+* Fixed issue with Classic role strategy where games with no werewolves is possible
 * Added the Tanner role
 * Added the Lycan role
 * Added the Beholder role
+* Changed Classic mode to randomly include Lycan, Bodyguard, Beholder, and Tanner after 6 players

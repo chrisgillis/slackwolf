@@ -11,34 +11,42 @@ class Classic implements RoleStrategyInterface
         $num_evil = floor($num_players / 3); // 2
         $num_good = $num_players - $num_evil; // 4
 
-        $roles = [
-            Role::SEER => 1
-        ];
-
-        if ($num_players >= 5) {
-            $roles[Role::BODYGUARD] = 1;
-        }
-
-        if ($num_players >= 6) {
-            $roles[Role::TANNER] = 1;
-        }
-
-        $roles += [
-            Role::VILLAGER => max($num_good - count($roles), 0),
+        $requiredRoles = [
+            Role::SEER => 1,
             Role::WEREWOLF => $num_evil
         ];
 
-        // In games >= 6 players, lets randomly throw in some roles to switch things up
+        $optionalRoles = [
+            Role::VILLAGER => max($num_good - 1, 0)
+        ];
+
         if ($num_players >= 6) {
-            $roles[Role::LYCAN] = 1;
-            $roles[Role::BEHOLDER] = 1;
+            $optionalRoles += [
+                Role::TANNER => 1,
+                Role::LYCAN => 1,
+                Role::BEHOLDER => 1,
+                Role::BODYGUARD => 1
+            ];
         }
+
+        shuffle($optionalRoles);
+
 
         $rolePool = [];
 
-        foreach ($roles as $role => $num_role) {
+        foreach ($requiredRoles as $role => $num_role) {
             for ($i = 0; $i < $num_role; $i++) {
-                $rolePool[] = $role;
+                if (count($rolePool) < $num_players) {
+                    $rolePool[] = $role;
+                }
+            }
+        }
+
+        foreach ($optionalRoles as $role => $num_role) {
+            for ($i = 0; $i < $num_role; $i++) {
+                if (count($rolePool) < $num_players) {
+                    $rolePool[] = $role;
+                }
             }
         }
 
