@@ -23,14 +23,16 @@ class Classic implements RoleStrategyInterface
             $roles[Role::TANNER] = 1;
         }
 
-        if ($num_players >= 7) {
-            $roles[Role::LYCAN] = 1;
-        }
-
         $roles += [
             Role::VILLAGER => max($num_good - count($roles), 0),
             Role::WEREWOLF => $num_evil
         ];
+
+        // I intentionally placed the Lycan here, so that we'll have one extra row so you never
+        // know if the Lycan is truly in play or not
+        if ($num_players >= 6) {
+            $roles[Role::LYCAN] = 1;
+        }
 
         $rolePool = [];
 
