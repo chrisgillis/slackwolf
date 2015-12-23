@@ -41,7 +41,7 @@ class GuardCommand extends Command
         $channelName = "";
 
         if (strpos($this->args[0], '#C') !== false) {
-            $channelId = $this->args[0];
+            $channelName = UserIdFormatter::format($this->args[0])
         } elseif (strpos($this->args[0], '#') !== false) {
             $channelName = substr($this->args[0], 1);
         } else {

@@ -4,6 +4,7 @@ use Exception;
 use Slack\Channel;
 use Slack\ChannelInterface;
 use Slack\DirectMessageChannel;
+use Slackwolf\Game\Formatter\UserIdFormatter;
 use Slackwolf\Game\Game;
 use Slackwolf\Game\GameState;
 use Slackwolf\Game\Role;
@@ -49,7 +50,7 @@ class SeeCommand extends Command
         $channelName = "";
 
         if (strpos($this->args[0], '#C') !== false) {
-            $channelId = $this->args[0];
+            $channelName = UserIdFormatter::format($this->args[0]);
         } elseif (strpos($this->args[0], '#') !== false) {
             $channelName = substr($this->args[0], 1);
         } else {
