@@ -42,15 +42,17 @@ class GuardCommand extends Command
         $channelName = "";
 
         if (strpos($this->args[0], '#C') !== false) {
-            $channelName = ChannelIdFormatter::format($this->args[0])
-        } elseif (strpos($this->args[0], '#') !== false) {
-            $channelName = substr($this->args[0], 1);
+            $channelId = ChannelIdFormatter::format($this->args[0]);
         } else {
-            $channelName = $this->args[0];
+            if (strpos($this->args[0], '#') !== false) {
+                $channelName = substr($this->args[0], 1);
+            } else {
+                $channelName = $this->args[0];
+            }
         }
 
-        if ($channelId == null) {
-            $this->client->getChannelByName($channelName)
+        if ($channelId != null) {
+            $this->client->getChannelById($channelId)
                          ->then(
                              function (ChannelInterface $channel) use (&$channelId) {
                                  $channelId = $channel->getId();
