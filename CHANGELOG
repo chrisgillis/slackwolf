@@ -1,0 +1,5 @@
+2015-12-22
+----------
+* Fixed issue with !guard and !kill not being able to find the targeted user
+* Fixed issue where game ends prematurely when Bodyguard is in the role pool
+* Added the Tanner role
