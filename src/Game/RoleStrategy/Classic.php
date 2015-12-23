@@ -5,6 +5,17 @@ use Slackwolf\Game\Role;
 class Classic implements RoleStrategyInterface
 {
 
+    private $roleListMsg;
+
+    /**
+     * @return string
+     */
+    public function getRoleListMsg()
+    {
+        return $this->roleListMsg;
+    }
+
+
     public function assign(array $players)
     {
         $num_players = count($players); // 6
@@ -31,6 +42,7 @@ class Classic implements RoleStrategyInterface
 
         shuffle($optionalRoles);
 
+        $this->roleListMsg = "Required: [Seer, Werewolf, Villager] + Optional: [Tanner,Lycan,Beholder,Bodyguard]";
 
         $rolePool = [];
 

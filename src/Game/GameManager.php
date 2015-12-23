@@ -331,7 +331,7 @@ class GameManager
 
         $msg = ":wolf: A new game of Werewolf is starting! For a tutorial, type !help.\r\n\r\n";
         $msg .= "Players: {$playerList}\r\n";
-        $msg .= "Roles: {$roleList}\r\n\r\n";
+        $msg .= "Possible Roles: {$game->getRoleStrategy()->getRoleListMsg()}\r\n\r\n";
 
         $msg .= ":crescent_moon: :zzz: It is the middle of the night and the village is sleeping. The game will begin when the Seer chooses someone.";
 

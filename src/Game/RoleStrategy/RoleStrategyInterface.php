@@ -8,4 +8,9 @@ interface RoleStrategyInterface
      * @return \Slack\User[]
      */
     public function assign(array $users);
+
+    /**
+     * @return string
+     */
+    public function getRoleListMsg();
 }

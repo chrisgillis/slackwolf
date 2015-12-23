@@ -14,6 +14,7 @@ class Game
     private $wolvesVoted;
     private $guardedUserId;
     private $lastGuardedUserId;
+    private $roleStrategy;
 
     /**
      * @param                       $id
@@ -24,12 +25,18 @@ class Game
     {
         $this->id = $id;
 
+        $this->roleStrategy = $roleStrategy;
         $players = $roleStrategy->assign($users);
 
         foreach ($players as $player) {
             $this->players[$player->getId()] = $player;
             $this->originalPlayers[$player->getId()] = $player;
         }
+    }
+
+    public function getRoleStrategy()
+    {
+        return $this->roleStrategy;
     }
 
     public function getId()
