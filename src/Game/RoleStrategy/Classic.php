@@ -42,7 +42,11 @@ class Classic implements RoleStrategyInterface
 
         shuffle($optionalRoles);
 
-        $this->roleListMsg = "Required: [Seer, Werewolf, Villager] + Optional: [Tanner,Lycan,Beholder,Bodyguard]";
+        $this->roleListMsg = "Required: [Seer, Werewolf, Villager]";
+
+        if ($num_players >= 6) {
+            $this->roleListMsg .= "+ Optional: [Tanner,Lycan,Beholder,Bodyguard]";
+        }
 
         $rolePool = [];
 
