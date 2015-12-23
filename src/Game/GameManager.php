@@ -316,6 +316,13 @@ class GameManager
                     if ($player->role == Role::SEER) {
                         $client->send("Seer, select a player by saying !see #channel @username.", $dmc);
                     }
+
+                    if ($player->role == Role::BEHOLDER) {
+                        $seers = $game->getPlayersOfRole(Role::SEER);
+                        $seers = PlayerListFormatter::format($seers);
+
+                        $client->send("The seer is: {$seers}", $dmc);
+                    }
                 });
         }
 

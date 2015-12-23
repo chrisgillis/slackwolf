@@ -8,4 +8,5 @@ class Role
     const BODYGUARD = "Bodyguard";
     const TANNER = "Tanner";
     const LYCAN = "Lycan";
+    const BEHOLDER = "Beholder";
 }

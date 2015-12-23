@@ -28,10 +28,10 @@ class Classic implements RoleStrategyInterface
             Role::WEREWOLF => $num_evil
         ];
 
-        // I intentionally placed the Lycan here, so that we'll have one extra row so you never
-        // know if the Lycan is truly in play or not
+        // In games >= 6 players, lets randomly throw in some roles to switch things up
         if ($num_players >= 6) {
             $roles[Role::LYCAN] = 1;
+            $roles[Role::BEHOLDER] = 1;
         }
 
         $rolePool = [];
