@@ -410,7 +410,7 @@ class GameManager
                 $game->setLastGuardedUserId($game->getGuardedUserId());
                 $game->setGuardedUserId(null);
             } else {
-                $killMsg = ":skull_and_crossbones: @{$player->getUsername()} was killed during the night.";
+                $killMsg = ":skull_and_crossbones: @{$player->getUsername()} ($player->role) was killed during the night.";
                 $game->removePlayer($lynch_id);
             }
 
