@@ -7,4 +7,5 @@ class Role
     const WEREWOLF = "Werewolf";
     const BODYGUARD = "Bodyguard";
     const TANNER = "Tanner";
+    const LYCAN = "Lycan";
 }

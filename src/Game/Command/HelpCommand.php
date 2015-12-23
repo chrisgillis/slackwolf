@@ -18,6 +18,7 @@ class HelpCommand extends Command
         $help_msg .= "Special Roles\r\n------------------------\r\n";
         $help_msg .= " |_ Seer - A villager who, once each night, is allowed to see the role of another player. The bot will private message you.\r\n";
         $help_msg .= " |_ Tanner - A player not on the side of the villagers or the werewolves who wins if is killed.\r\n";
+        $help_msg .= " |_ Lycan - A villager who appears to the Seer as a Werewolf.\r\n";
         $help_msg .= " |_ Bodyguard - A villager who may protect a player from being eliminated once each night, but not the same person two nights in a row.\r\n\r\n";
         $help_msg .= "Available Commands\r\n------------------------\r\n";
         $help_msg .= "|_  !start - Starts a new game with everyone in the channel participating\r\n";
