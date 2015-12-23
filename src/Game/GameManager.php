@@ -307,7 +307,7 @@ class GameManager
                     if ($player->role == Role::WEREWOLF) {
                         if ($game->getNumRole(Role::WEREWOLF) > 1) {
                             $werewolves = PlayerListFormatter::format($game->getPlayersOfRole(Role::WEREWOLF));
-                            $client->send("The other werewolves are: {$werewolves}", $dmc);
+                            $client->send("The werewolves are: {$werewolves}", $dmc);
                         } else {
                             $client->send("You are the only werewolf.", $dmc);
                         }
