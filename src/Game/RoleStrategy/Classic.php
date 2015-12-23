@@ -31,16 +31,17 @@ class Classic implements RoleStrategyInterface
             Role::VILLAGER => max($num_good - 1, 0)
         ];
 
+        $possibleOptionalRoles = [Role::VILLAGER];
+
         if ($num_players >= 6) {
-            $optionalRoles += [
-                Role::TANNER => 1,
-                Role::LYCAN => 1,
-                Role::BEHOLDER => 1,
-                Role::BODYGUARD => 1
-            ];
+            $optionalRoles[Role::TANNER] = 1;
+            $optionalRoles[Role::LYCAN] = 1;
+            $optionalRoles[Role::BEHOLDER] = 1;
+            $optionalRoles[Role::BODYGUARD] = 1;
+            $possibleOptionalRoles = [Role::VILLAGER, Role::TANNER, Role::LYCAN, Role::BEHOLDER,Role::BODYGUARD];
         }
 
-        shuffle($optionalRoles);
+        shuffle($possibleOptionalRoles);
 
         $this->roleListMsg = "Required: [Seer, Werewolf, Villager]";
 
@@ -58,10 +59,11 @@ class Classic implements RoleStrategyInterface
             }
         }
 
-        foreach ($optionalRoles as $role => $num_role) {
+        foreach ($possibleOptionalRoles as $possibleRole) {
+            $num_role = $optionalRoles[$possibleRole];
             for ($i = 0; $i < $num_role; $i++) {
                 if (count($rolePool) < $num_players) {
-                    $rolePool[] = $role;
+                    $rolePool[] = $possibleRole;
                 }
             }
         }
