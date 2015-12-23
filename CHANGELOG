@@ -2,5 +2,6 @@
 ----------
 * Fixed issue with !guard and !kill not being able to find the targeted user
 * Fixed issue where game ends prematurely when Bodyguard is in the role pool
+* Fixed issue where it is known for certain if Lycan is in game
 * Added the Tanner role
 * Added the Lycan role
