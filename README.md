@@ -4,7 +4,7 @@ Slackwolf is a bot for Slack. After inviting the bot to a channel, you can play 
 ![ProjectImage](http://i.imgur.com/0Kwd8oe.png)
 
 ## Roles
-Slackwolf currently supports Seer, Bodyguard, Villager, and Werewolf. The roles needed to play a fun game.
+Slackwolf currently supports Seer, Bodyguard, Lycan, Tanner, Villager, and Werewolf. The roles needed to play a fun game.
 
 ## How to play
 `/invite` the bot and type !help
