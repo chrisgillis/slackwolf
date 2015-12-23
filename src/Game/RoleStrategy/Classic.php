@@ -19,6 +19,10 @@ class Classic implements RoleStrategyInterface
             $roles[Role::BODYGUARD] = 1;
         }
 
+        if ($num_players >= 6) {
+            $roles[Role::TANNER] = 1;
+        }
+
         $roles += [
             Role::VILLAGER => max($num_good - count($roles), 0),
             Role::WEREWOLF => $num_evil

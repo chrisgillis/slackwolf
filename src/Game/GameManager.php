@@ -185,15 +185,18 @@ class GameManager
         if($winningTeam !== null) {
             $winMsg = ":clipboard: Role Summary\r\n--------------------------------------------------------------\r\n{$playerList}\r\n\r\n:tada: The game is over. The ";
             if ($winningTeam == Role::VILLAGER) {
-                $winMsg .= "Townsfolk ";
+                $winMsg .= "Townsfolk are victorious!";
             }
             elseif ($winningTeam == Role::WEREWOLF) {
-                $winMsg .= "Werewolves ";
+                $winMsg .= "Werewolves are victorious!";
+            }
+            elseif ($winningTeam == Role::TANNER) {
+                $winMsg .= "Tanner is victorious!";
             }
             else {
-                $winMsg .= "UnknownTeam ";
+                $winMsg .= "UnknownTeam is victorious!";
             }
-            $winMsg .= "are victorious!";
+
             $client->getChannelGroupOrDMByID($id)
                 ->then(function (ChannelInterface $channel) use ($client, $playerList, $winMsg) {
                     $client->send($winMsg, $channel);

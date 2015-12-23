@@ -74,6 +74,22 @@ class Game
         return $werewolves;
     }
 
+    /**
+     * @return \Slack\User[]
+     */
+    public function getOriginalPlayersOfRole($roleType)
+    {
+        $werewolves = [];
+
+        foreach ($this->originalPlayers as $player) {
+            if ($player->role == $roleType) {
+                $werewolves[] = $player;
+            }
+        }
+
+        return $werewolves;
+    }
+
     public function hasPlayer($playerId) {
         return isset($this->players[$playerId]);
     }
@@ -97,6 +113,14 @@ class Game
     public function getNumRole($roleType)
     {
         return count($this->getPlayersOfRole($roleType));
+    }
+
+    /**
+     * @return int
+     */
+    public function getOriginalNumRole($roleType)
+    {
+        return count($this->getOriginalPlayersOfRole($roleType));
     }
 
     public function getState()
@@ -151,12 +175,17 @@ class Game
 
     public function isOver()
     {
-        $numSeers = $this->getNumRole(Role::SEER);
-        $numVillagers = $this->getNumRole(Role::VILLAGER);
-        $numBodyguard = $this->getNumRole(Role::BODYGUARD);
         $numWerewolves = $this->getNumRole(Role::WEREWOLF);
+        $numTanner = $this->getNumRole(Role::TANNER);
 
-        $numGood = $numVillagers + $numSeers + $numBodyguard;
+        $numGood = count($this->getPlayers()) - $numWerewolves;
+
+        if ($numTanner == 0) {
+            if ($this->getOriginalNumRole(Role::TANNER) > 0) {
+                $this->winningTeam = Role::TANNER;
+                return true;
+            }
+        }
 
         if ($numWerewolves == 0) {
             $this->winningTeam = Role::VILLAGER;
