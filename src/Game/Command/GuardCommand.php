@@ -5,6 +5,7 @@ use InvalidArgumentException;
 use Slack\Channel;
 use Slack\ChannelInterface;
 use Slack\DirectMessageChannel;
+use Slackwolf\Game\Formatter\ChannelIdFormatter;
 use Slackwolf\Game\Formatter\UserIdFormatter;
 use Slackwolf\Game\Game;
 use Slackwolf\Game\GameState;
@@ -41,7 +42,7 @@ class GuardCommand extends Command
         $channelName = "";
 
         if (strpos($this->args[0], '#C') !== false) {
-            $channelName = UserIdFormatter::format($this->args[0])
+            $channelName = ChannelIdFormatter::format($this->args[0])
         } elseif (strpos($this->args[0], '#') !== false) {
             $channelName = substr($this->args[0], 1);
         } else {
