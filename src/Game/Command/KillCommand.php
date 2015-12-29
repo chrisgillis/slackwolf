@@ -80,7 +80,7 @@ class KillCommand extends Command
             $this->client->getDMById($this->channel)
                          ->then(
                              function (DirectMessageChannel $dmc) use ($client) {
-                                 $this->client->send(":warning: Invalid channel specified. Usage: !guard #channel @user", $dmc);
+                                 $this->client->send(":warning: Invalid channel specified. Usage: !kill #channel @user", $dmc);
                              }
                          );
             throw new InvalidArgumentException();
