@@ -414,12 +414,13 @@ class GameManager
 
             if ($lynch_id == $game->getGuardedUserId()) {
                 $killMsg = ":muscle: @{$player->getUsername()} was protected from being killed during the night.";
-                $game->setLastGuardedUserId($game->getGuardedUserId());
-                $game->setGuardedUserId(null);
             } else {
                 $killMsg = ":skull_and_crossbones: @{$player->getUsername()} ($player->role) was killed during the night.";
                 $game->removePlayer($lynch_id);
             }
+
+            $game->setLastGuardedUserId($game->getGuardedUserId());
+            $game->setGuardedUserId(null);
 
             $client->getChannelGroupOrDMByID($game->getId())
                 ->then(function(ChannelInterface $channel) use ($client,$killMsg) {

@@ -30,7 +30,7 @@ class StartCommand extends Command
         }
 
         $this->client->getChannelGroupOrDMByID($this->channel)
-            ->then(function (ChannelInterface $channel) {
+            ->then(function (Channel $channel) {
                 return $channel->getMembers();
             })
             ->then(function (array $users) use ($gameManager, $message, $client) {
