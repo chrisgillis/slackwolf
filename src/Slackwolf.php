@@ -33,7 +33,7 @@ class Slackwolf
         /*
          * Create our Slack client
          */
-        $client = new RealTimeClient($eventLoop);
+        $client = new SlackRTMClient($eventLoop);
         $client->setToken(getenv('BOT_TOKEN'));
 
         /*
@@ -58,7 +58,15 @@ class Slackwolf
          * Route incoming Slack messages
          */
         $client->on('message', function ($data) use ($client, $gameManager) {
-            $gameManager->input(new Message($data));
+            $message = new Message($data);
+
+            if ($message->getSubType() == 'channel_join') {
+                $client->refreshChannel($message->getChannel());
+            } else if ($message->getSubType() == 'channel_leave') {
+                $client->refreshChannel($message->getChannel());
+            } else {
+                $gameManager->input($message);
+            }
         });
 
         /*
