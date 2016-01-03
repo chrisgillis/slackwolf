@@ -33,7 +33,7 @@ class Game
             $this->originalPlayers[$player->getId()] = $player;
         }
     }
-
+        
     public function getRoleStrategy()
     {
         return $this->roleStrategy;
@@ -162,6 +162,24 @@ class Game
         }
 
         return false;
+    }
+
+    public function clearPlayerVote($voterId)
+    {        
+        foreach ($this->votes as $voted => $voters)
+        {
+            foreach ($voters as $voterKey => $voter)
+            {
+                if ($voter == $voterId) {
+                    //Remove voter
+                    unset($this->votes[$voted][$voterKey]);
+                    //Clear empty arrays
+                    if (count($this->votes[$voted]) == 0) {
+                        unset($this->votes[$voted]);
+                    }
+                }                
+            }            
+        }
     }
 
     public function votingFinished()

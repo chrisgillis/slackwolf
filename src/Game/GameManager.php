@@ -84,6 +84,15 @@ class GameManager
 
         return true;
     }
+    
+    public function sendMessageToChannel($game, $msg)
+    {
+        $client = $this->client;
+        $client->getChannelGroupOrDMByID($game->getId())
+               ->then(function (ChannelInterface $channel) use ($client,$msg) {
+                   $client->send($msg, $channel);
+               });
+    }
 
     public function changeGameState($gameId, $newGameState)
     {
@@ -196,24 +205,17 @@ class GameManager
             else {
                 $winMsg .= "UnknownTeam is victorious!";
             }
+            $this->sendMessageToChannel($game, $winMsg);
+        }
 
-            $client->getChannelGroupOrDMByID($id)
-                ->then(function (ChannelInterface $channel) use ($client, $playerList, $winMsg) {
-                    $client->send($winMsg, $channel);
-                });
+        if ($enderUserId !== null) {
+            $client->getUserById($enderUserId)
+                   ->then(function (\Slack\User $user) use ($game, $playerList) {
+                       $this->sendMessageToChannel($game, ":triangular_flag_on_post: The game was ended by @{$user->getUsername()}.\r\n\r\nRole Summary:\r\n----------------\r\n{$playerList}");
+                   });
         }
 
         unset($this->games[$id]);
-
-        if ($enderUserId !== null) {
-            $client->getChannelGroupOrDMByID($id)
-                   ->then(function (ChannelInterface $channel) use ($client, $playerList, $enderUserId) {
-                       $client->getUserById($enderUserId)
-                              ->then(function (\Slack\User $user) use ($client, $playerList, $channel) {
-                                  $client->send(":triangular_flag_on_post: The game was ended by @{$user->getUsername()}.\r\n\r\nRole Summary:\r\n----------------\r\n{$playerList}", $channel);
-                              });
-                   });
-        }
     }
 
     public function vote(Game $game, $voterId, $voteForId)
@@ -227,20 +229,21 @@ class GameManager
         }
 
         if ($game->hasPlayerVoted($voterId)) {
-            return;
+            try {
+                $game->clearPlayerVote($voterId);
+            } 
+            catch(Exception $e) {
+                //$this->sendMessageToChannel($game, "Exception: " + $e->getMessage());
+                return;
+            }
         }
 
         $game->vote($voterId, $voteForId);
 
         $voteMsg = VoteSummaryFormatter::format($game);
 
-        $client = $this->client;
-
-        $client->getChannelGroupOrDMByID($game->getId())
-            ->then(function (ChannelInterface $channel) use ($client,$voteMsg) {
-                $client->send($voteMsg, $channel);
-            });
-
+        $this->sendMessageToChannel($game, $voteMsg);
+        
         if ( ! $game->votingFinished()) {
             return;
         }
@@ -280,11 +283,7 @@ class GameManager
         }
 
         $lynchMsg .= implode(', ', $lynchedNames). "\r\n";
-
-        $client->getChannelGroupOrDMByID($game->getId())
-               ->then(function (ChannelInterface $channel) use ($client,$lynchMsg) {
-                   $client->send($lynchMsg, $channel);
-               });
+        $this->sendMessageToChannel($game,$lynchMsg);
 
         $this->changeGameState($game->getId(), GameState::NIGHT);
     }
@@ -334,38 +333,24 @@ class GameManager
         $msg .= "Possible Roles: {$game->getRoleStrategy()->getRoleListMsg()}\r\n\r\n";
 
         $msg .= ":crescent_moon: :zzz: It is the middle of the night and the village is sleeping. The game will begin when the Seer chooses someone.";
-
-        $this->client->getChannelGroupOrDMByID($game->getId())
-            ->then(function (ChannelInterface $channel) use ($msg, $client) {
-                $client->send($msg, $channel);
-            });
+        $this->sendMessageToChannel($game, msg);
     }
 
     private function onDay(Game $game)
     {
-        $client = $this->client;
-
         $remainingPlayers = PlayerListFormatter::format($game->getPlayers());
 
         $dayBreakMsg = ":sunrise: The sun rises and the villagers awake.\r\n";
         $dayBreakMsg .= "Remaining Players: {$remainingPlayers}\r\n\r\n";
         $dayBreakMsg .= "Villagers, find the Werewolves! Type !vote @username to vote to lynch a player.";
-
-        $this->client->getChannelGroupOrDMByID($game->getId())
-            ->then(function (ChannelInterface $channel) use ($client, $dayBreakMsg) {
-                $client->send($dayBreakMsg, $channel);
-            });
+        $this->sendMessageToChannel($game, $dayBreakMsg);
     }
 
     private function onNight(Game $game)
     {
         $client = $this->client;
         $nightMsg = ":crescent_moon: :zzz: The sun sets and the villagers go to sleep.";
-
-        $this->client->getChannelGroupOrDMByID($game->getId())
-             ->then(function (ChannelInterface $channel) use ($client, $nightMsg) {
-                 $client->send($nightMsg, $channel);
-             });
+        $this->sendMessageToChannel($game, $nightMsg);
 
         $wolves = $game->getPlayersOfRole(Role::WEREWOLF);
 
@@ -405,8 +390,6 @@ class GameManager
 
     private function onNightEnd(Game $game)
     {
-        $client = $this->client;
-
         $votes = $game->getVotes();
 
         foreach ($votes as $lynch_id => $voters) {
@@ -421,11 +404,7 @@ class GameManager
 
             $game->setLastGuardedUserId($game->getGuardedUserId());
             $game->setGuardedUserId(null);
-
-            $client->getChannelGroupOrDMByID($game->getId())
-                ->then(function(ChannelInterface $channel) use ($client,$killMsg) {
-                    $client->send($killMsg, $channel);
-                });
+            $this->sendMessageToChannel($game, $killMsg);
         }
     }
 
