@@ -35,9 +35,12 @@ class VoteCommand extends Command
         }
 
         $this->args[0] = UserIdFormatter::format($this->args[0], $this->game->getOriginalPlayers());
-
+echo $this->args[0];
         // Person player is voting for should also be alive
-        if ( ! $this->game->hasPlayer($this->args[0])) {
+        if ( ! $this->game->hasPlayer($this->args[0]) 
+                && $this->args[0] != 'noone'
+                && $this->args[0] != 'clear') {
+            echo 'not found';
             throw new Exception("Voted player not found in game.");
         }
     }

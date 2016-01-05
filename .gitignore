@@ -1,3 +1,5 @@
 /vendor/
 .env
 .idea
+/nbproject/private/
+/options.json

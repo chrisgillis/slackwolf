@@ -227,7 +227,9 @@ class GameManager
             return;
         }
 
-        if ( ! $game->hasPlayer($voteForId)) {
+        if ( ! $game->hasPlayer($voteForId)
+                && $voteForId != 'noone'
+                && $voteForId != 'clear') {
             return;
         }
 
@@ -240,8 +242,9 @@ class GameManager
             $game->clearPlayerVote($voterId);
         }
 
-        $game->vote($voterId, $voteForId);
-
+        if ($voteForId != 'clear') { //if voting for 'clear' just clear vote
+            $game->vote($voterId, $voteForId);
+        }
         $voteMsg = VoteSummaryFormatter::format($game);
 
         $this->sendMessageToChannel($game, $voteMsg);
@@ -315,7 +318,7 @@ class GameManager
                     }
 
                     if ($player->role == Role::SEER) {
-                        $client->send("Seer, select a player by saying !see #channel @username.\r\nDO NOT DISCUSS WHAT YOU SEE DURING THE NIGHT OR AFTER YOU ARE DEAD!", $dmc);
+                        $client->send("Seer, select a player by saying !see #channel @username.\r\nDO NOT DISCUSS WHAT YOU SEE DURING THE NIGHT, ONLY DISCUSS DURING THE DAY IF YOU ARE NOT DEAD!", $dmc);
                     }
 
                     if ($player->role == Role::BEHOLDER) {
