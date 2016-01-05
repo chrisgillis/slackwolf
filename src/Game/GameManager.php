@@ -12,6 +12,7 @@ use Slackwolf\Game\Formatter\RoleSummaryFormatter;
 use Slackwolf\Game\Formatter\VoteSummaryFormatter;
 use Slackwolf\Message\Message;
 use Slackwolf\Game\OptionsManager;
+use Slackwolf\Game\OptionName;
 
 class GameManager
 {
@@ -235,7 +236,7 @@ class GameManager
 
         if ($game->hasPlayerVoted($voterId)) {
             //If changeVote is not enabled and player has already voted, do not allow another vote
-            if (!$this->optionsManager->getOptionValue("changevote"))
+            if (!$this->optionsManager->getOptionValue(OptionName::changevote))
             {
                 throw new Exception("Vote change not allowed.");
             }
@@ -337,8 +338,15 @@ class GameManager
         $msg .= "Players: {$playerList}\r\n";
         $msg .= "Possible Roles: {$game->getRoleStrategy()->getRoleListMsg()}\r\n\r\n";
 
-        $msg .= ":crescent_moon: :zzz: It is the middle of the night and the village is sleeping. The game will begin when the Seer chooses someone.";
+        if ($this->optionsManager->getOptionValue(OptionName::role_seer)) {
+            $msg .= ":crescent_moon: :zzz: It is the middle of the night and the village is sleeping.";
+            $msg .= " The game will begin when the Seer chooses someone.";
+        }
         $this->sendMessageToChannel($game, $msg);
+        
+        if (!$this->optionsManager->getOptionValue(OptionName::role_seer)) {
+            $this->changeGameState($game->getId(), GameState::NIGHT);        
+        }
     }
 
     private function onDay(Game $game)

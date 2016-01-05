@@ -11,7 +11,7 @@ class SetOptionCommand extends Command
         if (count($this->args) > 1)
         {
             //Attempt to change an option detected
-            $this->gameManager->optionsManager->setOptionValue($this->args[0], $this->args[1], true);
+            $this->gameManager->optionsManager->setOptionValue($this->args, true);
         }
     }
     

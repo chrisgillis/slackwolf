@@ -2,11 +2,24 @@
 
 use Exception;
 
+class OptionName
+{
+    const changevote = 'changevote';
+    const mods = 'mods';
+    const role_seer = 'role_seer';
+    const role_tanner = 'role_tanner';
+    const role_lycan = 'role_lycan';
+    const role_beholder = 'role_beholder';
+    const role_bodyguard = 'role_bodyguard';
+}
+
 class OptionType
 {
     const Bool = 0;
     const Int = 1;
     const String = 2;
+    const StringArray = 3;
+    const UserArray = 4;
 }
 
 class Option
@@ -38,7 +51,13 @@ class OptionsManager
     
     public function __construct()
     {
-        $this->options[] = new Option("changevote", OptionType::Bool, "on", "When enabled votes can be changed until the final vote is cast.");
+        $this->options[] = new Option(OptionName::changevote, OptionType::Bool, "on", "When enabled votes can be changed until the final vote is cast.");
+        $this->options[] = new Option(OptionName::role_seer, OptionType::Bool, "on", "Use Seer role in random games.");
+        $this->options[] = new Option(OptionName::role_tanner, OptionType::Bool, "on", "Use Tanner role in random games.");
+        $this->options[] = new Option(OptionName::role_lycan, OptionType::Bool, "on", "Use Lycan role in random games.");
+        $this->options[] = new Option(OptionName::role_beholder, OptionType::Bool, "on", "Use Beholder role in random games.");
+        $this->options[] = new Option(OptionName::role_bodyguard, OptionType::Bool, "on", "Use Bodyguard role in random games.");
+
         $this->loadOptions();
     }
     
@@ -55,11 +74,11 @@ class OptionsManager
                     /** @var Option $loadedOption */
                     if ($loadedOption->optionType == OptionType::Bool)
                     {
-                        $this->setOptionValue($loadedOption->name, $loadedOption->value ? "on" : "off", false);
+                        $this->setOptionValue([$loadedOption->name, $loadedOption->value ? "on" : "off"], false);
                     }
                     else
                     {
-                        $this->setOptionValue($loadedOption->name, $loadedOption->value, false);
+                        $this->setOptionValue([$loadedOption->name, $loadedOption->value], false);
                     }
                 }
             } catch(Exception $e) { }
@@ -73,23 +92,24 @@ class OptionsManager
         } catch (Exception $e) {}
     }
 
-    public function setOptionValue($optionName, $setValue, $doSave)
+    public function setOptionValue(array $args, $doSave)
     {
+        if (count($args) < 2) { return; } //minimum name/value required
         /** @var Option $option */
         $option = null;
         
         foreach ($this->options as $searchOption)
         {
             /** @var Option $searchOption */
-            if ($searchOption->name == $optionName){
+            if ($searchOption->name == $args[0]){
                 $option = $searchOption;
                 break;
             }
         }
         
         if ($option==null) { return; }
-        
         $newValue = $option->value;
+        $setValue = $args[1];
         switch($option->optionType)
         {
           case OptionType::Bool:
@@ -100,6 +120,34 @@ class OptionsManager
               break;
           case OptionType::String:
               $newValue = $setValue;
+              break;
+          case OptionType::StringArray:
+          case OptionType::UserArray:
+              if (count($args) < 3) { return; } //name add|remove value, all required
+              if ($option->optionType == OptionType::UserArray) 
+              {
+                  $this->client->getChannelGroupOrDMByID($this->channel)
+                    ->then(function (Channel $channel) {
+                        return $channel->getMembers();
+                    })
+                    ->then(function (array $users) use ($gameManager, $message, $client) {
+                        /** @var \Slack\User[] $users */
+                        $setValue = UserIdFormatter::format($setValue, $users);
+                      });
+              }
+              switch(strtolower($args[1]))
+              {
+                  //TODO: Work!
+                  case "add":
+                        $newValue[] = $args[2];
+                        break;
+                  case "remove":
+                        //TODO: if option name ='mods' user is same username as .env admin, do not allow removal
+                        unset($newValue[$args[2]]);
+                        break;
+                  default:
+                        return;
+              }
               break;
         }
         $option->value = $newValue;

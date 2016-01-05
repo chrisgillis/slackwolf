@@ -15,6 +15,7 @@ class Game
     private $guardedUserId;
     private $lastGuardedUserId;
     private $roleStrategy;
+    private $optionsManager;
 
     /**
      * @param                       $id
@@ -24,9 +25,9 @@ class Game
     public function __construct($id, array $users, RoleStrategyInterface $roleStrategy)
     {
         $this->id = $id;
-
         $this->roleStrategy = $roleStrategy;
-        $players = $roleStrategy->assign($users);
+        $this->optionsManager = new OptionsManager();
+        $players = $roleStrategy->assign($users, $this->optionsManager);
 
         foreach ($players as $player) {
             $this->players[$player->getId()] = $player;

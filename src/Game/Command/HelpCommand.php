@@ -1,5 +1,7 @@
 <?php namespace Slackwolf\Game\Command;
 
+use Slack\Channel;
+use Slack\ChannelInterface;
 use Slack\DirectMessageChannel;
 
 class HelpCommand extends Command
@@ -34,5 +36,12 @@ class HelpCommand extends Command
         $this->client->getDMByUserId($this->userId)->then(function(DirectMessageChannel $dm) use ($client, $help_msg) {
             $client->send($help_msg, $dm);
         });
+        
+        if ($this->channel[0] != 'D') {
+            $client->getChannelGroupOrDMByID($this->channel)
+               ->then(function (ChannelInterface $channel) use ($client) {
+                   $client->send(":book: Please check your Direct Messages for help text.", $channel);
+               });
+        }
     }
 }

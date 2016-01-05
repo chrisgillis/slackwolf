@@ -23,6 +23,12 @@ class OptionFormatter
             case OptionType::String:
                 $rtn .= "stringValue (".$option->value.")";
                 break;
+            case OptionType::StringArray:
+                $rtn .= "add|remove stringValue (".implode(', ', $option->value).")";
+                break;
+            case OptionType::UserArray:
+                $rtn .= "add|remove @user (".implode(', ', $option->value).")";
+                break;
             default:
                 $rtn .= "value (".$option->value.")";
                 break;

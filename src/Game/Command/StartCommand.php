@@ -38,10 +38,10 @@ class StartCommand extends Command
                 /** @var \Slack\User[] $users */
                 $this->filterChosen($users);
 
-                if(count($users) < 1) {
+                if(count($users) < 3) {
                     $this->client->getChannelGroupOrDMByID($this->channel)
                         ->then(function (ChannelInterface $channel) use ($client) {
-                            $client->send("Cannot start a game without any users.", $channel);
+                            $client->send("Cannot start a game with less than 3 players.", $channel);
                         });
                     return;
                 }
