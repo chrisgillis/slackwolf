@@ -35,8 +35,6 @@ class KillCommand extends Command
             throw new InvalidArgumentException("Not enough arguments");
         }
 
-        $this->args[1] = UserIdFormatter::format($this->args[1]);
-
         $client = $this->client;
 
         $channelId   = null;
@@ -95,11 +93,20 @@ class KillCommand extends Command
                    });
             throw new Exception("No game in progress.");
         }
+        
+        $this->args[1] = UserIdFormatter::format($this->args[1], $this->game->getOriginalPlayers());
     }
 
     public function fire()
     {
         $client = $this->client;
+        if ($this->game->getWolvesVoted()){
+            $client->getChannelGroupOrDMByID($this->channel)
+                   ->then(function (ChannelInterface $channel) use ($client) {
+                       $client->send(":warning: Wolves have already voted.", $channel);
+                   });
+            throw new Exception("Wolves can't vote after voting ends.");
+        }
 
         if ($this->game->getState() != GameState::NIGHT) {
             $client->getChannelGroupOrDMByID($this->channel)
@@ -133,17 +140,19 @@ class KillCommand extends Command
         if ($player->role != Role::WEREWOLF) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: YOu have to be a werewolf to kill.", $channel);
+                       $client->send(":warning: You have to be a werewolf to kill.", $channel);
                    });
             throw new Exception("Only werewolves can kill.");
         }
 
-        if ($this->game->hasPlayerVoted($this->userId)) {
-            $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: You have already voted.", $channel);
-                   });
-            throw new Exception("You have already voted.");
+        if ($this->game->hasPlayerVoted($this->userId)) {               
+            //If changeVote is not enabled and player has already voted, do not allow another vote
+            if (!$this->gameManager->optionsManager->getOptionValue("changevote"))
+            {
+                throw new Exception("Vote change not allowed.");
+            }
+        
+            $this->game->clearPlayerVote($this->userId);
         }
 
         $this->game->vote($this->userId, $this->args[1]);

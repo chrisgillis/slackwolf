@@ -3,6 +3,7 @@
 use Exception;
 use Slack\Channel;
 use Slack\ChannelInterface;
+use Slackwolf\Game\Formatter\UserIdFormatter;
 use Slackwolf\Game\RoleStrategy;
 
 class StartCommand extends Command
@@ -63,6 +64,7 @@ class StartCommand extends Command
         $chosenUsers = [];
 
         foreach ($this->args as $chosenUser) {
+            $chosenUser = UserIdFormatter::format($chosenUser, $users);
             $chosenUsers[$chosenUser] = $chosenUser;
         }
 

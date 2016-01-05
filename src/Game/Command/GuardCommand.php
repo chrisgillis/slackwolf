@@ -34,8 +34,6 @@ class GuardCommand extends Command
             throw new InvalidArgumentException("Not enough arguments");
         }
 
-        $this->args[1] = UserIdFormatter::format($this->args[1]);
-
         $client = $this->client;
 
         $channelId   = null;
@@ -94,6 +92,8 @@ class GuardCommand extends Command
                    });
             throw new Exception("No game in progress.");
         }
+        
+        $this->args[1] = UserIdFormatter::format($this->args[1], $this->game->getOriginalPlayers());
     }
 
     public function fire()

@@ -29,6 +29,7 @@ class HelpCommand extends Command
         $help_msg .= "|_  !kill #channel @user1 - Werewolf only. As a werewolf, in a PM to the bot, you can vote to kill a user each night. Must be unanimous amongst all werewolves.\r\n";
         $help_msg .= "|_  !guard #channel @user1 - Bodyguard only. The bodyguard can protect a player from being eliminated once each night. Cant select the same user two nights in a row.\r\n";
         $help_msg .= "|_  !end - Cause the game to end prematurely\r\n";
+        $help_msg .= "|_  !setoption - View or change options.  Use without any parameters for help and current values.\r\n";
 
         $this->client->getDMByUserId($this->userId)->then(function(DirectMessageChannel $dm) use ($client, $help_msg) {
             $client->send($help_msg, $dm);

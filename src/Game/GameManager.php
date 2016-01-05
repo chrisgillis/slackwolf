@@ -11,6 +11,7 @@ use Slackwolf\Game\Formatter\RoleListFormatter;
 use Slackwolf\Game\Formatter\RoleSummaryFormatter;
 use Slackwolf\Game\Formatter\VoteSummaryFormatter;
 use Slackwolf\Message\Message;
+use Slackwolf\Game\OptionsManager;
 
 class GameManager
 {
@@ -18,13 +19,15 @@ class GameManager
 
     private $commandBindings;
     private $client;
-
+    public $optionsManager;
+    
     public function __construct(RealTimeClient $client, array $commandBindings)
     {
         $this->commandBindings = $commandBindings;
         $this->client = $client;
+        $this->optionsManager = new OptionsManager();
     }
-
+    
     public function input(Message $message)
     {
         $input = $message->getText();
@@ -229,13 +232,12 @@ class GameManager
         }
 
         if ($game->hasPlayerVoted($voterId)) {
-            try {
-                $game->clearPlayerVote($voterId);
-            } 
-            catch(Exception $e) {
-                //$this->sendMessageToChannel($game, "Exception: " + $e->getMessage());
-                return;
+            //If changeVote is not enabled and player has already voted, do not allow another vote
+            if (!$this->optionsManager->getOptionValue("changevote"))
+            {
+                throw new Exception("Vote change not allowed.");
             }
+            $game->clearPlayerVote($voterId);
         }
 
         $game->vote($voterId, $voteForId);
@@ -313,7 +315,7 @@ class GameManager
                     }
 
                     if ($player->role == Role::SEER) {
-                        $client->send("Seer, select a player by saying !see #channel @username.", $dmc);
+                        $client->send("Seer, select a player by saying !see #channel @username.\r\nDO NOT DISCUSS WHAT YOU SEE DURING THE NIGHT OR AFTER YOU ARE DEAD!", $dmc);
                     }
 
                     if ($player->role == Role::BEHOLDER) {
@@ -333,7 +335,7 @@ class GameManager
         $msg .= "Possible Roles: {$game->getRoleStrategy()->getRoleListMsg()}\r\n\r\n";
 
         $msg .= ":crescent_moon: :zzz: It is the middle of the night and the village is sleeping. The game will begin when the Seer chooses someone.";
-        $this->sendMessageToChannel($game, msg);
+        $this->sendMessageToChannel($game, $msg);
     }
 
     private function onDay(Game $game)
