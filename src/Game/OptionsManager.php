@@ -5,6 +5,7 @@ use Exception;
 class OptionName
 {
     const changevote = 'changevote';
+    const no_lynch = 'no_lynch';
     const mods = 'mods';
     const role_seer = 'role_seer';
     const role_tanner = 'role_tanner';
@@ -52,6 +53,7 @@ class OptionsManager
     public function __construct()
     {
         $this->options[] = new Option(OptionName::changevote, OptionType::Bool, "on", "When enabled votes can be changed until the final vote is cast.");
+        $this->options[] = new Option(OptionName::no_lynch, OptionType::Bool, "on", "When enabled townsfolk can vote not to lynch anybody.");
         $this->options[] = new Option(OptionName::role_seer, OptionType::Bool, "on", "Use Seer role in random games.");
         $this->options[] = new Option(OptionName::role_tanner, OptionType::Bool, "on", "Use Tanner role in random games.");
         $this->options[] = new Option(OptionName::role_lycan, OptionType::Bool, "on", "Use Lycan role in random games.");

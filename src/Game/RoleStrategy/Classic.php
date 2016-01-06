@@ -38,7 +38,6 @@ class Classic implements RoleStrategyInterface
         $possibleOptionalRoles = [Role::VILLAGER];
         $optionalRoleListMsg = "";
         if ($num_players >= 6) {
-            $possibleOptionalRoles = [];
             if ($optionsManager->getOptionValue(OptionName::role_tanner)){
                 $optionalRoles[Role::TANNER] = 1;
                 $possibleOptionalRoles[] = Role::TANNER;

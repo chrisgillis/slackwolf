@@ -229,7 +229,7 @@ class GameManager
         }
 
         if ( ! $game->hasPlayer($voteForId)
-                && $voteForId != 'noone'
+                && ($voteForId != 'noone' || !$this->optionsManager->getOptionValue(OptionName::no_lynch))
                 && $voteForId != 'clear') {
             return;
         }
@@ -274,21 +274,26 @@ class GameManager
             }
         }
         foreach ($vote_count as $lynch_player_id => $num_votes) {
-            if ($num_votes == $max) {
+            if ($num_votes == $max && $lynch_player_id != 'noone') {
                 $players_to_be_lynched[] = $lynch_player_id;
             }
         }
 
-        $lynchMsg = "\r\n:newspaper: With pitchforks in hand, the townsfolk killed: ";
+        $lynchMsg = "\r\n";
+        if (count($players_to_be_lynched) == 0){
+            $lynchMsg .= ":peace_symbol: The townsfolk decided not to kill anybody today.";
+        }else {
+            $lynchMsg .= ":newspaper: With pitchforks in hand, the townsfolk killed: ";
 
-        $lynchedNames = [];
-        foreach ($players_to_be_lynched as $player_id) {
-            $player = $game->getPlayerById($player_id);
-            $lynchedNames[] = "@{$player->getUsername()} ({$player->role})";
-            $game->removePlayer($player_id);
+            $lynchedNames = [];
+            foreach ($players_to_be_lynched as $player_id) {
+                $player = $game->getPlayerById($player_id);
+                $lynchedNames[] = "@{$player->getUsername()} ({$player->role})";
+                $game->removePlayer($player_id);
+            }
+
+            $lynchMsg .= implode(', ', $lynchedNames). "\r\n";
         }
-
-        $lynchMsg .= implode(', ', $lynchedNames). "\r\n";
         $this->sendMessageToChannel($game,$lynchMsg);
 
         $this->changeGameState($game->getId(), GameState::NIGHT);
@@ -355,7 +360,16 @@ class GameManager
 
         $dayBreakMsg = ":sunrise: The sun rises and the villagers awake.\r\n";
         $dayBreakMsg .= "Remaining Players: {$remainingPlayers}\r\n\r\n";
-        $dayBreakMsg .= "Villagers, find the Werewolves! Type !vote @username to vote to lynch a player.";
+        $dayBreakMsg .= "Villagers, find the Werewolves! Type !vote @username to vote to lynch a player.\r\n";
+        if ($this->optionsManager->getOptionValue(OptionName::changevote))
+        {
+            $dayBreakMsg .= "You may change your vote at any time before voting closes. Type !vote clear to remove your vote.";
+        }
+        if ($this->optionsManager->getOptionValue(OptionName::no_lynch))
+        {
+            $dayBreakMsg .= "Type !vote noone to vote to not kill anybody today..";
+        }
+
         $this->sendMessageToChannel($game, $dayBreakMsg);
     }
 

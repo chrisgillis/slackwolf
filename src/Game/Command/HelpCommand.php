@@ -26,7 +26,7 @@ class HelpCommand extends Command
         $help_msg .= "Available Commands\r\n------------------------\r\n";
         $help_msg .= "|_  !start - Starts a new game with everyone in the channel participating\r\n";
         $help_msg .= "|_  !start @user1 @user2 @user3 - Starts a new game with the three specified users participating\r\n";
-        $help_msg .= "|_  !vote @user1 - Vote for a player during the Day.\r\n";
+        $help_msg .= "|_  !vote @user1|noone|clear - During the day, Vote for a @player, no one (no lynch), or clear your existing vote (changevote option must be enabled).\r\n";
         $help_msg .= "|_  !see #channel @user1 -  Seer only. As the seer, find out if user is villager or werewolf. #channel is the name of the channel you're playing in\r\n";
         $help_msg .= "|_  !kill #channel @user1 - Werewolf only. As a werewolf, in a PM to the bot, you can vote to kill a user each night. Must be unanimous amongst all werewolves.\r\n";
         $help_msg .= "|_  !guard #channel @user1 - Bodyguard only. The bodyguard can protect a player from being eliminated once each night. Cant select the same user two nights in a row.\r\n";
