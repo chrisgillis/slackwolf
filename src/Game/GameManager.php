@@ -180,6 +180,7 @@ class GameManager
     public function startGame($id)
     {
         $game = $this->getGame($id);
+        if (!$this->hasGame($id)) { return; }
         $users = $game->getLobbyPlayers();
         if(count($users) < 3) {
             $this->sendMessageToChannel($game, "Cannot start a game with less than 3 players.");

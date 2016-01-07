@@ -24,7 +24,11 @@ class HelpCommand extends Command
         $help_msg .= " |_ Beholder - A villager who learns who the Seer is on the first night\r\n";
         $help_msg .= " |_ Bodyguard - A villager who may protect a player from being eliminated once each night, but not the same person two nights in a row.\r\n\r\n";
         $help_msg .= "Available Commands\r\n------------------------\r\n";
-        $help_msg .= "|_  !start - Starts a new game with everyone in the channel participating\r\n";
+        $help_msg .= "|_  !new - Create a new lobby for players to !join for the next game\r\n";
+        $help_msg .= "|_  !join - Join the lobby for the next game\r\n";
+        $help_msg .= "|_  !leave - Leave the lobby for the next game\r\n";
+        $help_msg .= "|_  !start - Start the game, when called with no parameters the lobby players are used\r\n";
+        $help_msg .= "|_  !start all - Starts a new game with everyone in the channel participating\r\n";
         $help_msg .= "|_  !start @user1 @user2 @user3 - Starts a new game with the three specified users participating\r\n";
         $help_msg .= "|_  !vote @user1|noone|clear - During the day, Vote for a @player, no one (no lynch), or clear your existing vote (changevote option must be enabled).\r\n";
         $help_msg .= "|_  !see #channel @user1 -  Seer only. As the seer, find out if user is villager or werewolf. #channel is the name of the channel you're playing in\r\n";

@@ -30,11 +30,16 @@ class StartCommand extends Command
             $game = $this->gameManager->getGame($this->channel);
             if ($game->getState() == GameState::LOBBY){    
                 $loadPlayers = false;
+                if (count($this->args) > 0 && count($game->getLobbyPlayers(0)) > 0) {
+                    $this->client->getChannelGroupOrDMByID($this->channel)->then(function (ChannelInterface $channel) use ($client) {
+                        $client->send('A game lobby is open, you must !end the current game before starting a new one specifying players.', $channel);
+                    });
+                    return;
+                }
             } else {
                 $this->client->getChannelGroupOrDMByID($this->channel)->then(function (ChannelInterface $channel) use ($client) {
                     $client->send('A game is already in progress.', $channel);
                 });
-
                 return;
             }
         }
@@ -78,7 +83,7 @@ class StartCommand extends Command
 
         foreach ($this->args as $chosenUser) {
             $chosenUser = UserIdFormatter::format($chosenUser, $users);
-            $chosenUsers[$chosenUser] = $chosenUser;
+            $chosenUsers[] = $chosenUser;
         }
 
         // Remove the bot from the player list
@@ -89,7 +94,7 @@ class StartCommand extends Command
         }
 
         // Remove players that weren't specified, if there were specified players
-        if (count($chosenUsers) > 0) {
+        if (count($chosenUsers) == 0 || $chosenUsers[0] != 'all') {
             foreach ($users as $key => $user) {
                 $userFound = false;
 
