@@ -5,6 +5,7 @@ use Slack\Channel;
 use Slack\ChannelInterface;
 use Slackwolf\Game\Formatter\UserIdFormatter;
 use Slackwolf\Game\RoleStrategy;
+use Slackwolf\Game\GameState;
 
 class StartCommand extends Command
 {
@@ -20,40 +21,52 @@ class StartCommand extends Command
         $client = $this->client;
         $gameManager = $this->gameManager;
         $message = $this->message;
-
+        /** @var Game $game */
+        $game;
+        
+        $loadPlayers = true;
         // Check to see that a game does not currently exist
         if ($this->gameManager->hasGame($this->channel)) {
-            $this->client->getChannelGroupOrDMByID($this->channel)->then(function (ChannelInterface $channel) use ($client) {
-                $client->send('A game is already in progress.', $channel);
-            });
+            $game = $this->gameManager->getGame($this->channel);
+            if ($game->getState() == GameState::LOBBY){    
+                $loadPlayers = false;
+            } else {
+                $this->client->getChannelGroupOrDMByID($this->channel)->then(function (ChannelInterface $channel) use ($client) {
+                    $client->send('A game is already in progress.', $channel);
+                });
 
-            return;
+                return;
+            }
         }
 
-        $this->client->getChannelGroupOrDMByID($this->channel)
-            ->then(function (Channel $channel) {
-                return $channel->getMembers();
-            })
-            ->then(function (array $users) use ($gameManager, $message, $client) {
-                /** @var \Slack\User[] $users */
-                $this->filterChosen($users);
+        if ($loadPlayers) {
+            $this->client->getChannelGroupOrDMByID($this->channel)
+                ->then(function (Channel $channel) {
+                    return $channel->getMembers();
+                })
+                ->then(function (array $users) use ($gameManager, $message, $client) {
+                    /** @var \Slack\User[] $users */
+                    $this->filterChosen($users);
 
-                if(count($users) < 3) {
-                    $this->client->getChannelGroupOrDMByID($this->channel)
-                        ->then(function (ChannelInterface $channel) use ($client) {
-                            $client->send("Cannot start a game with less than 3 players.", $channel);
+                    if(count($users) < 3) {
+                        $this->client->getChannelGroupOrDMByID($this->channel)
+                            ->then(function (ChannelInterface $channel) use ($client) {
+                                $client->send("Cannot start a game with less than 3 players.", $channel);
+                            });
+                        return;
+                    }
+
+                    try {
+                        $gameManager->newGame($message->getChannel(), $users, new RoleStrategy\Classic());
+                        //$game = $gameManager->getGame($message->getChannel());
+                    } catch (Exception $e) {
+                        $this->client->getChannelGroupOrDMByID($this->channel)->then(function (ChannelInterface $channel) use ($client,$e) {
+                            $client->send($e->getMessage(), $channel);
                         });
-                    return;
-                }
-
-                try {
-                    $gameManager->newGame($message->getChannel(), $users, new RoleStrategy\Classic());
-                } catch (Exception $e) {
-                    $this->client->getChannelGroupOrDMByID($this->channel)->then(function (ChannelInterface $channel) use ($client,$e) {
-                        $client->send($e->getMessage(), $channel);
-                    });
-                }
-            });
+                    }
+                });
+        }
+        $gameManager->startGame($message->getChannel());
     }
 
     /**

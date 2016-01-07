@@ -6,6 +6,7 @@ class Game
 {
     private $id;
     private $state;
+    private $lobbyPlayers = [];
     private $players = [];
     private $originalPlayers = [];
     private $votes = [];
@@ -27,12 +28,18 @@ class Game
         $this->id = $id;
         $this->roleStrategy = $roleStrategy;
         $this->optionsManager = new OptionsManager();
-        $players = $roleStrategy->assign($users, $this->optionsManager);
+        $this->state = GameState::LOBBY;
+        $this->lobbyPlayers = $users;
+    }
+    
+    public function assignRoles() {
+        $players = $this->roleStrategy->assign($this->lobbyPlayers, $this->optionsManager);
 
         foreach ($players as $player) {
             $this->players[$player->getId()] = $player;
             $this->originalPlayers[$player->getId()] = $player;
         }
+        
     }
         
     public function getRoleStrategy()
@@ -43,6 +50,29 @@ class Game
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return \Slack\User[]
+     */
+    public function getLobbyPlayers()
+    {
+        return $this->lobbyPlayers;
+    }
+
+    public function addLobbyPlayer($user)
+    {
+        if ($this->state == GameState::LOBBY) {            
+            $player_id = $user->getId();
+            if (! isset($this->lobbyPlayers[$player_id])){
+                $this->lobbyPlayers[$player_id] =$user;                
+            }
+        }
+    }
+        
+    public function removeLobbyPlayer($player_id)
+    {
+        unset($this->lobbyPlayers[$player_id]);
     }
 
     /**

@@ -174,13 +174,21 @@ class GameManager
 
     public function newGame($id, array $users, $roleStrategy)
     {
-        $game = new Game($id, $users, $roleStrategy);
+        $this->addGame(new Game($id, $users, $roleStrategy));
+   }
 
-        $this->addGame($game);
-
-        $this->changeGameState($game->getId(), GameState::FIRST_NIGHT);
+    public function startGame($id)
+    {
+        $game = $this->getGame($id);
+        $users = $game->getLobbyPlayers();
+        if(count($users) < 3) {
+            $this->sendMessageToChannel($game, "Cannot start a game with less than 3 players.");
+            return;
+        }
+        $game->assignRoles();
+        $this->changeGameState($id, GameState::FIRST_NIGHT);
     }
-
+    
     public function endGame($id, $enderUserId = null)
     {
         $game = $this->getGame($id);
@@ -192,7 +200,6 @@ class GameManager
         $playerList = RoleSummaryFormatter::format($game->getPlayers(), $game->getOriginalPlayers());
 
         $client = $this->client;
-
         $winningTeam = $game->whoWon();
 
         if($winningTeam !== null) {
@@ -215,7 +222,15 @@ class GameManager
         if ($enderUserId !== null) {
             $client->getUserById($enderUserId)
                    ->then(function (\Slack\User $user) use ($game, $playerList) {
-                       $this->sendMessageToChannel($game, ":triangular_flag_on_post: The game was ended by @{$user->getUsername()}.\r\n\r\nRole Summary:\r\n----------------\r\n{$playerList}");
+                       $gameMsg = ":triangular_flag_on_post: The ";
+                       $roleSummary = "";
+                       if($game->getState() != GameState::LOBBY) {
+                           $gameMsg .= "game was ended";
+                           $roleSummary .= "\r\n\r\nRole Summary:\r\n----------------\r\n{$playerList}";
+                       } else {
+                           $gameMsg .= "lobby was closed";
+                       }
+                       $this->sendMessageToChannel($game, $gameMsg." by @{$user->getUsername()}.".$roleSummary);
                    });
         }
 
@@ -281,7 +296,7 @@ class GameManager
 
         $lynchMsg = "\r\n";
         if (count($players_to_be_lynched) == 0){
-            $lynchMsg .= ":peace_symbol: The townsfolk decided not to kill anybody today.";
+            $lynchMsg .= ":peace_symbol: The townsfolk decided not to lynch anybody today.";
         }else {
             $lynchMsg .= ":newspaper: With pitchforks in hand, the townsfolk killed: ";
 
@@ -360,14 +375,14 @@ class GameManager
 
         $dayBreakMsg = ":sunrise: The sun rises and the villagers awake.\r\n";
         $dayBreakMsg .= "Remaining Players: {$remainingPlayers}\r\n\r\n";
-        $dayBreakMsg .= "Villagers, find the Werewolves! Type !vote @username to vote to lynch a player.\r\n";
+        $dayBreakMsg .= "Villagers, find the Werewolves! Type !vote @username to vote to lynch a player.";
         if ($this->optionsManager->getOptionValue(OptionName::changevote))
         {
-            $dayBreakMsg .= "You may change your vote at any time before voting closes. Type !vote clear to remove your vote.";
+            $dayBreakMsg .= "\r\nYou may change your vote at any time before voting closes. Type !vote clear to remove your vote.";
         }
         if ($this->optionsManager->getOptionValue(OptionName::no_lynch))
         {
-            $dayBreakMsg .= "Type !vote noone to vote to not kill anybody today..";
+            $dayBreakMsg .= "\r\nType !vote noone to vote to not lynch anybody today.";
         }
 
         $this->sendMessageToChannel($game, $dayBreakMsg);

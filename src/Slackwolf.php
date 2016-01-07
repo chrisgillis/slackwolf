@@ -8,6 +8,9 @@ use Slackwolf\Game\Command\GuardCommand;
 use Slackwolf\Game\Command\HelpCommand;
 use Slackwolf\Game\Command\KillCommand;
 use Slackwolf\Game\Command\SeeCommand;
+use Slackwolf\Game\Command\NewCommand;
+use Slackwolf\Game\Command\JoinCommand;
+use Slackwolf\Game\Command\LeaveCommand;
 use Slackwolf\Game\Command\StartCommand;
 use Slackwolf\Game\Command\VoteCommand;
 use Slackwolf\Game\Command\SetOptionCommand;
@@ -43,6 +46,9 @@ class Slackwolf
         $commandBindings = [
             'help'  => HelpCommand::class,
             'setoption'  => SetOptionCommand::class,
+            'new' => NewCommand::class,
+            'join' => JoinCommand::class,
+            'leave' => LeaveCommand::class,
             'start' => StartCommand::class,
             'end'   => EndCommand::class,
             'see'   => SeeCommand::class,

@@ -3,3 +3,6 @@
 .idea
 /nbproject/private/
 /options.json
+/cronscript
+/nbproject/project.properties
+/nbproject/project.xml
