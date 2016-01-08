@@ -6,6 +6,7 @@ class Game
 {
     private $id;
     private $state;
+    private $lobbyPlayers = [];
     private $players = [];
     private $originalPlayers = [];
     private $votes = [];
@@ -15,6 +16,7 @@ class Game
     private $guardedUserId;
     private $lastGuardedUserId;
     private $roleStrategy;
+    private $optionsManager;
 
     /**
      * @param                       $id
@@ -24,16 +26,22 @@ class Game
     public function __construct($id, array $users, RoleStrategyInterface $roleStrategy)
     {
         $this->id = $id;
-
         $this->roleStrategy = $roleStrategy;
-        $players = $roleStrategy->assign($users);
+        $this->optionsManager = new OptionsManager();
+        $this->state = GameState::LOBBY;
+        $this->lobbyPlayers = $users;
+    }
+    
+    public function assignRoles() {
+        $players = $this->roleStrategy->assign($this->lobbyPlayers, $this->optionsManager);
 
         foreach ($players as $player) {
             $this->players[$player->getId()] = $player;
             $this->originalPlayers[$player->getId()] = $player;
         }
+        
     }
-
+        
     public function getRoleStrategy()
     {
         return $this->roleStrategy;
@@ -42,6 +50,29 @@ class Game
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return \Slack\User[]
+     */
+    public function getLobbyPlayers()
+    {
+        return $this->lobbyPlayers;
+    }
+
+    public function addLobbyPlayer($user)
+    {
+        if ($this->state == GameState::LOBBY) {            
+            $player_id = $user->getId();
+            if (! isset($this->lobbyPlayers[$player_id])){
+                $this->lobbyPlayers[$player_id] =$user;                
+            }
+        }
+    }
+        
+    public function removeLobbyPlayer($player_id)
+    {
+        unset($this->lobbyPlayers[$player_id]);
     }
 
     /**
@@ -162,6 +193,24 @@ class Game
         }
 
         return false;
+    }
+
+    public function clearPlayerVote($voterId)
+    {        
+        foreach ($this->votes as $voted => $voters)
+        {
+            foreach ($voters as $voterKey => $voter)
+            {
+                if ($voter == $voterId) {
+                    //Remove voter
+                    unset($this->votes[$voted][$voterKey]);
+                    //Clear empty arrays
+                    if (count($this->votes[$voted]) == 0) {
+                        unset($this->votes[$voted]);
+                    }
+                }                
+            }            
+        }
     }
 
     public function votingFinished()

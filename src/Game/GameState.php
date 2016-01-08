@@ -2,8 +2,9 @@
 
 class GameState
 {
-    const FIRST_NIGHT = 0;
-    const DAY = 1;
-    const NIGHT = 2;
-    const OVER = 3;
+    const LOBBY = 0;
+    const FIRST_NIGHT = 1;
+    const DAY = 2;
+    const NIGHT = 3;
+    const OVER = 9;
 }

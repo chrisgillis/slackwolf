@@ -11,11 +11,14 @@ class VoteSummaryFormatter
         foreach ($game->getVotes() as $voteForId => $voters)
         {
             $voteForPlayer = $game->getPlayerById($voteForId);
-
             $numVoters = count($voters);
 
-            $msg .= ":knife: Kill @{$voteForPlayer->getUsername()}\t\t | ({$numVoters}) | ";
-
+            if ($voteForId == 'noone'){
+                $msg .= ":peace_symbol: No lynch\t\t | ({$numVoters}) | ";
+            } else {
+                $msg .= ":knife: Kill @{$voteForPlayer->getUsername()}\t\t | ({$numVoters}) | ";
+            }
+            
             $voterNames = [];
 
             foreach ($voters as $voter)

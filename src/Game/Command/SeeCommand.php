@@ -108,6 +108,7 @@ class SeeCommand extends Command
             throw new InvalidArgumentException();
         }
 
+        $this->args[1] = UserIdFormatter::format($this->args[1], $this->game->getOriginalPlayers());
         $this->chosenUserId = $this->args[1];
 
         $player = $this->game->getPlayerById($this->userId);
