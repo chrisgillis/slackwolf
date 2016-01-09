@@ -153,7 +153,7 @@ class SeeCommand extends Command
     {
         $client = $this->client;
 
-        foreach ($this->game->getPlayers() as $player) {
+        foreach ($this->game->getLivingPlayers() as $player) {
             if (! strstr($this->chosenUserId, $player->getId())) {
                 continue;
             }

@@ -109,7 +109,7 @@ class GuardCommand extends Command
         }
 
         // Voter should be alive
-        if ( ! $this->game->hasPlayer($this->userId)) {
+        if ( ! $this->game->isPlayerAlive($this->userId)) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
                        $client->send(":warning: You aren't alive in the specified channel.", $channel);
@@ -118,7 +118,7 @@ class GuardCommand extends Command
         }
 
         // Person player is voting for should also be alive
-        if ( ! $this->game->hasPlayer($this->args[1])) {
+        if ( ! $this->game->isPlayerAlive($this->args[1])) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
                        $client->send(":warning: Could not find that player.", $channel);

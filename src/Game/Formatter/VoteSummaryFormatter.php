@@ -34,7 +34,7 @@ class VoteSummaryFormatter
 
         $playerNames = [];
 
-        foreach ($game->getPlayers() as $player)
+        foreach ($game->getLivingPlayers() as $player)
         {
             if ( ! $game->hasPlayerVoted($player->getId())) {
                 $playerNames[] = '@'.$player->getUsername();
