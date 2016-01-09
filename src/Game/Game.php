@@ -139,7 +139,8 @@ class Game
         return $werewolves;
     }
 
-    public function isPlayerAlive($playerId) {
+    public function isPlayerAlive($playerId)
+    {
         return isset($this->livingPlayers[$playerId]);
     }
 
@@ -148,9 +149,10 @@ class Game
      *
      * @return \Slack\User|bool
      */
-    public function getPlayerById($id) {
-        if($this->isPlayerAlive($id)) {
-            return $this->livingPlayers[$id];
+    public function getPlayerById($id)
+    {
+        if (isset($this->originalPlayers[$id])) {
+            return $this->originalPlayers[$id];
         }
 
         return false;
