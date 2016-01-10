@@ -198,7 +198,7 @@ class GameManager
             return;
         }
 
-        $playerList = RoleSummaryFormatter::format($game->getPlayers(), $game->getOriginalPlayers());
+        $playerList = RoleSummaryFormatter::format($game->getLivingPlayers(), $game->getOriginalPlayers());
 
         $client = $this->client;
         $winningTeam = $game->whoWon();
@@ -240,11 +240,11 @@ class GameManager
 
     public function vote(Game $game, $voterId, $voteForId)
     {
-        if ( ! $game->hasPlayer($voterId)) {
+        if ( ! $game->isPlayerAlive($voterId)) {
             return;
         }
 
-        if ( ! $game->hasPlayer($voteForId)
+        if ( ! $game->isPlayerAlive($voteForId)
                 && ($voteForId != 'noone' || !$this->optionsManager->getOptionValue(OptionName::no_lynch))
                 && $voteForId != 'clear') {
             return;
@@ -305,7 +305,7 @@ class GameManager
             foreach ($players_to_be_lynched as $player_id) {
                 $player = $game->getPlayerById($player_id);
                 $lynchedNames[] = "@{$player->getUsername()} ({$player->role})";
-                $game->removePlayer($player_id);
+                $game->killPlayer($player_id);
             }
 
             $lynchMsg .= implode(', ', $lynchedNames). "\r\n";
@@ -325,7 +325,7 @@ class GameManager
     {
         $client = $this->client;
 
-        foreach ($game->getPlayers() as $player) {
+        foreach ($game->getLivingPlayers() as $player) {
             $client->getDMByUserId($player->getId())
                 ->then(function (DirectMessageChannel $dmc) use ($client,$player,$game) {
                     $client->send("Your role is {$player->role}", $dmc);
@@ -352,8 +352,8 @@ class GameManager
                 });
         }
 
-        $playerList = PlayerListFormatter::format($game->getPlayers());
-        $roleList = RoleListFormatter::format($game->getPlayers());
+        $playerList = PlayerListFormatter::format($game->getLivingPlayers());
+        $roleList = RoleListFormatter::format($game->getLivingPlayers());
 
         $msg = ":wolf: A new game of Werewolf is starting! For a tutorial, type !help.\r\n\r\n";
         $msg .= "Players: {$playerList}\r\n";
@@ -372,7 +372,7 @@ class GameManager
 
     private function onDay(Game $game)
     {
-        $remainingPlayers = PlayerListFormatter::format($game->getPlayers());
+        $remainingPlayers = PlayerListFormatter::format($game->getLivingPlayers());
 
         $dayBreakMsg = ":sunrise: The sun rises and the villagers awake.\r\n";
         $dayBreakMsg .= "Remaining Players: {$remainingPlayers}\r\n\r\n";
@@ -442,7 +442,7 @@ class GameManager
                 $killMsg = ":muscle: @{$player->getUsername()} was protected from being killed during the night.";
             } else {
                 $killMsg = ":skull_and_crossbones: @{$player->getUsername()} ($player->role) was killed during the night.";
-                $game->removePlayer($lynch_id);
+                $game->killPlayer($lynch_id);
             }
 
             $game->setLastGuardedUserId($game->getGuardedUserId());

@@ -3,6 +3,8 @@
 use React\EventLoop\Factory;
 use Slack\ConnectionException;
 use Slack\RealTimeClient;
+use Slackwolf\Game\Command\AliveCommand;
+use Slackwolf\Game\Command\DeadCommand;
 use Slackwolf\Game\Command\EndCommand;
 use Slackwolf\Game\Command\GuardCommand;
 use Slackwolf\Game\Command\HelpCommand;
@@ -54,7 +56,9 @@ class Slackwolf
             'see'   => SeeCommand::class,
             'vote'  => VoteCommand::class,
             'kill'  => KillCommand::class,
-            'guard' => GuardCommand::class
+            'guard' => GuardCommand::class,
+            'alive' => AliveCommand::class,
+            'dead'  => DeadCommand::class
         ];
         
         /*
