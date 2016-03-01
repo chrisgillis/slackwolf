@@ -301,6 +301,9 @@ class Game
         $this->wolvesVoted = false;
         $this->witchHealed = false;
         $this->witchPoisoned = false;
+
+        $this->setWitchHealedUserId(null);
+        $this->setWitchPoisonedUserId(null);
     }
 
     /**
