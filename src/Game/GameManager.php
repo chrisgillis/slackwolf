@@ -449,7 +449,7 @@ class GameManager
         if (count($witches) > 0) {
             $witch_msg = ":wine_glass:  You may poison someone once for the entire game.  Type \"!poison #channel @user\" to poison someone \r\nor \"!poison #channel noone\" to do nothing.  \r\Night will not end until you make a decision.";
 
-            if ($game->setWitchPoisonPotion() > 0) {
+            if ($game->getWitchPoisonPotion() > 0) {
                 foreach ($witches as $witch) {
                     $this->client->getDMByUserId($witch->getId())
                          ->then(function (DirectMessageChannel $channel) use ($client,$witch_msg) {
