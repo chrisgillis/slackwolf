@@ -111,15 +111,6 @@ class PoisonCommand extends Command
             throw new Exception("Poison occurs only during the night.");
         }
 
-        // Person player is voting for should also be alive
-        if ( ! $this->game->isPlayerAlive($this->args[1])) {
-            $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: Could not find that player.", $channel);
-                   });
-            throw new Exception("Voted player not found in game.");
-        }
-
         // Person should be witch
         $player = $this->game->getPlayerById($this->userId);
 
@@ -149,9 +140,18 @@ class PoisonCommand extends Command
           return true;
         }
 
+        // Person player is voting for should also be alive
+        if ( ! $this->game->isPlayerAlive($this->args[1])) {
+            $client->getChannelGroupOrDMByID($this->channel)
+                   ->then(function (ChannelInterface $channel) use ($client) {
+                       $client->send(":warning: Could not find that player.", $channel);
+                   });
+            throw new Exception("Voted player not found in game.");
+        }
+
         $this->game->setWitchPoisonPotion(0);
         $this->game->setWitchPoisonedUserId($this->args[1]);
-        $game->killPlayer($this->args[1]);
+        $this->game->killPlayer($this->args[1]);
 
         $this->game->setWitchPoisoned(true);
         $this->gameManager->changeGameState($this->game->getId(), GameState::DAY);
