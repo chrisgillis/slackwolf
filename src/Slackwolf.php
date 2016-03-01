@@ -7,8 +7,10 @@ use Slackwolf\Game\Command\AliveCommand;
 use Slackwolf\Game\Command\DeadCommand;
 use Slackwolf\Game\Command\EndCommand;
 use Slackwolf\Game\Command\GuardCommand;
+use Slackwolf\Game\Command\HealCommand;
 use Slackwolf\Game\Command\HelpCommand;
 use Slackwolf\Game\Command\KillCommand;
+use Slackwolf\Game\Command\PoisonCommand;
 use Slackwolf\Game\Command\SeeCommand;
 use Slackwolf\Game\Command\NewCommand;
 use Slackwolf\Game\Command\JoinCommand;
@@ -46,21 +48,23 @@ class Slackwolf
          * Setup command bindings
          */
         $commandBindings = [
-            'help'  => HelpCommand::class,
-            'setoption'  => SetOptionCommand::class,
-            'new' => NewCommand::class,
-            'join' => JoinCommand::class,
-            'leave' => LeaveCommand::class,
-            'start' => StartCommand::class,
-            'end'   => EndCommand::class,
-            'see'   => SeeCommand::class,
-            'vote'  => VoteCommand::class,
-            'kill'  => KillCommand::class,
-            'guard' => GuardCommand::class,
-            'alive' => AliveCommand::class,
-            'dead'  => DeadCommand::class
+            'help'      => HelpCommand::class,
+            'setoption' => SetOptionCommand::class,
+            'new'       => NewCommand::class,
+            'join'      => JoinCommand::class,
+            'leave'     => LeaveCommand::class,
+            'start'     => StartCommand::class,
+            'end'       => EndCommand::class,
+            'see'       => SeeCommand::class,
+            'vote'      => VoteCommand::class,
+            'kill'      => KillCommand::class,
+            'poison'    => PoisonCommand::class,
+            'guard'     => GuardCommand::class,
+            'heal'      => HealCommand::class,
+            'alive'     => AliveCommand::class,
+            'dead'      => DeadCommand::class,
         ];
-        
+
         /*
          * Create the game manager
          */

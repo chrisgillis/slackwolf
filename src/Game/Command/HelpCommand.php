@@ -23,6 +23,7 @@ class HelpCommand extends Command
         $help_msg .= " |_ Lycan - A villager who appears to the Seer as a Werewolf.\r\n";
         $help_msg .= " |_ Beholder - A villager who learns who the Seer is on the first night\r\n";
         $help_msg .= " |_ Bodyguard - A villager who may protect a player from being eliminated once each night, but not the same person two nights in a row.\r\n\r\n";
+        $help_msg .= " |_ Witch - A villager who has 1 healing potion and 1 poison potion and may heal and/or kill targets at night, but can only do each action once per game.\r\n\r\n";
         $help_msg .= "Available Commands\r\n------------------------\r\n";
         $help_msg .= "|_  !new - Create a new lobby for players to !join for the next game\r\n";
         $help_msg .= "|_  !join - Join the lobby for the next game\r\n";
@@ -42,7 +43,7 @@ class HelpCommand extends Command
         $this->client->getDMByUserId($this->userId)->then(function(DirectMessageChannel $dm) use ($client, $help_msg) {
             $client->send($help_msg, $dm);
         });
-        
+
         if ($this->channel[0] != 'D') {
             $client->getChannelGroupOrDMByID($this->channel)
                ->then(function (ChannelInterface $channel) use ($client) {

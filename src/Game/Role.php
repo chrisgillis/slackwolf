@@ -9,4 +9,5 @@ class Role
     const TANNER = "Tanner";
     const LYCAN = "Lycan";
     const BEHOLDER = "Beholder";
+    const WITCH = "Witch";
 }

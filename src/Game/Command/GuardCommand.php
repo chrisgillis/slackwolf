@@ -92,7 +92,7 @@ class GuardCommand extends Command
                    });
             throw new Exception("No game in progress.");
         }
-        
+
         $this->args[1] = UserIdFormatter::format($this->args[1], $this->game->getOriginalPlayers());
     }
 
@@ -126,7 +126,7 @@ class GuardCommand extends Command
             throw new Exception("Voted player not found in game.");
         }
 
-        // Person should be werewolf
+        // Person should be bodyguard
         $player = $this->game->getPlayerById($this->userId);
 
         if ($player->role != Role::BODYGUARD) {

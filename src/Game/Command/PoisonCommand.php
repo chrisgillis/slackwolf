@@ -14,7 +14,7 @@ use Slackwolf\Game\Role;
 use Slackwolf\Game\OptionManager;
 use Slackwolf\Game\OptionName;
 
-class KillCommand extends Command
+class PoisonCommand extends Command
 {
     /**
      * @var Game
@@ -26,13 +26,13 @@ class KillCommand extends Command
         $client = $this->client;
 
         if ($this->channel[0] != 'D') {
-            throw new Exception("You may only !kill privately.");
+            throw new Exception("You may only !poison privately.");
         }
 
         if (count($this->args) < 2) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: Invalid command. Usage: !kill #channel @user", $channel);
+                       $client->send(":warning: Invalid command. Usage: !poison #channel @user", $channel);
                    });
             throw new InvalidArgumentException("Not enough arguments");
         }
@@ -80,7 +80,7 @@ class KillCommand extends Command
             $this->client->getDMById($this->channel)
                          ->then(
                              function (DirectMessageChannel $dmc) use ($client) {
-                                 $this->client->send(":warning: Invalid channel specified. Usage: !kill #channel @user", $dmc);
+                                 $this->client->send(":warning: Invalid channel specified. Usage: !poison #channel @user", $dmc);
                              }
                          );
             throw new InvalidArgumentException();
@@ -102,29 +102,13 @@ class KillCommand extends Command
     public function fire()
     {
         $client = $this->client;
-        if ($this->game->getWolvesVoted()){
-            $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: Wolves have already voted.", $channel);
-                   });
-            throw new Exception("Wolves can't vote after voting ends.");
-        }
 
         if ($this->game->getState() != GameState::NIGHT) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: You can only kill at night.", $channel);
+                       $client->send(":warning: You can only poison at night.", $channel);
                    });
-            throw new Exception("Killing occurs only during the night.");
-        }
-
-        // Voter should be alive
-        if ( ! $this->game->isPlayerAlive($this->userId)) {
-            $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: You aren't alive in the specified channel.", $channel);
-                   });
-            throw new Exception("Can't kill if dead.");
+            throw new Exception("Poison occurs only during the night.");
         }
 
         // Person player is voting for should also be alive
@@ -136,80 +120,40 @@ class KillCommand extends Command
             throw new Exception("Voted player not found in game.");
         }
 
-        // Person should be werewolf
+        // Person should be witch
         $player = $this->game->getPlayerById($this->userId);
 
-        if ($player->role != Role::WEREWOLF) {
+        if ($player->role != Role::WITCH) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: You have to be a werewolf to kill.", $channel);
+                       $client->send(":warning: You have to be a witch to poison.", $channel);
                    });
-            throw new Exception("Only werewolves can kill.");
+            throw new Exception("Only witch can poison.");
         }
 
-        if ($this->game->hasPlayerVoted($this->userId)) {
-            //If changeVote is not enabled and player has already voted, do not allow another vote
-            if (!$this->gameManager->optionsManager->getOptionValue(OptionName::changevote))
-            {
-                throw new Exception("Vote change not allowed.");
-            }
-
-            $this->game->clearPlayerVote($this->userId);
+        // Witch should have poison potion
+        if ($this->game->getWitchPoisonPotion() <= 0) {
+            $client->getChannelGroupOrDMByID($this->channel)
+                   ->then(function (ChannelInterface $channel) use ($client) {
+                       $client->send(":warning: You have used your poison potion.", $channel);
+                   });
+            throw new Exception("Witch poison potion is 0.");
         }
 
-        $this->game->vote($this->userId, $this->args[1]);
-
-        $msg = KillFormatter::format($this->game);
-
-        foreach($this->game->getPlayersOfRole(Role::WEREWOLF) as $player) {
-            $client->getDMByUserID($player->getId())
-                ->then(function(DirectMessageChannel $channel) use ($client,$msg) {
-                    $client->send($msg,$channel);
-                });
+        if ($this->args[1] == 'noone') {
+          $this->game->setWitchPoisoned(true);
+          $client->getChannelGroupOrDMByID($this->channel)
+                   ->then(function (ChannelInterface $channel) use ($client) {
+                       $client->send(":warning: You have chosen not to poison anyone tonight.", $channel);
+                   });
+          return true;
         }
 
-        foreach ($this->game->getPlayersOfRole(Role::WEREWOLF) as $player)
-        {
-            if ( ! $this->game->hasPlayerVoted($player->getId())) {
-                return;
-            }
-        }
+        $this->game->setWitchPoisonPotion(0);
+        $this->game->setWitchPoisonedUserId($this->args[1]);
+        $game->killPlayer($this->args[1]);
 
-        $votes = $this->game->getVotes();
-
-        if (count($votes) > 1) {
-            $this->game->clearVotes();
-            foreach($this->game->getPlayersOfRole(Role::WEREWOLF) as $player) {
-                $client->getDMByUserID($player->getId())
-                       ->then(function(DirectMessageChannel $channel) use ($client) {
-                           $client->send(":warning: The werewolves did not unanimously vote on a member of the town. Vote again.",$channel);
-                       });
-            }
-            return;
-        }
-
-        $this->game->setWolvesVoted(true);
-
-        // send heal message to witch
-        $witches = $this->game->getPlayersOfRole(Role::WITCH);
-        if (count($witches) > 0) {
-            if ($this->game->getWitchHealingPotion() > 0) {
-                foreach($witches as $player) {
-
-                    $killed_player = $this->game->getPlayerById($this->args[1]);
-                    $witch_msg = ":wine_glass: @{$killed_player->getUsername()} was attacked, would you like to heal that person?  Type \"!heal #channel @user\" to save that person \r\nor \"!heal #channel noone\" to let that person die.  \r\Night will not end until you make a decision.";
-
-                    $client->getDMByUserID($player->getId())
-                        ->then(function(DirectMessageChannel $channel) use ($client,$witch_msg) {
-                            $client->send($witch_msg,$channel);
-                        });
-                }
-            }
-            else {
-                $this->game->setWitchHealed(true);
-            }
-        }
-
+        $this->game->setWitchPoisoned(true);
         $this->gameManager->changeGameState($this->game->getId(), GameState::DAY);
     }
 }

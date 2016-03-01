@@ -21,14 +21,14 @@ class GameManager
     private $commandBindings;
     private $client;
     public $optionsManager;
-    
+
     public function __construct(RealTimeClient $client, array $commandBindings)
     {
         $this->commandBindings = $commandBindings;
         $this->client = $client;
         $this->optionsManager = new OptionsManager();
     }
-    
+
     public function input(Message $message)
     {
         $input = $message->getText();
@@ -88,7 +88,7 @@ class GameManager
 
         return true;
     }
-    
+
     public function sendMessageToChannel($game, $msg)
     {
         $client = $this->client;
@@ -114,6 +114,7 @@ class GameManager
         if ($game->getState() == GameState::NIGHT && $newGameState == GameState::DAY) {
             $numSeer = $game->getNumRole(Role::SEER);
 
+
             if ($numSeer && ! $game->seerSeen()) {
                 return;
             }
@@ -127,6 +128,15 @@ class GameManager
             $numBodyguard = $game->getNumRole(Role::BODYGUARD);
 
             if ($numBodyguard && ! $game->getGuardedUserId()) {
+                return;
+            }
+
+            $numWitch = $game->getNumRole(Role::WITCH);
+            if ($numWitch && !$game->getWitchHealed()) {
+                return;
+            }
+
+            if ($numWitch && !$game->getWitchPoisoned()) {
                 return;
             }
 
@@ -186,10 +196,14 @@ class GameManager
             $this->sendMessageToChannel($game, "Cannot start a game with less than 3 players.");
             return;
         }
+
+        $game->setWitchHealedUserId(null);
+        $this->setWitchPoisonedUserId(null);
+
         $game->assignRoles();
         $this->changeGameState($id, GameState::FIRST_NIGHT);
     }
-    
+
     public function endGame($id, $enderUserId = null)
     {
         $game = $this->getGame($id);
@@ -265,7 +279,7 @@ class GameManager
         $voteMsg = VoteSummaryFormatter::format($game);
 
         $this->sendMessageToChannel($game, $voteMsg);
-        
+
         if ( ! $game->votingFinished()) {
             return;
         }
@@ -364,9 +378,9 @@ class GameManager
             $msg .= " The game will begin when the Seer chooses someone.";
         }
         $this->sendMessageToChannel($game, $msg);
-        
+
         if (!$this->optionsManager->getOptionValue(OptionName::role_seer)) {
-            $this->changeGameState($game->getId(), GameState::NIGHT);        
+            $this->changeGameState($game->getId(), GameState::NIGHT);
         }
     }
 
@@ -429,25 +443,92 @@ class GameManager
                      $client->send($bodyGuardMsg, $channel);
                  });
         }
+
+        $witches = $game->getPlayersOfRole(Role::WITCH);
+
+        if (count($witches) > 0) {
+            $witch_msg = ":wine_glass:  You may poison someone once for the entire game.  Type \"!poison #channel @user\" to poison someone \r\nor \"!poison #channel noone\" to do nothing.  \r\Night will not end until you make a decision.";
+
+            if ($game->setWitchPoisonPotion() > 0) {
+                foreach ($witches as $witch) {
+                    $this->client->getDMByUserId($witch->getId())
+                         ->then(function (DirectMessageChannel $channel) use ($client,$witch_msg) {
+                             $client->send($witch_msg, $channel);
+                         });
+                }
+            }
+            else {
+                $this->game->setWitchPoisoned(true);
+            }
+        }
     }
 
     private function onNightEnd(Game $game)
     {
         $votes = $game->getVotes();
 
+        $numKilled = 0;
+        $hasGuarded = false;
+        $hasHealed = false;
+        $hasKilled = false;
+        $killMsg = ":skull_and_crossbones: ";
+        $guardedMsg = "";
+        $healedMsg = "";
+
         foreach ($votes as $lynch_id => $voters) {
             $player = $game->getPlayerById($lynch_id);
 
             if ($lynch_id == $game->getGuardedUserId()) {
-                $killMsg = ":muscle: @{$player->getUsername()} was protected from being killed during the night.";
-            } else {
-                $killMsg = ":skull_and_crossbones: @{$player->getUsername()} ($player->role) was killed during the night.";
-                $game->killPlayer($lynch_id);
-            }
+                $guardedMsg = ":muscle: @{$player->getUsername()} was protected from being killed during the night.";
+                $hasGuarded = true;
 
-            $game->setLastGuardedUserId($game->getGuardedUserId());
-            $game->setGuardedUserId(null);
+            }
+            elseif($lynch_id == $game->getWitchHealedUserId()) {
+                $healedMsg = ":wine_glass: @{$player->getUsername()} was attacked but then healed during the night.";
+                $hasHealed = true;
+            }
+            else {
+                $killMsg .= " @{$player->getUsername()} ($player->role), ";
+                $game->killPlayer($lynch_id);
+                $hasKilled = true;
+                $numKilled++;
+            }
+        }
+
+        // see if witch poisoned someone
+        if ($game->getWitchPoisonedUserId()) {
+
+            $poisoned_player_id = $game->getWitchPoisonedUserId();
+            $poisoned_player = $game->getPlayerById($poisoned_player_id);
+
+            $killMsg .= " @{$poisoned_player->getUsername()} ($poisoned_player->role), ";
+            $game->killPlayer($poisoned_player_id);
+
+            $hasKilled = true;
+            $numKilled++;
+            $game->setWitchPoisonedUserId(null);
+        }
+
+        $wasOrWere = "was";
+        if ($numKilled > 1) {
+            $wasOrWere = "were";
+        }
+
+        $killMsg .= " $wasOrWere killed during the night.";
+
+        $game->setLastGuardedUserId($game->getGuardedUserId());
+        $game->setGuardedUserId(null);
+
+        if ($hasKilled) {
             $this->sendMessageToChannel($game, $killMsg);
+        }
+
+        if ($hasGuarded) {
+            $this->sendMessageToChannel($game, $guardedMsg);
+        }
+
+        if ($hasHealed) {
+            $this->sendMessageToChannel($game, $healedMsg);
         }
     }
 
