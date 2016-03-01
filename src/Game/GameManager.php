@@ -458,7 +458,7 @@ class GameManager
                 }
             }
             else {
-                $this->game->setWitchPoisoned(true);
+                $game->setWitchPoisoned(true);
             }
         }
     }

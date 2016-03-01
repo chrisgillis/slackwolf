@@ -8,6 +8,7 @@ class Classic implements RoleStrategyInterface
 {
 
     private $roleListMsg;
+    private $minExtraRolesNumPlayers = 5;
 
     /**
      * @return string
@@ -37,7 +38,7 @@ class Classic implements RoleStrategyInterface
 
         $possibleOptionalRoles = [Role::VILLAGER];
         $optionalRoleListMsg = "";
-        if ($num_players >= 6) {
+        if ($num_players >= $this->minExtraRolesNumPlayers) {
             if ($optionsManager->getOptionValue(OptionName::role_tanner)){
                 $optionalRoles[Role::TANNER] = 1;
                 $possibleOptionalRoles[] = Role::TANNER;
@@ -69,7 +70,7 @@ class Classic implements RoleStrategyInterface
         shuffle($possibleOptionalRoles);
 
 
-        if ($num_players >= 6 && strlen($optionalRoleListMsg) > 0) {
+        if ($num_players >= $this->minExtraRolesNumPlayers && strlen($optionalRoleListMsg) > 0) {
             $this->roleListMsg .= "+ Optional: [".$optionalRoleListMsg."]";
         }
 

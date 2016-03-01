@@ -153,6 +153,11 @@ class PoisonCommand extends Command
         $this->game->setWitchPoisonedUserId($this->args[1]);
         $this->game->killPlayer($this->args[1]);
 
+        $client->getChannelGroupOrDMByID($this->channel)
+               ->then(function (ChannelInterface $channel) use ($client) {
+                   $client->send("Poisoning successful.", $channel);
+               });
+
         $this->game->setWitchPoisoned(true);
         $this->gameManager->changeGameState($this->game->getId(), GameState::DAY);
     }

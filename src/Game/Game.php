@@ -380,7 +380,7 @@ class Game
     }
 
     public function setWitchHealedUserId($id) {
-        $this->setWitchHealedUserId = $id;
+        $this->witchHealedUserId = $id;
     }
 
     public function getWitchPoisonedUserId() {

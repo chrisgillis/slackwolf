@@ -137,6 +137,15 @@ class HealCommand extends Command
             throw new Exception("Witch healing potion is 0.");
         }
 
+        if ($this->args[1] == 'noone') {
+          $this->game->setWitchHealed(true);
+          $client->getChannelGroupOrDMByID($this->channel)
+                   ->then(function (ChannelInterface $channel) use ($client) {
+                       $client->send(":warning: You have chosen not to heal anyone tonight.", $channel);
+                   });
+          return true;
+        }
+
         // Person player is voting for should be targetted by wolves
         $votes = $this->game->getVotes();
 
@@ -162,15 +171,6 @@ class HealCommand extends Command
                    });
             throw new Exception("Wolves chosen target not healing target.");
           }
-        }
-
-        if ($this->args[1] == 'noone') {
-          $this->game->setWitchHealed(true);
-          $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: You have chosen not to heal anyone tonight.", $channel);
-                   });
-          return true;
         }
 
         $this->game->setWitchHealingPotion(0);
