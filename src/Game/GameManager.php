@@ -198,7 +198,7 @@ class GameManager
         }
 
         $game->setWitchHealedUserId(null);
-        $this->setWitchPoisonedUserId(null);
+        $game->setWitchPoisonedUserId(null);
 
         $game->assignRoles();
         $this->changeGameState($id, GameState::FIRST_NIGHT);
