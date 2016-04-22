@@ -10,7 +10,7 @@ Slackwolf currently supports Seer, Bodyguard, Lycan, Tanner, Beholder, Villager,
 `/invite` the bot and type !help
 
 ## Installation
-Slackwolf requires PHP 5.5+ and [Composer](https://getcomposer.org/). It may not work with PHP7 due to one of its dependencies.
+Slackwolf requires PHP 5.5+ and [Composer](https://getcomposer.org/).
 
 ```
 git clone http://github.com/chrisgillis/slackwolf
