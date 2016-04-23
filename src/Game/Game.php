@@ -112,15 +112,15 @@ class Game
      */
     public function getPlayersOfRole($roleType)
     {
-        $werewolves = [];
+        $playersofRole = [];
 
         foreach ($this->livingPlayers as $player) {
             if ($player->role == $roleType) {
-                $werewolves[] = $player;
+                $playersofRole[] = $player;
             }
         }
 
-        return $werewolves;
+        return $playersofRole;
     }
 
     /**
