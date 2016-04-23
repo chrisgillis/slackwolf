@@ -4,7 +4,7 @@ use Slackwolf\Game\Role;
 class Tanner extends Role
 {
 	public function getName() {
-		return "Tanner";
+		return Role::TANNER;
 	}
 
 	public function getDescription() {

@@ -4,7 +4,7 @@ use Slackwolf\Game\Role;
 class Seer extends Role
 {
 	public function getName() {
-		return "Seer";
+		return Role::SEER;
 	}
 
 	public function getDescription() {

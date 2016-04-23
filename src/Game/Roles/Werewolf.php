@@ -10,4 +10,8 @@ class Werewolf extends Role
 	public function isWerewolfTeam() {
 		return true;
 	}
+
+	public function getName() {
+		return Role::WEREWOLF;
+	}
 }

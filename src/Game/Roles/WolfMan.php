@@ -1,21 +1,17 @@
 <?php namespace Slackwolf\Game\Roles;
 
 use Slackwolf\Game\Role;
-class Lycan extends Role
+class WolfMan extends Werewolf
 {
 	public function appearsAsWerewolf() {
-		return true;
-	}
-
-	public function isWerewolfTeam() {
 		return false;
 	}
 
 	public function getName() {
-		return Role::LYCAN;
+		return Role::WOLFMAN;
 	}
 
 	public function getDescription() {
-		return "A villager who appears to the Seer as a Werewolf.";
+		return "A werewolf who appears to the Seer as a Villager.";
 	}
 }

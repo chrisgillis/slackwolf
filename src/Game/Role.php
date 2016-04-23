@@ -22,6 +22,11 @@ class Role
 	public function getDescription() {
 		return null;
 	}
+
+	public function isRole($roleName) {
+		return $roleName == getName();
+	}
+
     const VILLAGER = "Villager";
     const SEER = "Seer";
     const WEREWOLF = "Werewolf";
@@ -29,8 +34,9 @@ class Role
     const TANNER = "Tanner";
     const LYCAN = "Lycan";
     const BEHOLDER = "Beholder";
+    const WOLFMAN = "Wolf Man";
 
     public static function getSpecialRoles() {
-    	return [new Seer(), new Tanner(), new Lycan(), new Beholder(), new Bodyguard()];
+    	return [new Seer(), new Tanner(), new Lycan(), new Beholder(), new Bodyguard(), new WolfMan()];
     }
 }

@@ -4,7 +4,7 @@ use Slackwolf\Game\Role;
 class Beholder extends Role
 {
 	public function getName() {
-		return "Beholder";
+		return Role::BEHOLDER;
 	}
 
 	public function getDescription() {

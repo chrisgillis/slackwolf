@@ -35,28 +35,28 @@ class Classic implements RoleStrategyInterface
         
         $this->roleListMsg = "Required: [".($num_seer > 0 ? "Seer, " : "")."Werewolf, Villager]";
 
-        $possibleOptionalRoles = [Role::VILLAGER];
+        $possibleOptionalRoles = [new Villager()];
         $optionalRoleListMsg = "";
         if ($num_players >= 6) {
             if ($optionsManager->getOptionValue(OptionName::role_tanner)){
                 $optionalRoles[Role::TANNER] = 1;
-                $possibleOptionalRoles[] = Role::TANNER;
+                $possibleOptionalRoles[] = new Tanner();
                 $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Tanner";
             }
             if ($optionsManager->getOptionValue(OptionName::role_lycan)){
                 $optionalRoles[Role::LYCAN] = 1;
-                $possibleOptionalRoles[] = Role::LYCAN;
+                $possibleOptionalRoles[] = new Lycan();
                 $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Lycan";
             }
             if ($num_seer > 0 
                 && $optionsManager->getOptionValue(OptionName::role_beholder)){
                 $optionalRoles[Role::BEHOLDER] = 1;
-                $possibleOptionalRoles[] = Role::BEHOLDER;
+                $possibleOptionalRoles[] = new Beholder();
                 $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Beholder";
             }
             if ($optionsManager->getOptionValue(OptionName::role_bodyguard)){
                 $optionalRoles[Role::BODYGUARD] = 1;
-                $possibleOptionalRoles[] = Role::BODYGUARD;
+                $possibleOptionalRoles[] = new BodyGuard();
                 $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Bodyguard";
             }
         }

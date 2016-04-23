@@ -115,7 +115,7 @@ class Game
         $playersofRole = [];
 
         foreach ($this->livingPlayers as $player) {
-            if ($player->role == $roleType) {
+            if ($player->role->isRole($roleType)) { 
                 $playersofRole[] = $player;
             }
         }
@@ -126,17 +126,49 @@ class Game
     /**
      * @return \Slack\User[]
      */
-    public function getOriginalPlayersOfRole($roleType)
+    public function getWerewolves()
     {
         $werewolves = [];
 
-        foreach ($this->originalPlayers as $player) {
-            if ($player->role == $roleType) {
+        foreach ($this->livingPlayers as $player) {
+            if ($player->role->isWerewolfTeam()) { 
                 $werewolves[] = $player;
             }
         }
 
         return $werewolves;
+    }
+
+    /**
+     * @return \Slack\User[]
+     */
+    public function getVillageTeam()
+    {
+        $villagers = [];
+
+        foreach ($this->livingPlayers as $player) {
+            if (!$player->role->isWerewolfTeam()) { 
+                $villagers[] = $player;
+            }
+        }
+
+        return $villagers;
+    }
+
+    /**
+     * @return \Slack\User[]
+     */
+    public function getOriginalPlayersOfRole($roleType)
+    {
+        $originalPlayersOfRole = [];
+
+        foreach ($this->originalPlayers as $player) {
+            if ($player->role->isRole($roleType)) { 
+                $originalPlayersOfRole[] = $player;
+            }
+        }
+
+        return $originalPlayersOfRole;
     }
 
     public function isPlayerAlive($playerId)
@@ -244,7 +276,7 @@ class Game
 
     public function isOver()
     {
-        $numWerewolves = $this->getNumRole(Role::WEREWOLF);
+        $numWerewolves = count($this->getWerewolves());
         $numTanner = $this->getNumRole(Role::TANNER);
 
         $numGood = count($this->getLivingPlayers()) - $numWerewolves;

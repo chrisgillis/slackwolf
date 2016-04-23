@@ -118,7 +118,7 @@ class GameManager
                 return;
             }
 
-            $numWolf = $game->getNumRole(Role::WEREWOLF);
+            $numWolf = count($game->getWerewolves());
 
             if ($numWolf && ! $game->getWolvesVoted()) {
                 return;
@@ -304,7 +304,7 @@ class GameManager
             $lynchedNames = [];
             foreach ($players_to_be_lynched as $player_id) {
                 $player = $game->getPlayerById($player_id);
-                $lynchedNames[] = "@{$player->getUsername()} ({$player->role})";
+                $lynchedNames[] = "@{$player->getUsername()} ({$player->role->getName()})";
                 $game->killPlayer($player_id);
             }
 
@@ -328,22 +328,22 @@ class GameManager
         foreach ($game->getLivingPlayers() as $player) {
             $client->getDMByUserId($player->getId())
                 ->then(function (DirectMessageChannel $dmc) use ($client,$player,$game) {
-                    $client->send("Your role is {$player->role}", $dmc);
+                    $client->send("Your role is {$player->role->getName()}", $dmc);
 
-                    if ($player->role == Role::WEREWOLF) {
-                        if ($game->getNumRole(Role::WEREWOLF) > 1) {
-                            $werewolves = PlayerListFormatter::format($game->getPlayersOfRole(Role::WEREWOLF));
+                    if ($player->role->isWerewolfTeam()) {
+                        if (count($game->getWerewolves()) > 1) {
+                            $werewolves = PlayerListFormatter::format($game->getWerewolves());
                             $client->send("The werewolves are: {$werewolves}", $dmc);
                         } else {
                             $client->send("You are the only werewolf.", $dmc);
                         }
                     }
 
-                    if ($player->role == Role::SEER) {
+                    if ($player->role->isRole(Role::SEER)) {
                         $client->send("Seer, select a player by saying !see #channel @username.\r\nDO NOT DISCUSS WHAT YOU SEE DURING THE NIGHT, ONLY DISCUSS DURING THE DAY IF YOU ARE NOT DEAD!", $dmc);
                     }
 
-                    if ($player->role == Role::BEHOLDER) {
+                    if ($player->role->isRole(Role::BEHOLDER)) {
                         $seers = $game->getPlayersOfRole(Role::SEER);
                         $seers = PlayerListFormatter::format($seers);
 
@@ -395,7 +395,7 @@ class GameManager
         $nightMsg = ":crescent_moon: :zzz: The sun sets and the villagers go to sleep.";
         $this->sendMessageToChannel($game, $nightMsg);
 
-        $wolves = $game->getPlayersOfRole(Role::WEREWOLF);
+        $wolves = $game->getWerewolves();
 
         $wolfMsg = ":crescent_moon: It is night and it is time to hunt. Type !kill #channel @player to make your choice. ";
 
@@ -441,7 +441,7 @@ class GameManager
             if ($lynch_id == $game->getGuardedUserId()) {
                 $killMsg = ":muscle: @{$player->getUsername()} was protected from being killed during the night.";
             } else {
-                $killMsg = ":skull_and_crossbones: @{$player->getUsername()} ($player->role) was killed during the night.";
+                $killMsg = ":skull_and_crossbones: @{$player->getUsername()} ($player->role->getName()) was killed during the night.";
                 $game->killPlayer($lynch_id);
             }
 

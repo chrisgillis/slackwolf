@@ -4,7 +4,7 @@ use Slackwolf\Game\Role;
 class Bodyguard extends Role
 {
 	public function getName() {
-		return "Bodyguard";
+		return Role::BODYGUARD;
 	}
 
 	public function getDescription() {
