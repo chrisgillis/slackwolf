@@ -3,7 +3,7 @@
 use Slackwolf\Game\Role;
 class Villager extends Role
 {
-	public string getName() {
+	public function getName() {
 		return Role::VILLAGER;
 	}
 }

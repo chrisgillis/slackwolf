@@ -4,7 +4,7 @@ use Slackwolf\Game\Roles\Tanner;
 use Slackwolf\Game\Roles\Lycan;
 use Slackwolf\Game\Roles\Beholder;
 use Slackwolf\Game\Roles\Bodyguard;
-use Slackwolf\Game\Roles\Wolfman;
+use Slackwolf\Game\Roles\WolfMan;
 class Role
 {
 	public function appearsAsWerewolf() {
@@ -24,7 +24,7 @@ class Role
 	}
 
 	public function isRole($roleName) {
-		return $roleName == getName();
+		return $roleName == $this->getName();
 	}
 
     const VILLAGER = "Villager";

@@ -441,7 +441,7 @@ class GameManager
             if ($lynch_id == $game->getGuardedUserId()) {
                 $killMsg = ":muscle: @{$player->getUsername()} was protected from being killed during the night.";
             } else {
-                $killMsg = ":skull_and_crossbones: @{$player->getUsername()} ($player->role->getName()) was killed during the night.";
+                $killMsg = ":skull_and_crossbones: @{$player->getUsername()} ({$player->role->getName()}) was killed during the night.";
                 $game->killPlayer($lynch_id);
             }
 
