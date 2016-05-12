@@ -137,6 +137,7 @@ class PoisonCommand extends Command
                    ->then(function (ChannelInterface $channel) use ($client) {
                        $client->send(":warning: You have chosen not to poison anyone tonight.", $channel);
                    });
+          $this->gameManager->changeGameState($this->game->getId(), GameState::DAY);
           return true;
         }
 
@@ -151,14 +152,13 @@ class PoisonCommand extends Command
 
         $this->game->setWitchPoisonPotion(0);
         $this->game->setWitchPoisonedUserId($this->args[1]);
-        $this->game->killPlayer($this->args[1]);
+        $this->game->setWitchPoisoned(true);
 
         $client->getChannelGroupOrDMByID($this->channel)
                ->then(function (ChannelInterface $channel) use ($client) {
                    $client->send("Poisoning successful.", $channel);
                });
 
-        $this->game->setWitchPoisoned(true);
         $this->gameManager->changeGameState($this->game->getId(), GameState::DAY);
     }
 }

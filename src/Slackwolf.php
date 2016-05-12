@@ -18,6 +18,7 @@ use Slackwolf\Game\Command\LeaveCommand;
 use Slackwolf\Game\Command\StartCommand;
 use Slackwolf\Game\Command\VoteCommand;
 use Slackwolf\Game\Command\SetOptionCommand;
+use Slackwolf\Game\Command\StatusCommand;
 use Slackwolf\Game\GameManager;
 use Slackwolf\Message\Message;
 
@@ -49,7 +50,7 @@ class Slackwolf
          */
         $commandBindings = [
             'help'      => HelpCommand::class,
-            'setoption' => SetOptionCommand::class,
+            'option' => SetOptionCommand::class,
             'new'       => NewCommand::class,
             'join'      => JoinCommand::class,
             'leave'     => LeaveCommand::class,
@@ -63,6 +64,7 @@ class Slackwolf
             'heal'      => HealCommand::class,
             'alive'     => AliveCommand::class,
             'dead'      => DeadCommand::class,
+            'status'    => StatusCommand::class,
         ];
 
         /*

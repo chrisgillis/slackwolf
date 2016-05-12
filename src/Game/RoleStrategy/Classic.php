@@ -25,16 +25,25 @@ class Classic implements RoleStrategyInterface
         $num_evil = floor($num_players / 3); // 2
         $num_good = $num_players - $num_evil; // 4
         $num_seer = $optionsManager->getOptionValue(OptionName::role_seer) ? 1 : 0;
+        $num_witch = $optionsManager->getOptionValue(OptionName::role_witch) ? 1 : 0;
+
         $requiredRoles = [
             Role::SEER => $num_seer,
             Role::WEREWOLF => $num_evil
         ];
 
+        // witch role on
+        if ($optionsManager->getOptionValue(OptionName::role_witch)){
+            $requiredRoles[Role::WITCH] = 1;
+        }
+
         $optionalRoles = [
-            Role::VILLAGER => max($num_good - $num_seer, 0)
+            Role::VILLAGER => max($num_good - $num_seer + $num_witch, 0)
         ];
 
-        $this->roleListMsg = "Required: [".($num_seer > 0 ? "Seer, " : "")."Werewolf, Villager]";
+        $this->roleListMsg = "Required: [".($num_seer > 0 ? "Seer, " : "").
+            ($num_witch > 0 ? "Witch, " : "").
+            "Werewolf, Villager]";
 
         $possibleOptionalRoles = [Role::VILLAGER];
         $optionalRoleListMsg = "";
@@ -60,15 +69,9 @@ class Classic implements RoleStrategyInterface
                 $possibleOptionalRoles[] = Role::BODYGUARD;
                 $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Bodyguard";
             }
-            if ($optionsManager->getOptionValue(OptionName::role_witch)){
-                $optionalRoles[Role::WITCH] = 1;
-                $possibleOptionalRoles[] = Role::WITCH;
-                $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Witch";
-            }
         }
 
         shuffle($possibleOptionalRoles);
-
 
         if ($num_players >= $this->minExtraRolesNumPlayers && strlen($optionalRoleListMsg) > 0) {
             $this->roleListMsg .= "+ Optional: [".$optionalRoleListMsg."]";

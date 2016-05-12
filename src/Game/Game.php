@@ -5,25 +5,28 @@ use Slackwolf\Game\RoleStrategy\RoleStrategyInterface;
 class Game
 {
     private $id;
-    private $state;
     private $lobbyPlayers = [];
     private $livingPlayers = [];
     private $deadPlayers = [];
     private $originalPlayers = [];
     private $votes = [];
     private $winningTeam;
-    private $seerSeen;
-    private $wolvesVoted;
+
     private $guardedUserId;
     private $lastGuardedUserId;
     private $witchHealingPotion = 0;
     private $witchPoisonPotion = 0;
-    private $witchHealed;
+
     private $witchHealedUserId;
-    private $witchPoisoned;
     private $witchPoisonedUserId;
     private $roleStrategy;
     private $optionsManager;
+
+    public $state;
+    public $seerSeen;
+    public $wolvesVoted;
+    public $witchHealed;
+    public $witchPoisoned;
 
     /**
      * @param                       $id
@@ -104,9 +107,11 @@ class Game
 
     public function killPlayer($player_id)
     {
-        $player = $this->livingPlayers[$player_id];
-        unset($this->livingPlayers[$player_id]);
-        $this->deadPlayers[$player_id] = $player;
+        if (isset($this->livingPlayers[$player_id])) {
+            $player = $this->livingPlayers[$player_id];
+            unset($this->livingPlayers[$player_id]);
+            $this->deadPlayers[$player_id] = $player;
+        }
     }
 
     /**

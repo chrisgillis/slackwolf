@@ -143,6 +143,7 @@ class HealCommand extends Command
                    ->then(function (ChannelInterface $channel) use ($client) {
                        $client->send(":warning: You have chosen not to heal anyone tonight.", $channel);
                    });
+          $this->gameManager->changeGameState($this->game->getId(), GameState::DAY);
           return true;
         }
 

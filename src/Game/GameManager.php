@@ -479,12 +479,12 @@ class GameManager
             $player = $game->getPlayerById($lynch_id);
 
             if ($lynch_id == $game->getGuardedUserId()) {
-                $guardedMsg = ":muscle: @{$player->getUsername()} was protected from being killed during the night.";
+                $guardedMsg = ":innocent: Someone was guarded in the night!";
                 $hasGuarded = true;
 
             }
             elseif($lynch_id == $game->getWitchHealedUserId()) {
-                $healedMsg = ":wine_glass: @{$player->getUsername()} was attacked but then healed during the night.";
+                $healedMsg = ":innocent: Someone was healed in the night!";
                 $hasHealed = true;
             }
             else {
@@ -523,12 +523,8 @@ class GameManager
             $this->sendMessageToChannel($game, $killMsg);
         }
 
-        if ($hasGuarded) {
-            $this->sendMessageToChannel($game, $guardedMsg);
-        }
-
-        if ($hasHealed) {
-            $this->sendMessageToChannel($game, $healedMsg);
+        if ($numKilled == 0) {
+            $this->sendMessageToChannel($game, "There was no deaths in the night!");
         }
     }
 
