@@ -139,7 +139,7 @@ class KillCommand extends Command
         // Person should be werewolf
         $player = $this->game->getPlayerById($this->userId);
 
-        if ($player->role != Role::WEREWOLF) {
+        if (!$player->role->isWerewolfTeam()) { 
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
                        $client->send(":warning: You have to be a werewolf to kill.", $channel);
@@ -161,14 +161,14 @@ class KillCommand extends Command
 
         $msg = KillFormatter::format($this->game);
 
-        foreach($this->game->getPlayersOfRole(Role::WEREWOLF) as $player) {
+        foreach($this->game->getWerewolves() as $player) {
             $client->getDMByUserID($player->getId())
                 ->then(function(DirectMessageChannel $channel) use ($client,$msg) {
                     $client->send($msg,$channel);
                 });
         }
 
-        foreach ($this->game->getPlayersOfRole(Role::WEREWOLF) as $player)
+        foreach ($this->game->getWerewolves() as $player)
         {
             if ( ! $this->game->hasPlayerVoted($player->getId())) {
                 return;
@@ -179,7 +179,7 @@ class KillCommand extends Command
 
         if (count($votes) > 1) {
             $this->game->clearVotes();
-            foreach($this->game->getPlayersOfRole(Role::WEREWOLF) as $player) {
+            foreach($this->game->getWerewolves() as $player) {
                 $client->getDMByUserID($player->getId())
                        ->then(function(DirectMessageChannel $channel) use ($client) {
                            $client->send(":warning: The werewolves did not unanimously vote on a member of the town. Vote again.",$channel);

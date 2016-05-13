@@ -133,7 +133,7 @@ class SeeCommand extends Command
             throw new Exception("Can't See if dead.");
         }
 
-        if ($player->role != Role::SEER) {
+        if (!$player->role->isRole(Role::SEER)) {
             $this->client->getDMById($this->channel)
                  ->then(
                      function (DirectMessageChannel $dmc) use ($client) {
@@ -167,7 +167,7 @@ class SeeCommand extends Command
                 continue;
             }
 
-            if ($player->role == Role::WEREWOLF || $player->role == Role::LYCAN) {
+            if ($player->role->appearsAsWerewolf()) {
                 $msg = "@{$player->getUsername()} is on the side of the Werewolves.";
             } else {
                 $msg = "@{$player->getUsername()} is on the side of the Villagers.";

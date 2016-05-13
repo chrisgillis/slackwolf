@@ -112,10 +112,26 @@ class Game
      */
     public function getPlayersOfRole($roleType)
     {
+        $playersofRole = [];
+
+        foreach ($this->livingPlayers as $player) {
+            if ($player->role->isRole($roleType)) { 
+                $playersofRole[] = $player;
+            }
+        }
+
+        return $playersofRole;
+    }
+
+    /**
+     * @return \Slack\User[]
+     */
+    public function getWerewolves()
+    {
         $werewolves = [];
 
         foreach ($this->livingPlayers as $player) {
-            if ($player->role == $roleType) {
+            if ($player->role->isWerewolfTeam()) { 
                 $werewolves[] = $player;
             }
         }
@@ -126,17 +142,33 @@ class Game
     /**
      * @return \Slack\User[]
      */
-    public function getOriginalPlayersOfRole($roleType)
+    public function getVillageTeam()
     {
-        $werewolves = [];
+        $villagers = [];
 
-        foreach ($this->originalPlayers as $player) {
-            if ($player->role == $roleType) {
-                $werewolves[] = $player;
+        foreach ($this->livingPlayers as $player) {
+            if (!$player->role->isWerewolfTeam()) { 
+                $villagers[] = $player;
             }
         }
 
-        return $werewolves;
+        return $villagers;
+    }
+
+    /**
+     * @return \Slack\User[]
+     */
+    public function getOriginalPlayersOfRole($roleType)
+    {
+        $originalPlayersOfRole = [];
+
+        foreach ($this->originalPlayers as $player) {
+            if ($player->role->isRole($roleType)) { 
+                $originalPlayersOfRole[] = $player;
+            }
+        }
+
+        return $originalPlayersOfRole;
     }
 
     public function isPlayerAlive($playerId)
@@ -244,7 +276,7 @@ class Game
 
     public function isOver()
     {
-        $numWerewolves = $this->getNumRole(Role::WEREWOLF);
+        $numWerewolves = count($this->getWerewolves());
         $numTanner = $this->getNumRole(Role::TANNER);
 
         $numGood = count($this->getLivingPlayers()) - $numWerewolves;

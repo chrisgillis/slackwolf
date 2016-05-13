@@ -14,7 +14,7 @@ class RoleSummaryFormatter
 
         foreach ($originalPlayers as $og)
         {
-            $roleSummary .= "@{$og->getUsername()} ({$og->role}) - ";
+            $roleSummary .= "@{$og->getUsername()} ({$og->role->getName()}) - ";
 
             if (isset($players[$og->getId()])) {
                 $roleSummary .= ":white_check_mark:\r\n";
