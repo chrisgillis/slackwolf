@@ -91,12 +91,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Devristo/phpws.git",
-                "reference": "5c495fa15555c8a4eb40c000e28ab6205d72e7f7"
+                "reference": "3166c21bdce4a84937ab9e42564a85acb6c2b5db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Devristo/phpws/zipball/5c495fa15555c8a4eb40c000e28ab6205d72e7f7",
-                "reference": "5c495fa15555c8a4eb40c000e28ab6205d72e7f7",
+                "url": "https://api.github.com/repos/Devristo/phpws/zipball/3166c21bdce4a84937ab9e42564a85acb6c2b5db",
+                "reference": "3166c21bdce4a84937ab9e42564a85acb6c2b5db",
                 "shasum": ""
             },
             "require": {
@@ -120,7 +120,7 @@
                 }
             ],
             "description": "WebSocket Server and Client library for PHP",
-            "time": "2015-07-10 14:59:37"
+            "time": "2016-02-08 15:53:28"
         },
         {
             "name": "evenement/evenement",
