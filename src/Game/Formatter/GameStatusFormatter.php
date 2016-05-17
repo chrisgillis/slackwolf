@@ -3,6 +3,7 @@
 use Slackwolf\Game\Game;
 use Slackwolf\Game\GameState;
 use Slackwolf\Game\Role;
+use Slackwolf\Game\Formatter\VoteSummaryFormatter;
 
 class GameStatusFormatter
 {
@@ -13,7 +14,10 @@ class GameStatusFormatter
         switch($game->state) {
 
             case GameState::DAY:
+                $voteMsg = VoteSummaryFormatter::format($game);
+
                 $msg .= ":sun_small_cloud:  It is now Day.  Please vote!\r\n";
+                $msg .= $voteMsg . "\r\n";
                 break;
 
             case GameState::FIRST_NIGHT:
