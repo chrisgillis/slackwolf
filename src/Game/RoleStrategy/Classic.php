@@ -10,6 +10,7 @@ use Slackwolf\Game\Roles\Beholder;
 use Slackwolf\Game\Roles\Bodyguard;
 use Slackwolf\Game\Roles\Seer;
 use Slackwolf\Game\Roles\Werewolf;
+use Slackwolf\Game\Roles\Witch;
 use Slackwolf\Game\Roles\WolfMan;
 
 class Classic implements RoleStrategyInterface
@@ -94,6 +95,8 @@ class Classic implements RoleStrategyInterface
                         $rolePool[] = new Seer();
                     if($role == Role::WEREWOLF)
                         $rolePool[] = new Werewolf();
+                    if($role == Role::WITCH)
+                        $rolePool[] = new Witch();
                 }
             }
         }
@@ -121,7 +124,7 @@ class Classic implements RoleStrategyInterface
                     }
                 }
             }
-            
+
         }
 
         shuffle($rolePool);
