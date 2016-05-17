@@ -13,12 +13,12 @@ class GameStatusFormatter
         switch($game->state) {
 
             case GameState::DAY:
-                $msg .= "It is now Day.  Please vote!\r\n";
+                $msg .= ":sun_small_cloud:  It is now Day.  Please vote!\r\n";
                 break;
 
             case GameState::FIRST_NIGHT:
             case GameState::NIGHT:
-                $msg .= "It is now Night\r\n \r\n";
+                $msg .= ":crescent_moon:  The night lingers on ... \r\n \r\n";
 
                 $numSeer = $game->getNumRole(Role::SEER);
                 $numBodyguard = $game->getNumRole(Role::BODYGUARD);
@@ -28,10 +28,6 @@ class GameStatusFormatter
                     $msg .= " - Waiting on Seer\r\n";
                 }
 
-                if ($numBodyguard > 0 && !$game->getGuardedUserId()) {
-                    $msg .= " - Waiting on Bodyguard\r\n";
-                }
-
                 if ($game->state == GameState::NIGHT) {
                     if (!$game->wolvesVoted) {
                         $msg .= " - Waiting on Wolves\r\n";
@@ -39,6 +35,10 @@ class GameStatusFormatter
 
                     if ($numWitch > 0 && (!$game->witchPoisoned || !$game->witchHealed)) {
                         $msg .= " - Waiting on Witch\r\n";
+                    }
+
+                    if ($numBodyguard > 0 && !$game->getGuardedUserId()) {
+                        $msg .= " - Waiting on Bodyguard\r\n";
                     }
                 }
                 break;
