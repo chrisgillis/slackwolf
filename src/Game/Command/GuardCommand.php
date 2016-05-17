@@ -129,7 +129,7 @@ class GuardCommand extends Command
         // Person should be bodyguard
         $player = $this->game->getPlayerById($this->userId);
 
-        if ($player->role != Role::BODYGUARD) {
+        if (!$player->role->isRole(Role::BODYGUARD)) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
                        $client->send(":warning: You have to be a bodyguard to guard.", $channel);

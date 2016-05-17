@@ -16,7 +16,7 @@ class PlayerListFormatter
             $str = '@'.$player->getUsername();
 
             if ($withRoles) {
-                $str .= ' (' . $player->role . ')';
+                $str .= ' (' . $player->role->getName() . ')';
             }
 
             $playerList[] = $str;

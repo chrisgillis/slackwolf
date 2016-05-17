@@ -3,6 +3,7 @@
 use Slack\Channel;
 use Slack\ChannelInterface;
 use Slack\DirectMessageChannel;
+use Slackwolf\Game\Role;
 
 class HelpCommand extends Command
 {
@@ -18,12 +19,11 @@ class HelpCommand extends Command
         $help_msg .= "Each night, the werewolves will be allowed to vote privately on one player to kill. The decision must be unanimous. If its not, you'll keep voting until it is. The bot will private message you.\r\n";
         $help_msg .= "The villagers win if they eliminate all the werewolves. The werewolves win if they equal or outnumber the remaining players.\r\n\r\n";
         $help_msg .= "Special Roles\r\n------------------------\r\n";
-        $help_msg .= " |_ Seer - A villager who, once each night, is allowed to see the role of another player. The bot will private message you.\r\n";
-        $help_msg .= " |_ Tanner - A player not on the side of the villagers or the werewolves who wins if is killed.\r\n";
-        $help_msg .= " |_ Lycan - A villager who appears to the Seer as a Werewolf.\r\n";
-        $help_msg .= " |_ Beholder - A villager who learns who the Seer is on the first night\r\n";
-        $help_msg .= " |_ Bodyguard - A villager who may protect a player from being eliminated once each night, but not the same person two nights in a row.\r\n\r\n";
-        $help_msg .= " |_ Witch - A villager who has 1 healing potion and 1 poison potion and may heal and/or kill targets at night, but can only do each action once per game.\r\n\r\n";
+        foreach(Role::getSpecialRoles() as $specialRole) {
+            $help_msg .= " |_ " . $specialRole->getName() . " - " . $specialRole->getDescription() . "\r\n";
+        }
+        $help_msg .= "\r\n";
+
         $help_msg .= "Available Commands\r\n------------------------\r\n";
         $help_msg .= "|_  !new - Create a new lobby for players to !join for the next game\r\n";
         $help_msg .= "|_  !join - Join the lobby for the next game\r\n";

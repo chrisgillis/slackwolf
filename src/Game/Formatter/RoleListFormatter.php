@@ -13,7 +13,7 @@ class RoleListFormatter
 
         foreach ($players as $player)
         {
-            $roleList[] = $player->role;
+            $roleList[] = $player->role->getName();
         }
 
         shuffle($roleList);
