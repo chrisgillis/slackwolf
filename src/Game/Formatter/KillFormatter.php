@@ -32,7 +32,7 @@ class KillFormatter
 
         $playerNames = [];
 
-        foreach ($game->getPlayersOfRole(Role::WEREWOLF) as $player)
+        foreach ($game->getWerewolves() as $player)
         {
             if ( ! $game->hasPlayerVoted($player->getId())) {
                 $playerNames[] = '@'.$player->getUsername();
