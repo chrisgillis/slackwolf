@@ -49,7 +49,7 @@ class Game
             $this->livingPlayers[$player->getId()] = $player;
             $this->originalPlayers[$player->getId()] = $player;
 
-            if ($player->role == Role::WITCH) {
+            if ($player->role->isRole(Role::WITCH)) {
                 $this->setWitchHealingPotion(1);
                 $this->setWitchPoisonPotion(1);
             }
@@ -130,7 +130,7 @@ class Game
         $playersofRole = [];
 
         foreach ($this->livingPlayers as $player) {
-            if ($player->role->isRole($roleType)) { 
+            if ($player->role->isRole($roleType)) {
                 $playersofRole[] = $player;
             }
         }
@@ -146,7 +146,7 @@ class Game
         $werewolves = [];
 
         foreach ($this->livingPlayers as $player) {
-            if ($player->role->isWerewolfTeam()) { 
+            if ($player->role->isWerewolfTeam()) {
                 $werewolves[] = $player;
             }
         }
@@ -162,7 +162,7 @@ class Game
         $villagers = [];
 
         foreach ($this->livingPlayers as $player) {
-            if (!$player->role->isWerewolfTeam()) { 
+            if (!$player->role->isWerewolfTeam()) {
                 $villagers[] = $player;
             }
         }
@@ -178,7 +178,7 @@ class Game
         $originalPlayersOfRole = [];
 
         foreach ($this->originalPlayers as $player) {
-            if ($player->role->isRole($roleType)) { 
+            if ($player->role->isRole($roleType)) {
                 $originalPlayersOfRole[] = $player;
             }
         }

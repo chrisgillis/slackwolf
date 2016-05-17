@@ -503,7 +503,7 @@ class GameManager
             $poisoned_player_id = $game->getWitchPoisonedUserId();
             $poisoned_player = $game->getPlayerById($poisoned_player_id);
 
-            $killMsg .= " @{$poisoned_player->getUsername()} ($poisoned_player->role), ";
+            $killMsg .= " @{$poisoned_player->getUsername()} ($poisoned_player->role->getName()), ";
             $game->killPlayer($poisoned_player_id);
 
             $hasKilled = true;

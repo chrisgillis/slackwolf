@@ -114,7 +114,7 @@ class PoisonCommand extends Command
         // Person should be witch
         $player = $this->game->getPlayerById($this->userId);
 
-        if ($player->role != Role::WITCH) {
+        if (!$player->role->isRole(Role::WITCH)) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
                        $client->send(":warning: You have to be a witch to poison.", $channel);
