@@ -95,7 +95,7 @@ class KillCommand extends Command
                    });
             throw new Exception("No game in progress.");
         }
-        
+
         $this->args[1] = UserIdFormatter::format($this->args[1], $this->game->getOriginalPlayers());
     }
 
@@ -147,13 +147,13 @@ class KillCommand extends Command
             throw new Exception("Only werewolves can kill.");
         }
 
-        if ($this->game->hasPlayerVoted($this->userId)) {               
+        if ($this->game->hasPlayerVoted($this->userId)) {
             //If changeVote is not enabled and player has already voted, do not allow another vote
             if (!$this->gameManager->optionsManager->getOptionValue(OptionName::changevote))
             {
                 throw new Exception("Vote change not allowed.");
             }
-        
+
             $this->game->clearPlayerVote($this->userId);
         }
 
@@ -189,6 +189,26 @@ class KillCommand extends Command
         }
 
         $this->game->setWolvesVoted(true);
+
+        // send heal message to witch
+        $witches = $this->game->getPlayersOfRole(Role::WITCH);
+        if (count($witches) > 0) {
+            if ($this->game->getWitchHealingPotion() > 0) {
+                foreach($witches as $player) {
+
+                    $killed_player = $this->game->getPlayerById($this->args[1]);
+                    $witch_msg = ":wine_glass: @{$killed_player->getUsername()} was attacked, would you like to heal that person?  Type \"!heal #channel @user\" to save that person \r\nor \"!heal #channel noone\" to let that person die.  \r\Night will not end until you make a decision.";
+
+                    $client->getDMByUserID($player->getId())
+                        ->then(function(DirectMessageChannel $channel) use ($client,$witch_msg) {
+                            $client->send($witch_msg,$channel);
+                        });
+                }
+            }
+            else {
+                $this->game->setWitchHealed(true);
+            }
+        }
 
         $this->gameManager->changeGameState($this->game->getId(), GameState::DAY);
     }

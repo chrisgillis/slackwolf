@@ -6,12 +6,15 @@ use Slack\Channel;
 use Slack\ChannelInterface;
 use Slack\DirectMessageChannel;
 use Slackwolf\Game\Formatter\ChannelIdFormatter;
+use Slackwolf\Game\Formatter\KillFormatter;
 use Slackwolf\Game\Formatter\UserIdFormatter;
 use Slackwolf\Game\Game;
 use Slackwolf\Game\GameState;
 use Slackwolf\Game\Role;
+use Slackwolf\Game\OptionManager;
+use Slackwolf\Game\OptionName;
 
-class GuardCommand extends Command
+class PoisonCommand extends Command
 {
     /**
      * @var Game
@@ -23,13 +26,13 @@ class GuardCommand extends Command
         $client = $this->client;
 
         if ($this->channel[0] != 'D') {
-            throw new Exception("You may only !guard privately.");
+            throw new Exception("You may only !poison privately.");
         }
 
         if (count($this->args) < 2) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: Invalid command. Usage: !guard #channel @user", $channel);
+                       $client->send(":warning: Invalid command. Usage: !poison #channel @user", $channel);
                    });
             throw new InvalidArgumentException("Not enough arguments");
         }
@@ -77,7 +80,7 @@ class GuardCommand extends Command
             $this->client->getDMById($this->channel)
                          ->then(
                              function (DirectMessageChannel $dmc) use ($client) {
-                                 $this->client->send(":warning: Invalid channel specified. Usage: !guard #channel @user", $dmc);
+                                 $this->client->send(":warning: Invalid channel specified. Usage: !poison #channel @user", $dmc);
                              }
                          );
             throw new InvalidArgumentException();
@@ -103,18 +106,39 @@ class GuardCommand extends Command
         if ($this->game->getState() != GameState::NIGHT) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: You can only guard at night.", $channel);
+                       $client->send(":warning: You can only poison at night.", $channel);
                    });
-            throw new Exception("Guarding occurs only during the night.");
+            throw new Exception("Poison occurs only during the night.");
         }
 
-        // Voter should be alive
-        if ( ! $this->game->isPlayerAlive($this->userId)) {
+        // Person should be witch
+        $player = $this->game->getPlayerById($this->userId);
+
+        if (!$player->role->isRole(Role::WITCH)) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: You aren't alive in the specified channel.", $channel);
+                       $client->send(":warning: You have to be a witch to poison.", $channel);
                    });
-            throw new Exception("Can't guard if dead.");
+            throw new Exception("Only witch can poison.");
+        }
+
+        // Witch should have poison potion
+        if ($this->game->getWitchPoisonPotion() <= 0) {
+            $client->getChannelGroupOrDMByID($this->channel)
+                   ->then(function (ChannelInterface $channel) use ($client) {
+                       $client->send(":warning: You have used your poison potion.", $channel);
+                   });
+            throw new Exception("Witch poison potion is 0.");
+        }
+
+        if ($this->args[1] == 'noone') {
+          $this->game->setWitchPoisoned(true);
+          $client->getChannelGroupOrDMByID($this->channel)
+                   ->then(function (ChannelInterface $channel) use ($client) {
+                       $client->send(":warning: You have chosen not to poison anyone tonight.", $channel);
+                   });
+          $this->gameManager->changeGameState($this->game->getId(), GameState::DAY);
+          return true;
         }
 
         // Person player is voting for should also be alive
@@ -126,38 +150,13 @@ class GuardCommand extends Command
             throw new Exception("Voted player not found in game.");
         }
 
-        // Person should be bodyguard
-        $player = $this->game->getPlayerById($this->userId);
-
-        if (!$player->role->isRole(Role::BODYGUARD)) {
-            $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: You have to be a bodyguard to guard.", $channel);
-                   });
-            throw new Exception("Only bodyguard can guard.");
-        }
-
-        if ($this->game->getGuardedUserId() !== null) {
-            $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: You have already guarded.", $channel);
-                   });
-            throw new Exception("You have already guarded.");
-        }
-
-        if ($this->game->getLastGuardedUserId() == $this->args[1]) {
-            $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: You cant guard the same player as last night.", $channel);
-                   });
-            throw new Exception("You cant guard the same player as last night");
-        }
-
-        $this->game->setGuardedUserId($this->args[1]);
+        $this->game->setWitchPoisonPotion(0);
+        $this->game->setWitchPoisonedUserId($this->args[1]);
+        $this->game->setWitchPoisoned(true);
 
         $client->getChannelGroupOrDMByID($this->channel)
                ->then(function (ChannelInterface $channel) use ($client) {
-                   $client->send("Guarding successful.", $channel);
+                   $client->send("Poisoning successful.", $channel);
                });
 
         $this->gameManager->changeGameState($this->game->getId(), GameState::DAY);

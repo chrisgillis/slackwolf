@@ -11,7 +11,7 @@ use Slackwolf\Game\Game;
 use Slackwolf\Game\GameState;
 use Slackwolf\Game\Role;
 
-class GuardCommand extends Command
+class HealCommand extends Command
 {
     /**
      * @var Game
@@ -23,13 +23,13 @@ class GuardCommand extends Command
         $client = $this->client;
 
         if ($this->channel[0] != 'D') {
-            throw new Exception("You may only !guard privately.");
+            throw new Exception("You may only !heal privately.");
         }
 
         if (count($this->args) < 2) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: Invalid command. Usage: !guard #channel @user", $channel);
+                       $client->send(":warning: Invalid command. Usage: !heal #channel @user", $channel);
                    });
             throw new InvalidArgumentException("Not enough arguments");
         }
@@ -77,7 +77,7 @@ class GuardCommand extends Command
             $this->client->getDMById($this->channel)
                          ->then(
                              function (DirectMessageChannel $dmc) use ($client) {
-                                 $this->client->send(":warning: Invalid channel specified. Usage: !guard #channel @user", $dmc);
+                                 $this->client->send(":warning: Invalid channel specified. Usage: !heal #channel @user", $dmc);
                              }
                          );
             throw new InvalidArgumentException();
@@ -103,9 +103,9 @@ class GuardCommand extends Command
         if ($this->game->getState() != GameState::NIGHT) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: You can only guard at night.", $channel);
+                       $client->send(":warning: You can only heal at night.", $channel);
                    });
-            throw new Exception("Guarding occurs only during the night.");
+            throw new Exception("Healing occurs only during the night.");
         }
 
         // Voter should be alive
@@ -114,50 +114,73 @@ class GuardCommand extends Command
                    ->then(function (ChannelInterface $channel) use ($client) {
                        $client->send(":warning: You aren't alive in the specified channel.", $channel);
                    });
-            throw new Exception("Can't guard if dead.");
+            throw new Exception("Can't heal if dead.");
         }
 
-        // Person player is voting for should also be alive
-        if ( ! $this->game->isPlayerAlive($this->args[1])) {
-            $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: Could not find that player.", $channel);
-                   });
-            throw new Exception("Voted player not found in game.");
-        }
-
-        // Person should be bodyguard
+        // Person should be Witch
         $player = $this->game->getPlayerById($this->userId);
 
-        if (!$player->role->isRole(Role::BODYGUARD)) {
+        if (!$player->role->isRole(Role::WITCH)) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: You have to be a bodyguard to guard.", $channel);
+                       $client->send(":warning: You have to be a witch to heal.", $channel);
                    });
-            throw new Exception("Only bodyguard can guard.");
+            throw new Exception("Only witch can heal.");
         }
 
-        if ($this->game->getGuardedUserId() !== null) {
+        // Witch should have poison potion
+        if ($this->game->getWitchHealingPotion() <= 0) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: You have already guarded.", $channel);
+                       $client->send(":warning: You have used your healing potion.", $channel);
                    });
-            throw new Exception("You have already guarded.");
+            throw new Exception("Witch healing potion is 0.");
         }
 
-        if ($this->game->getLastGuardedUserId() == $this->args[1]) {
+        if ($this->args[1] == 'noone') {
+          $this->game->setWitchHealed(true);
+          $client->getChannelGroupOrDMByID($this->channel)
+                   ->then(function (ChannelInterface $channel) use ($client) {
+                       $client->send(":warning: You have chosen not to heal anyone tonight.", $channel);
+                   });
+          $this->gameManager->changeGameState($this->game->getId(), GameState::DAY);
+          return true;
+        }
+
+        // Person player is voting for should be targetted by wolves
+        $votes = $this->game->getVotes();
+
+        if (count($votes) <= 0) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: You cant guard the same player as last night.", $channel);
+                       $client->send(":warning: Wolves have not killed anyone yet.", $channel);
                    });
-            throw new Exception("You cant guard the same player as last night");
+            throw new Exception("Wolves have not chosen target.");
+        }
+        else {
+          $found_target = false;
+          foreach ($votes as $kill_target_id => $voters) {
+            if ($this->args[1] == $kill_target_id) {
+              $found_target = true;
+              break;
+            }
+          }
+          if (!$found_target) {
+            $client->getChannelGroupOrDMByID($this->channel)
+                   ->then(function (ChannelInterface $channel) use ($client) {
+                       $client->send(":warning: Wolves did not kill that person tonight.", $channel);
+                   });
+            throw new Exception("Wolves chosen target not healing target.");
+          }
         }
 
-        $this->game->setGuardedUserId($this->args[1]);
+        $this->game->setWitchHealingPotion(0);
+        $this->game->setWitchHealedUserId($this->args[1]);
+        $this->game->setWitchHealed(true);
 
         $client->getChannelGroupOrDMByID($this->channel)
                ->then(function (ChannelInterface $channel) use ($client) {
-                   $client->send("Guarding successful.", $channel);
+                   $client->send("Healing successful.", $channel);
                });
 
         $this->gameManager->changeGameState($this->game->getId(), GameState::DAY);

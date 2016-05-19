@@ -4,7 +4,9 @@ use Slackwolf\Game\Roles\Tanner;
 use Slackwolf\Game\Roles\Lycan;
 use Slackwolf\Game\Roles\Beholder;
 use Slackwolf\Game\Roles\Bodyguard;
+use Slackwolf\Game\Roles\Witch;
 use Slackwolf\Game\Roles\WolfMan;
+
 class Role
 {
 	public function appearsAsWerewolf() {
@@ -34,9 +36,10 @@ class Role
     const TANNER = "Tanner";
     const LYCAN = "Lycan";
     const BEHOLDER = "Beholder";
+    const WITCH = "Witch";
     const WOLFMAN = "Wolf Man";
 
     public static function getSpecialRoles() {
-    	return [new Seer(), new Tanner(), new Lycan(), new Beholder(), new Bodyguard(), new WolfMan()];
+    	return [new Seer(), new Tanner(), new Lycan(), new Beholder(), new Bodyguard(), new Witch(), new WolfMan()];
     }
 }

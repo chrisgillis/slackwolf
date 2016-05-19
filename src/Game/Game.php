@@ -5,19 +5,28 @@ use Slackwolf\Game\RoleStrategy\RoleStrategyInterface;
 class Game
 {
     private $id;
-    private $state;
     private $lobbyPlayers = [];
     private $livingPlayers = [];
     private $deadPlayers = [];
     private $originalPlayers = [];
     private $votes = [];
     private $winningTeam;
-    private $seerSeen;
-    private $wolvesVoted;
+
     private $guardedUserId;
     private $lastGuardedUserId;
+    private $witchHealingPotion = 0;
+    private $witchPoisonPotion = 0;
+
+    private $witchHealedUserId;
+    private $witchPoisonedUserId;
     private $roleStrategy;
     private $optionsManager;
+
+    public $state;
+    public $seerSeen;
+    public $wolvesVoted;
+    public $witchHealed;
+    public $witchPoisoned;
 
     /**
      * @param                       $id
@@ -32,17 +41,21 @@ class Game
         $this->state = GameState::LOBBY;
         $this->lobbyPlayers = $users;
     }
-    
+
     public function assignRoles() {
         $players = $this->roleStrategy->assign($this->lobbyPlayers, $this->optionsManager);
 
         foreach ($players as $player) {
             $this->livingPlayers[$player->getId()] = $player;
             $this->originalPlayers[$player->getId()] = $player;
+
+            if ($player->role->isRole(Role::WITCH)) {
+                $this->setWitchHealingPotion(1);
+                $this->setWitchPoisonPotion(1);
+            }
         }
-        
     }
-        
+
     public function getRoleStrategy()
     {
         return $this->roleStrategy;
@@ -63,14 +76,14 @@ class Game
 
     public function addLobbyPlayer($user)
     {
-        if ($this->state == GameState::LOBBY) {            
+        if ($this->state == GameState::LOBBY) {
             $player_id = $user->getId();
             if (! isset($this->lobbyPlayers[$player_id])){
-                $this->lobbyPlayers[$player_id] =$user;                
+                $this->lobbyPlayers[$player_id] =$user;
             }
         }
     }
-        
+
     public function removeLobbyPlayer($player_id)
     {
         unset($this->lobbyPlayers[$player_id]);
@@ -94,9 +107,11 @@ class Game
 
     public function killPlayer($player_id)
     {
-        $player = $this->livingPlayers[$player_id];
-        unset($this->livingPlayers[$player_id]);
-        $this->deadPlayers[$player_id] = $player;
+        if (isset($this->livingPlayers[$player_id])) {
+            $player = $this->livingPlayers[$player_id];
+            unset($this->livingPlayers[$player_id]);
+            $this->deadPlayers[$player_id] = $player;
+        }
     }
 
     /**
@@ -115,7 +130,7 @@ class Game
         $playersofRole = [];
 
         foreach ($this->livingPlayers as $player) {
-            if ($player->role->isRole($roleType)) { 
+            if ($player->role->isRole($roleType)) {
                 $playersofRole[] = $player;
             }
         }
@@ -131,7 +146,7 @@ class Game
         $werewolves = [];
 
         foreach ($this->livingPlayers as $player) {
-            if ($player->role->isWerewolfTeam()) { 
+            if ($player->role->isWerewolfTeam()) {
                 $werewolves[] = $player;
             }
         }
@@ -147,7 +162,7 @@ class Game
         $villagers = [];
 
         foreach ($this->livingPlayers as $player) {
-            if (!$player->role->isWerewolfTeam()) { 
+            if (!$player->role->isWerewolfTeam()) {
                 $villagers[] = $player;
             }
         }
@@ -163,7 +178,7 @@ class Game
         $originalPlayersOfRole = [];
 
         foreach ($this->originalPlayers as $player) {
-            if ($player->role->isRole($roleType)) { 
+            if ($player->role->isRole($roleType)) {
                 $originalPlayersOfRole[] = $player;
             }
         }
@@ -241,7 +256,7 @@ class Game
     }
 
     public function clearPlayerVote($voterId)
-    {        
+    {
         foreach ($this->votes as $voted => $voters)
         {
             foreach ($voters as $voterKey => $voter)
@@ -253,8 +268,8 @@ class Game
                     if (count($this->votes[$voted]) == 0) {
                         unset($this->votes[$voted]);
                     }
-                }                
-            }            
+                }
+            }
         }
     }
 
@@ -321,6 +336,11 @@ class Game
         $this->clearVotes();
         $this->seerSeen = false;
         $this->wolvesVoted = false;
+        $this->witchHealed = false;
+        $this->witchPoisoned = false;
+
+        $this->setWitchHealedUserId(null);
+        $this->setWitchPoisonedUserId(null);
     }
 
     /**
@@ -358,4 +378,57 @@ class Game
     {
         $this->lastGuardedUserId = $id;
     }
+
+    public function getWitchHealingPotion() {
+        return $this->witchHealingPotion;
+    }
+
+    public function setWitchHealingPotion($val) {
+        $this->witchHealingPotion = $val;
+    }
+
+    public function getWitchPoisonPotion() {
+        return $this->witchPoisonPotion;
+    }
+
+    public function setWitchPoisonPotion($val) {
+        $this->witchPoisonPotion = $val;
+    }
+
+    public function getWitchHealed()
+    {
+        return $this->witchHealed;
+    }
+
+    public function setWitchHealed($healed)
+    {
+        $this->witchHealed = $healed;
+    }
+
+    public function getWitchPoisoned()
+    {
+        return $this->witchPoisoned;
+    }
+
+    public function setWitchPoisoned($poisoned)
+    {
+        $this->witchPoisoned = $poisoned;
+    }
+
+    public function getWitchHealedUserId() {
+        return $this->witchHealedUserId;
+    }
+
+    public function setWitchHealedUserId($id) {
+        $this->witchHealedUserId = $id;
+    }
+
+    public function getWitchPoisonedUserId() {
+        return $this->witchPoisonedUserId;
+    }
+
+    public function setWitchPoisonedUserId($id) {
+        $this->witchPoisonedUserId = $id;
+    }
+
 }
