@@ -489,7 +489,7 @@ class GameManager
             }
             else {
 
-                $killMsg = ":skull_and_crossbones: @{$player->getUsername()} ({$player->role->getName()}) was killed during the night.";
+                $killMsg .= " @{$player->getUsername()} ({$player->role->getName()})";
 
                 $game->killPlayer($lynch_id);
                 $hasKilled = true;
@@ -504,7 +504,7 @@ class GameManager
             $poisoned_player = $game->getPlayerById($poisoned_player_id);
             $poisoned_player_role = (string) $poisoned_player->role->getName();
 
-            $killMsg .= " @{$poisoned_player->getUsername()} ( $poisoned_player_role) was killed during the night.";
+            $killMsg .= " @{$poisoned_player->getUsername()} ( $poisoned_player_role)";
 
             $game->killPlayer($poisoned_player_id);
 
