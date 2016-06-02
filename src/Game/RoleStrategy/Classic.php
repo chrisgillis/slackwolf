@@ -78,6 +78,10 @@ class Classic implements RoleStrategyInterface
                 $possibleOptionalRoles[] = new Bodyguard();
                 $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Bodyguard";
             }
+
+            if ($optionsManager->getOptionValue(OptionName::role_wolfman)){
+                $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Wolfman";
+            }
         }
 
         shuffle($possibleOptionalRoles);
