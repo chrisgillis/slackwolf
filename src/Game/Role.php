@@ -32,14 +32,25 @@ class Role
     const VILLAGER = "Villager";
     const SEER = "Seer";
     const WEREWOLF = "Werewolf";
-    const BODYGUARD = "Bodyguard";
-    const TANNER = "Tanner";
-    const LYCAN = "Lycan";
+
     const BEHOLDER = "Beholder";
+    const BODYGUARD = "Bodyguard";
+    const HUNTER = "Hunter";
+    const LYCAN = "Lycan";
+    const TANNER = "Tanner";
     const WITCH = "Witch";
     const WOLFMAN = "Wolf Man";
 
     public static function getSpecialRoles() {
-    	return [new Seer(), new Tanner(), new Lycan(), new Beholder(), new Bodyguard(), new Witch(), new WolfMan()];
+    	return [
+            new Beholder(),
+            new Bodyguard(),
+            new Hunter(),
+            new Lycan(),
+            new Seer(),
+            new Tanner(),
+            new Witch(),
+            new WolfMan()
+        ];
     }
 }

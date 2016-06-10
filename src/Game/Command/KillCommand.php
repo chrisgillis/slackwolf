@@ -139,7 +139,7 @@ class KillCommand extends Command
         // Person should be werewolf
         $player = $this->game->getPlayerById($this->userId);
 
-        if (!$player->role->isWerewolfTeam()) { 
+        if (!$player->role->isWerewolfTeam()) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
                        $client->send(":warning: You have to be a werewolf to kill.", $channel);
@@ -190,7 +190,7 @@ class KillCommand extends Command
 
         $this->game->setWolvesVoted(true);
 
-        // send heal message to witch
+        // send heal message to witch if in game
         $witches = $this->game->getPlayersOfRole(Role::WITCH);
         if (count($witches) > 0) {
             if ($this->game->getWitchHealingPotion() > 0) {
@@ -207,6 +207,20 @@ class KillCommand extends Command
             }
             else {
                 $this->game->setWitchHealed(true);
+            }
+        }
+
+        // send shoot command to hunter if in game
+        $hunters = $this->game->getPlayersOfRole(Role::HUNTER);
+        if (count($hunters) > 0) {
+            foreach($hunters as $player) {
+                $game->setHunterNeedsToShoot(true);
+                $hunter_msg = ":bow_and_arrow: You were just killed.  As a hunter you can take one other player with you to your grave.";
+
+                $client->getDMByUserID($player->getId())
+                        ->then(function(DirectMessageChannel $channel) use ($client,$hunter_msg) {
+                            $client->send($hunter_msg,$channel);
+                        });
             }
         }
 

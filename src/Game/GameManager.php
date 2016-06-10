@@ -111,6 +111,11 @@ class GameManager
             return;
         }
 
+        if ($game->hunterNeedsToShoot) {
+            $this->sendMessageToChannel($game, "Hunter still needs to kill someone.");
+            return;
+        }
+
         if ($game->getState() == GameState::NIGHT && $newGameState == GameState::DAY) {
             $numSeer = $game->getNumRole(Role::SEER);
 
@@ -472,20 +477,16 @@ class GameManager
         $hasHealed = false;
         $hasKilled = false;
         $killMsg = ":skull_and_crossbones: ";
-        $guardedMsg = "";
-        $healedMsg = "";
+
         $wolves_killed_player_name = "";
 
         foreach ($votes as $lynch_id => $voters) {
             $player = $game->getPlayerById($lynch_id);
 
             if ($lynch_id == $game->getGuardedUserId()) {
-                $guardedMsg = ":innocent: Someone was guarded in the night!";
                 $hasGuarded = true;
-
             }
             elseif($lynch_id == $game->getWitchHealedUserId()) {
-                $healedMsg = ":innocent: Someone was healed in the night!";
                 $hasHealed = true;
             }
             else {

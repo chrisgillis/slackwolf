@@ -8,6 +8,7 @@ use Slackwolf\Game\Roles\Tanner;
 use Slackwolf\Game\Roles\Lycan;
 use Slackwolf\Game\Roles\Beholder;
 use Slackwolf\Game\Roles\Bodyguard;
+use Slackwolf\Game\Roles\Hunter;
 use Slackwolf\Game\Roles\Seer;
 use Slackwolf\Game\Roles\Werewolf;
 use Slackwolf\Game\Roles\Witch;
@@ -33,6 +34,7 @@ class Classic implements RoleStrategyInterface
         $num_players = count($players); // 6
         $num_evil = floor($num_players / 3); // 2
         $num_good = $num_players - $num_evil; // 4
+
         $num_seer = $optionsManager->getOptionValue(OptionName::role_seer) ? 1 : 0;
         $num_witch = $optionsManager->getOptionValue(OptionName::role_witch) ? 1 : 0;
 
@@ -57,30 +59,40 @@ class Classic implements RoleStrategyInterface
         $possibleOptionalRoles = [new Villager()];
         $optionalRoleListMsg = "";
         if ($num_players >= $this->minExtraRolesNumPlayers) {
-            if ($optionsManager->getOptionValue(OptionName::role_tanner)){
-                $optionalRoles[Role::TANNER] = 1;
-                $possibleOptionalRoles[] = new Tanner();
-                $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Tanner";
-            }
-            if ($optionsManager->getOptionValue(OptionName::role_lycan)){
-                $optionalRoles[Role::LYCAN] = 1;
-                $possibleOptionalRoles[] = new Lycan();
-                $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Lycan";
-            }
+
             if ($num_seer > 0
                 && $optionsManager->getOptionValue(OptionName::role_beholder)){
                 $optionalRoles[Role::BEHOLDER] = 1;
                 $possibleOptionalRoles[] = new Beholder();
                 $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Beholder";
             }
+
             if ($optionsManager->getOptionValue(OptionName::role_bodyguard)){
                 $optionalRoles[Role::BODYGUARD] = 1;
                 $possibleOptionalRoles[] = new Bodyguard();
                 $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Bodyguard";
             }
 
+            if ($optionsManager->getOptionValue(OptionName::role_hunter)){
+                $optionalRoles[Role::HUNTER] = 1;
+                $possibleOptionalRoles[] = new Hunter();
+                $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Hunter";
+            }
+
+            if ($optionsManager->getOptionValue(OptionName::role_lycan)){
+                $optionalRoles[Role::LYCAN] = 1;
+                $possibleOptionalRoles[] = new Lycan();
+                $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Lycan";
+            }
+
             if ($optionsManager->getOptionValue(OptionName::role_wolfman)){
                 $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Wolfman";
+            }
+
+            if ($optionsManager->getOptionValue(OptionName::role_tanner)){
+                $optionalRoles[Role::TANNER] = 1;
+                $possibleOptionalRoles[] = new Tanner();
+                $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Tanner";
             }
         }
 

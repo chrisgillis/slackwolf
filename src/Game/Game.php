@@ -23,6 +23,7 @@ class Game
     private $optionsManager;
 
     public $state;
+    public $hunterNeedsToShoot;
     public $seerSeen;
     public $wolvesVoted;
     public $witchHealed;
@@ -334,6 +335,7 @@ class Game
     public function changeState($state) {
         $this->state = $state;
         $this->clearVotes();
+        $this->hunterNeedsToShoot = false;
         $this->seerSeen = false;
         $this->wolvesVoted = false;
         $this->witchHealed = false;
@@ -341,6 +343,13 @@ class Game
 
         $this->setWitchHealedUserId(null);
         $this->setWitchPoisonedUserId(null);
+    }
+
+    /**
+     * @param bool $val
+     */
+    public function setHunterNeedsToShoot($val) {
+        $this->hunterNeedsToShoot = $val;
     }
 
     /**

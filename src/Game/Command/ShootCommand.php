@@ -14,7 +14,7 @@ use Slackwolf\Game\Role;
 use Slackwolf\Game\OptionManager;
 use Slackwolf\Game\OptionName;
 
-class PoisonCommand extends Command
+class ShootCommand extends Command
 {
     /**
      * @var Game
@@ -25,14 +25,10 @@ class PoisonCommand extends Command
     {
         $client = $this->client;
 
-        if ($this->channel[0] != 'D') {
-            throw new Exception("You may only !poison privately.");
-        }
-
         if (count($this->args) < 2) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: Invalid command. Usage: !poison #channel @user", $channel);
+                       $client->send(":warning: Invalid command. Usage: !shoot #channel @user", $channel);
                    });
             throw new InvalidArgumentException("Not enough arguments");
         }
@@ -103,71 +99,62 @@ class PoisonCommand extends Command
     {
         $client = $this->client;
 
-        if ($this->game->getState() != GameState::NIGHT) {
-            $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: You can only poison at night.", $channel);
-                   });
-            throw new Exception("Poison occurs only during the night.");
-        }
-
-        // Person should be witch
+        // Person should be hunter
         $player = $this->game->getPlayerById($this->userId);
 
-        if (!$player->role->isRole(Role::WITCH)) {
+        if (!$player->role->isRole(Role::HUNTER)) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: You have to be a witch to poison.", $channel);
+                       $client->send(":warning: You have to be a hunter to shoot.", $channel);
                    });
-            throw new Exception("Only witch can poison.");
+            throw new Exception("Only hunter can shoot.");
         }
 
-        // Voter should be alive
-        if ( ! $this->game->isPlayerAlive($this->userId)) {
+        // Hunter should be dead to shoot
+        if ( $this->game->isPlayerAlive($this->userId)) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: You aren't alive in the specified channel.", $channel);
+                       $client->send(":warning: You can only shoot someone when dying.", $channel);
                    });
-            throw new Exception("Can't poison if dead.");
-        }
-
-        // Witch should have poison potion
-        if ($this->game->getWitchPoisonPotion() <= 0) {
-            $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: You have used your poison potion.", $channel);
-                   });
-            throw new Exception("Witch poison potion is 0.");
+            throw new Exception("Can't shoot if alive.");
         }
 
         if ($this->args[1] == 'noone') {
-          $this->game->setWitchPoisoned(true);
           $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: You have chosen not to poison anyone tonight.", $channel);
-                   });
-          $this->gameManager->changeGameState($this->game->getId(), GameState::DAY);
-          return true;
+            ->then(function (ChannelInterface $channel) use ($client) {
+               $client->send(":bow_and_arrow: " . $player->getUsername() .
+                  " (Hunter) decided not to shoot anyone, and died.", $channel);
+            });
         }
+        else {
 
-        // Person player is voting for should also be alive
-        if ( ! $this->game->isPlayerAlive($this->args[1])) {
-            $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: Could not find that player.", $channel);
-                   });
-            throw new Exception("Voted player not found in game.");
-        }
+          $targeted_player_id = $this->args[1];
 
-        $this->game->setWitchPoisonPotion(0);
-        $this->game->setWitchPoisonedUserId($this->args[1]);
-        $this->game->setWitchPoisoned(true);
+          // Person player is shooting should be alive
+          if ( ! $this->game->isPlayerAlive($targeted_player_id)) {
+              $client->getChannelGroupOrDMByID($this->channel)
+                     ->then(function (ChannelInterface $channel) use ($client) {
+                         $client->send(":warning: Player is not in game or dead.", $channel);
+                     });
+              throw new Exception("Voted player not found in game.");
+          }
 
-        $client->getChannelGroupOrDMByID($this->channel)
+          $targeted_player = $game->getPlayerById($targeted_player_id);
+          $game->killPlayer($targeted_player_id);
+          $game->setHunterNeedsToShoot(false);
+
+          $client->getChannelGroupOrDMByID($this->channel)
                ->then(function (ChannelInterface $channel) use ($client) {
-                   $client->send("Poisoning successful.", $channel);
+                   $client->send(":bow_and_arrow: " . $player->getUsername() . " (Hunter) shot dead "
+                      . $targeted_player->getUsername() . ", and then died.", $channel);
                });
+        }
 
-        $this->gameManager->changeGameState($this->game->getId(), GameState::DAY);
+        if ($this->game->getState() == GameState::NIGHT) {
+          $this->gameManager->changeGameState($this->game->getId(), GameState::DAY);
+        }
+        else {
+          $this->gameManager->changeGameState($this->game->getId(), GameState::NIGHT);
+        }
     }
 }
