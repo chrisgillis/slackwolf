@@ -37,6 +37,7 @@ class Classic implements RoleStrategyInterface
 
         $num_seer = $optionsManager->getOptionValue(OptionName::role_seer) ? 1 : 0;
         $num_witch = $optionsManager->getOptionValue(OptionName::role_witch) ? 1 : 0;
+        $num_hunter = $optionsManager->getOptionValue(OptionName::role_hunter) ? 1 : 0;
 
         $requiredRoles = [
             Role::SEER => $num_seer,
@@ -48,12 +49,18 @@ class Classic implements RoleStrategyInterface
             $requiredRoles[Role::WITCH] = 1;
         }
 
+        // hunter role on
+        if ($optionsManager->getOptionValue(OptionName::role_hunter)){
+            $requiredRoles[Role::HUNTER] = 1;
+        }
+
         $optionalRoles = [
-            Role::VILLAGER => max($num_good - $num_seer + $num_witch, 0)
+            Role::VILLAGER => max($num_good - $num_seer + $num_witch + $num_hunter, 0)
         ];
 
         $this->roleListMsg = "Required: [".($num_seer > 0 ? "Seer, " : "").
             ($num_witch > 0 ? "Witch, " : "").
+            ($num_hunter > 0 ? "Hunter, " : "").
             "Werewolf, Villager]";
 
         $possibleOptionalRoles = [new Villager()];
@@ -71,12 +78,6 @@ class Classic implements RoleStrategyInterface
                 $optionalRoles[Role::BODYGUARD] = 1;
                 $possibleOptionalRoles[] = new Bodyguard();
                 $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Bodyguard";
-            }
-
-            if ($optionsManager->getOptionValue(OptionName::role_hunter)){
-                $optionalRoles[Role::HUNTER] = 1;
-                $possibleOptionalRoles[] = new Hunter();
-                $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Hunter";
             }
 
             if ($optionsManager->getOptionValue(OptionName::role_lycan)){
@@ -113,6 +114,8 @@ class Classic implements RoleStrategyInterface
                         $rolePool[] = new Werewolf();
                     if($role == Role::WITCH)
                         $rolePool[] = new Witch();
+                    if($role == Role::HUNTER)
+                        $rolePool[] = new Hunter();
                 }
             }
         }
