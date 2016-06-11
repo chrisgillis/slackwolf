@@ -505,7 +505,7 @@ class GameManager
             $poisoned_player_role = (string) $poisoned_player->role->getName();
             
             if ($numKilled == 1) {
-                $killMsg .= " and"
+                $killMsg .= " and";
             }
             
             $killMsg .= " @{$poisoned_player->getUsername()} ($poisoned_player_role)";
