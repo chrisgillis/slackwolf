@@ -139,13 +139,13 @@ class ShootCommand extends Command
               throw new Exception("Voted player not found in game.");
           }
 
-          $targeted_player = $game->getPlayerById($targeted_player_id);
-          $game->killPlayer($targeted_player_id);
-          $game->setHunterNeedsToShoot(false);
+          $targeted_player = $this->game->getPlayerById($targeted_player_id);
+          $this->game->killPlayer($targeted_player_id);
+          $this->game->setHunterNeedsToShoot(false);
 
           $client->getChannelGroupOrDMByID($this->channel)
                ->then(function (ChannelInterface $channel) use ($client) {
-                   $client->send(":bow_and_arrow: " . $player->getUsername() . " (Hunter) shot dead "
+                   $client->send(":bow_and_arrow: " . $targeted_player->getUsername() . " (Hunter) shot dead "
                       . $targeted_player->getUsername() . ", and then died.", $channel);
                });
         }

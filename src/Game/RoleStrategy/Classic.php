@@ -18,7 +18,7 @@ class Classic implements RoleStrategyInterface
 {
 
     private $roleListMsg;
-    private $minExtraRolesNumPlayers = 5;
+    private $minExtraRolesNumPlayers = 4;
 
     /**
      * @return string
@@ -31,9 +31,9 @@ class Classic implements RoleStrategyInterface
 
     public function assign(array $players, $optionsManager)
     {
-        $num_players = count($players); // 6
-        $num_evil = floor($num_players / 3); // 2
-        $num_good = $num_players - $num_evil; // 4
+        $num_players = count($players);
+        $num_evil = floor($num_players / 3);
+        $num_good = $num_players - $num_evil;
 
         $num_seer = $optionsManager->getOptionValue(OptionName::role_seer) ? 1 : 0;
         $num_witch = $optionsManager->getOptionValue(OptionName::role_witch) ? 1 : 0;

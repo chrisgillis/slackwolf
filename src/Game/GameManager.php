@@ -315,9 +315,11 @@ class GameManager
         }
 
         $lynchMsg = "\r\n";
-        if (count($players_to_be_lynched) == 0){
+        $hunterMsg = "\r\n";
+
+        if (count($players_to_be_lynched) == 0) {
             $lynchMsg .= ":peace_symbol: The townsfolk decided not to lynch anybody today.";
-        }else {
+        } else {
             $lynchMsg .= ":newspaper: With pitchforks in hand, the townsfolk killed: ";
 
             $lynchedNames = [];
@@ -325,11 +327,21 @@ class GameManager
                 $player = $game->getPlayerById($player_id);
                 $lynchedNames[] = "@{$player->getUsername()} ({$player->role->getName()})";
                 $game->killPlayer($player_id);
+
+                if ($player->role->isRole(ROLE::HUNTER)) {
+                    $game->setHunterNeedsToShoot(true);
+                    $hunterMsg .= ":bow_and_arrow: " . $player->getUsername() .
+                        " as hunter you may shoot one person.  Type !shoot #channel @playername.";
+                }
             }
 
             $lynchMsg .= implode(', ', $lynchedNames). "\r\n";
         }
         $this->sendMessageToChannel($game,$lynchMsg);
+
+        if ($game->hunterNeedsToShoot) {
+            $this->sendMessageToChannel($game, $hunterMsg);
+        }
 
         $this->changeGameState($game->getId(), GameState::NIGHT);
     }

@@ -215,7 +215,7 @@ class KillCommand extends Command
         if (count($hunters) > 0) {
             foreach($hunters as $player) {
                 $game->setHunterNeedsToShoot(true);
-                $hunter_msg = ":bow_and_arrow: You were just killed.  As a hunter you can take one other player with you to your grave.";
+                $hunter_msg = ":bow_and_arrow: You were just killed.  As a hunter you can take one other player with you to your grave.  Type !shoot #channel @playername.";
 
                 $client->getDMByUserID($player->getId())
                         ->then(function(DirectMessageChannel $channel) use ($client,$hunter_msg) {
