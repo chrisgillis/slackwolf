@@ -18,9 +18,10 @@ require __DIR__.'/vendor/autoload.php';
 /*
 * Load dotenv to be able to access .env configuration variables
 */
-$dotenv = new Dotenv(__DIR__);
-$dotenv->load();
-
+if (file_exists(__DIR__ . '/.env')) {
+    $dotenv = new Dotenv(__DIR__);
+    $dotenv->load();
+}
 error_reporting(E_ALL);
 
 /*

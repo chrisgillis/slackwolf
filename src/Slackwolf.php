@@ -51,7 +51,7 @@ class Slackwolf
          */
         $commandBindings = [
             'help'      => HelpCommand::class,
-            'option' => SetOptionCommand::class,
+            'option'    => SetOptionCommand::class,
             'new'       => NewCommand::class,
             'join'      => JoinCommand::class,
             'leave'     => LeaveCommand::class,

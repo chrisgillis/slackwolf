@@ -98,7 +98,7 @@ class GameManager
                });
     }
 
-    public function changeGameState($gameId, $newGameState, $skipNightEnd=false)
+    public function changeGameState($gameId, $newGameState)
     {
         $game = $this->getGame($gameId);
 
@@ -116,10 +116,10 @@ class GameManager
             return;
         }
 
-        if ($game->getState() == GameState::NIGHT && $newGameState == GameState::DAY) {
+        // changing from night to day
+        if ($game->getState() == GameState::NIGHT && $newGameState == GameState::DAY && !$game->nightEnded) {
+
             $numSeer = $game->getNumRole(Role::SEER);
-
-
             if ($numSeer && ! $game->seerSeen()) {
                 return;
             }
@@ -145,18 +145,16 @@ class GameManager
                 return;
             }
 
-            if (!$skipNightEnd) {
-                $this->onNightEnd($game);
+            $this->onNightEnd($game);
+
+            if ($game->hunterNeedsToShoot) {
+                return;
             }
 
             if ($game->isOver()) {
                 $this->onGameOver($game);
                 return;
             }
-        }
-
-        if ($game->hunterNeedsToShoot) {
-            return;
         }
 
         $game->changeState($newGameState);
@@ -337,7 +335,7 @@ class GameManager
                 if ($player->role->isRole(ROLE::HUNTER)) {
                     $game->setHunterNeedsToShoot(true);
                     $hunterMsg .= ":bow_and_arrow: " . $player->getUsername() .
-                        " as hunter you may shoot one person.  Type !shoot #channel @playername.";
+                        " as hunter you may shoot one person.  Type !shoot @playername, or !shoot noone.";
                 }
             }
 
@@ -546,6 +544,12 @@ class GameManager
             $hasKilled = true;
             $numKilled++;
             $game->setWitchPoisonedUserId(null);
+
+            // if killed player was hunter
+            if ($poisoned_player->role->isRole(ROLE::HUNTER)) {
+                $hunterKilled = true;
+                $hunterName = $poisoned_player_name;
+            }
         }
 
         $game->setLastGuardedUserId($game->getGuardedUserId());
@@ -558,7 +562,7 @@ class GameManager
             if ($hunterKilled) {
 
                 $game->setHunterNeedsToShoot(true);
-                $hunterMsg = ":bow_and_arrow: " . $hunterName . " you were killed during the night.  As a hunter you can take one other player with you to your grave.  Type !shoot #channel @playername.";
+                $hunterMsg = ":bow_and_arrow: " . $hunterName . " you were killed during the night.  As a hunter you can take one other player with you to your grave.  Type !shoot @playername, or !shoot noone.";
                 $this->sendMessageToChannel($game, $hunterMsg);
             }
         }
@@ -566,6 +570,8 @@ class GameManager
         if ($numKilled == 0) {
             $this->sendMessageToChannel($game, "There was no deaths in the night!");
         }
+
+        $game->setNightEnded(true);
     }
 
     private function onGameOver(Game $game)

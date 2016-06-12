@@ -1,11 +1,14 @@
 <?php namespace Slackwolf\Game;
-use Slackwolf\Game\Roles\Seer;
-use Slackwolf\Game\Roles\Tanner;
-use Slackwolf\Game\Roles\Lycan;
+
 use Slackwolf\Game\Roles\Beholder;
 use Slackwolf\Game\Roles\Bodyguard;
+use Slackwolf\Game\Roles\Hunter;
+use Slackwolf\Game\Roles\Lycan;
+use Slackwolf\Game\Roles\Seer;
+use Slackwolf\Game\Roles\Tanner;
 use Slackwolf\Game\Roles\Witch;
 use Slackwolf\Game\Roles\WolfMan;
+
 
 class Role
 {

@@ -24,75 +24,23 @@ class ShootCommand extends Command
     public function init()
     {
         $client = $this->client;
-
-        if (count($this->args) < 2) {
-            $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: Invalid command. Usage: !shoot #channel @user", $channel);
-                   });
-            throw new InvalidArgumentException("Not enough arguments");
-        }
-
-        $client = $this->client;
-
-        $channelId   = null;
-        $channelName = "";
-
-        if (strpos($this->args[0], '#C') !== false) {
-            $channelId = ChannelIdFormatter::format($this->args[0]);
-        } else {
-            if (strpos($this->args[0], '#') !== false) {
-                $channelName = substr($this->args[0], 1);
-            } else {
-                $channelName = $this->args[0];
-            }
-        }
-
-        if ($channelId != null) {
-            $this->client->getChannelById($channelId)
-                         ->then(
-                             function (ChannelInterface $channel) use (&$channelId) {
-                                 $channelId = $channel->getId();
-                             },
-                             function (Exception $e) {
-                                 // Do nothing
-                             }
-                         );
-        }
-
-        if ($channelId == null) {
-            $this->client->getGroupByName($channelName)
-                         ->then(
-                             function (ChannelInterface $channel) use (&$channelId) {
-                                 $channelId = $channel->getId();
-                             },
-                             function (Exception $e) {
-                                 // Do nothing
-                             }
-                         );
-        }
-
-        if ($channelId == null) {
-            $this->client->getDMById($this->channel)
-                         ->then(
-                             function (DirectMessageChannel $dmc) use ($client) {
-                                 $this->client->send(":warning: Invalid channel specified. Usage: !poison #channel @user", $dmc);
-                             }
-                         );
-            throw new InvalidArgumentException();
-        }
-
-        $this->game = $this->gameManager->getGame($channelId);
+        $this->game = $this->gameManager->getGame($this->channel);
 
         if ( ! $this->game) {
-            $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: No game in progress.", $channel);
-                   });
             throw new Exception("No game in progress.");
         }
 
-        $this->args[1] = UserIdFormatter::format($this->args[1], $this->game->getOriginalPlayers());
+        if ($this->channel[0] == 'D') {
+            $this->gameManager->sendMessageToChannel($this->game, "Please !shoot in the public channel.");
+            throw new Exception("You may not !shoot privately.");
+        }
+
+        if (count($this->args) < 1) {
+          $this->gameManager->sendMessageToChannel($this->game, "Please target a player using !shoot @player");
+          throw new InvalidArgumentException("Must specify a player");
+        }
+
+        $this->args[0] = UserIdFormatter::format($this->args[0], $this->game->getOriginalPlayers());
     }
 
     public function fire()
@@ -102,40 +50,32 @@ class ShootCommand extends Command
         // Person should be hunter
         $player = $this->game->getPlayerById($this->userId);
 
-        if (!$player->role->isRole(Role::HUNTER)) {
-            $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: You have to be a hunter to shoot.", $channel);
-                   });
+        if (!$player->role || !$player->role->isRole(Role::HUNTER)) {
+            $this->gameManager->sendMessageToChannel($this->game, ":warning: Invalid !shoot command.");
             throw new Exception("Only hunter can shoot.");
         }
 
         // Hunter should be dead to shoot
         if ( $this->game->isPlayerAlive($this->userId)) {
-            $client->getChannelGroupOrDMByID($this->channel)
-                   ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: You can only shoot someone when dying.", $channel);
-                   });
+            $this->gameManager->sendMessageToChannel($this->game, ":warning: Invalid !shoot command.");
             throw new Exception("Can't shoot if alive.");
         }
 
-        if ($this->args[1] == 'noone') {
-          $client->getChannelGroupOrDMByID($this->channel)
-            ->then(function (ChannelInterface $channel) use ($client) {
-               $client->send(":bow_and_arrow: " . $player->getUsername() .
-                  " (Hunter) decided not to shoot anyone, and died.", $channel);
-            });
+        if ($this->args[0] == 'noone') {
+            $this->game->setHunterNeedsToShoot(false);
+            $this->gameManager->sendMessageToChannel($this->game,
+              ":bow_and_arrow: " . $player->getUsername() .
+                  " (Hunter) decided not to shoot anyone, and died.");
         }
         else {
 
-          $targeted_player_id = $this->args[1];
+          $targeted_player_id = $this->args[0];
 
           // Person player is shooting should be alive
           if ( ! $this->game->isPlayerAlive($targeted_player_id)) {
-              $client->getChannelGroupOrDMByID($this->channel)
-                     ->then(function (ChannelInterface $channel) use ($client) {
-                         $client->send(":warning: Player is not in game or dead.", $channel);
-                     });
+              $this->gameManager->sendMessageToChannel($this->game,
+                ":warning: Targetted player is not in game or dead.");
+
               throw new Exception("Voted player not found in game.");
           }
 
@@ -143,19 +83,17 @@ class ShootCommand extends Command
           $this->game->killPlayer($targeted_player_id);
           $this->game->setHunterNeedsToShoot(false);
 
-          $client->getChannelGroupOrDMByID($this->channel)
-               ->then(function (ChannelInterface $channel) use ($client, $player, $targeted_player) {
-                   $client->send(":bow_and_arrow: " . $player->getUsername() . " (Hunter) shot dead "
-                      . $targeted_player->getUsername() . ", and then died.", $channel);
-               });
+          $this->gameManager->sendMessageToChannel($this->game,
+                ":bow_and_arrow: " . $player->getUsername() .
+                " (Hunter) shot dead " . $targeted_player->getUsername() .
+                " (" . $targeted_player->role->getName() . "), and then died.");
         }
 
         if ($this->game->getState() == GameState::DAY) {
           $this->gameManager->changeGameState($this->game->getId(), GameState::NIGHT);
         }
         else {
-          $skipNightEnd = true;
-          $this->gameManager->changeGameState($this->game->getId(), GameState::DAY, $skipNightEnd);
+          $this->gameManager->changeGameState($this->game->getId(), GameState::DAY);
         }
     }
 }
