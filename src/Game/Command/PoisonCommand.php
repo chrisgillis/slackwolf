@@ -144,7 +144,7 @@ class PoisonCommand extends Command
           $this->game->setWitchPoisoned(true);
           $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
-                       $client->send(":warning: You have chosen not to poison anyone tonight.", $channel);
+                       $client->send(":wine_glass: You have chosen not to poison anyone tonight.", $channel);
                    });
           $this->gameManager->changeGameState($this->game->getId(), GameState::DAY);
           return true;

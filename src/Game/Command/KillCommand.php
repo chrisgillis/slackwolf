@@ -210,20 +210,6 @@ class KillCommand extends Command
             }
         }
 
-        // send shoot command to hunter if in game
-        $hunters = $this->game->getPlayersOfRole(Role::HUNTER);
-        if (count($hunters) > 0) {
-            foreach($hunters as $player) {
-                $game->setHunterNeedsToShoot(true);
-                $hunter_msg = ":bow_and_arrow: You were just killed.  As a hunter you can take one other player with you to your grave.  Type !shoot #channel @playername.";
-
-                $client->getDMByUserID($player->getId())
-                        ->then(function(DirectMessageChannel $channel) use ($client,$hunter_msg) {
-                            $client->send($hunter_msg,$channel);
-                        });
-            }
-        }
-
         $this->gameManager->changeGameState($this->game->getId(), GameState::DAY);
     }
 }

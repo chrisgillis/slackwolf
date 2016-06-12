@@ -488,6 +488,9 @@ class GameManager
         $hasGuarded = false;
         $hasHealed = false;
         $hasKilled = false;
+        $hunterKilled = false;
+
+        $hunterName = "";
         $killMsg = ":skull_and_crossbones: ";
 
         $wolves_killed_player_name = "";
@@ -505,6 +508,11 @@ class GameManager
 
                 $wolves_killed_player_name = $player->getUsername();
                 $killMsg = ":skull_and_crossbones: $wolves_killed_player_name ({$player->role->getName()}) was killed during the night.";
+
+                if ($player->role->isRole(ROLE::HUNTER)) {
+                    $hunterKilled = true;
+                    $hunterName = $wolves_killed_player_name;
+                }
 
                 $game->killPlayer($lynch_id);
                 $hasKilled = true;
@@ -539,6 +547,14 @@ class GameManager
 
         if ($hasKilled) {
             $this->sendMessageToChannel($game, $killMsg);
+
+            // send shoot command to hunter if in game
+            if ($hunterKilled) {
+
+                $game->setHunterNeedsToShoot(true);
+                $hunterMsg = ":bow_and_arrow: " . $hunterName . " you were killed during the night.  As a hunter you can take one other player with you to your grave.  Type !shoot #channel @playername.";
+                $this->sendMessageToChannel($game, $hunterMsg);
+            }
         }
 
         if ($numKilled == 0) {
