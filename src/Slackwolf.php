@@ -12,6 +12,7 @@ use Slackwolf\Game\Command\HelpCommand;
 use Slackwolf\Game\Command\KillCommand;
 use Slackwolf\Game\Command\PoisonCommand;
 use Slackwolf\Game\Command\SeeCommand;
+use Slackwolf\Game\Command\ShootCommand;
 use Slackwolf\Game\Command\NewCommand;
 use Slackwolf\Game\Command\JoinCommand;
 use Slackwolf\Game\Command\LeaveCommand;
@@ -50,7 +51,7 @@ class Slackwolf
          */
         $commandBindings = [
             'help'      => HelpCommand::class,
-            'option' => SetOptionCommand::class,
+            'option'    => SetOptionCommand::class,
             'new'       => NewCommand::class,
             'join'      => JoinCommand::class,
             'leave'     => LeaveCommand::class,
@@ -62,6 +63,7 @@ class Slackwolf
             'poison'    => PoisonCommand::class,
             'guard'     => GuardCommand::class,
             'heal'      => HealCommand::class,
+            'shoot'     => ShootCommand::class,
             'alive'     => AliveCommand::class,
             'dead'      => DeadCommand::class,
             'status'    => StatusCommand::class,

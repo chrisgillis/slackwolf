@@ -139,7 +139,7 @@ class KillCommand extends Command
         // Person should be werewolf
         $player = $this->game->getPlayerById($this->userId);
 
-        if (!$player->role->isWerewolfTeam()) { 
+        if (!$player->role->isWerewolfTeam()) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
                        $client->send(":warning: You have to be a werewolf to kill.", $channel);
@@ -190,7 +190,7 @@ class KillCommand extends Command
 
         $this->game->setWolvesVoted(true);
 
-        // send heal message to witch
+        // send heal message to witch if in game
         $witches = $this->game->getPlayersOfRole(Role::WITCH);
         if (count($witches) > 0) {
             if ($this->game->getWitchHealingPotion() > 0) {

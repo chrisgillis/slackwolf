@@ -38,6 +38,7 @@ class HelpCommand extends Command
         $help_msg .= "|_  !poison #channel @user1 - Witch only. During night time, the witch can choose to use her poison potion to kill a target player once per game.\r\n";
         $help_msg .= "|_  !heal #channel @user1 - Witch only. During night time, the witch can choose to use her healing potion to revive a targeted player once per game.\r\n";
         $help_msg .= "|_  !guard #channel @user1 - Bodyguard only. The bodyguard can protect a player from being eliminated once each night. Cant select the same user two nights in a row.\r\n";
+        $help_msg .= "|_  !shoot @user1 - Hunter only. The hunter can shoot and kill another player if they are killed during day or night.\r\n";
         $help_msg .= "|_  !end - Cause the game to end prematurely\r\n";
         $help_msg .= "|_  !option - View or change options.  Use without any parameters for help and current values.\r\n";
         $help_msg .= "|_  !dead - Show dead players\r\n";

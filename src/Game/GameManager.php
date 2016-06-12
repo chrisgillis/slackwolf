@@ -111,10 +111,15 @@ class GameManager
             return;
         }
 
-        if ($game->getState() == GameState::NIGHT && $newGameState == GameState::DAY) {
+        if ($game->hunterNeedsToShoot) {
+            $this->sendMessageToChannel($game, "Hunter still needs to kill someone.");
+            return;
+        }
+
+        // changing from night to day
+        if ($game->getState() == GameState::NIGHT && $newGameState == GameState::DAY && !$game->nightEnded) {
+
             $numSeer = $game->getNumRole(Role::SEER);
-
-
             if ($numSeer && ! $game->seerSeen()) {
                 return;
             }
@@ -141,6 +146,10 @@ class GameManager
             }
 
             $this->onNightEnd($game);
+
+            if ($game->hunterNeedsToShoot) {
+                return;
+            }
 
             if ($game->isOver()) {
                 $this->onGameOver($game);
@@ -310,9 +319,11 @@ class GameManager
         }
 
         $lynchMsg = "\r\n";
-        if (count($players_to_be_lynched) == 0){
+        $hunterMsg = "\r\n";
+
+        if (count($players_to_be_lynched) == 0) {
             $lynchMsg .= ":peace_symbol: The townsfolk decided not to lynch anybody today.";
-        }else {
+        } else {
             $lynchMsg .= ":newspaper: With pitchforks in hand, the townsfolk killed: ";
 
             $lynchedNames = [];
@@ -320,11 +331,21 @@ class GameManager
                 $player = $game->getPlayerById($player_id);
                 $lynchedNames[] = "@{$player->getUsername()} ({$player->role->getName()})";
                 $game->killPlayer($player_id);
+
+                if ($player->role->isRole(ROLE::HUNTER)) {
+                    $game->setHunterNeedsToShoot(true);
+                    $hunterMsg .= ":bow_and_arrow: " . $player->getUsername() .
+                        " as hunter you may shoot one person.  Type !shoot @playername, or !shoot noone.";
+                }
             }
 
             $lynchMsg .= implode(', ', $lynchedNames). "\r\n";
         }
         $this->sendMessageToChannel($game,$lynchMsg);
+
+        if ($game->hunterNeedsToShoot) {
+            $this->sendMessageToChannel($game, $hunterMsg);
+        }
 
         $this->changeGameState($game->getId(), GameState::NIGHT);
     }
@@ -471,27 +492,31 @@ class GameManager
         $hasGuarded = false;
         $hasHealed = false;
         $hasKilled = false;
+        $hunterKilled = false;
+
+        $hunterName = "";
         $killMsg = ":skull_and_crossbones: ";
-        $guardedMsg = "";
-        $healedMsg = "";
+
         $wolves_killed_player_name = "";
 
         foreach ($votes as $lynch_id => $voters) {
             $player = $game->getPlayerById($lynch_id);
 
             if ($lynch_id == $game->getGuardedUserId()) {
-                $guardedMsg = ":innocent: Someone was guarded in the night!";
                 $hasGuarded = true;
-
             }
             elseif($lynch_id == $game->getWitchHealedUserId()) {
-                $healedMsg = ":innocent: Someone was healed in the night!";
                 $hasHealed = true;
             }
             else {
 
                 $wolves_killed_player_name = $player->getUsername();
                 $killMsg = ":skull_and_crossbones: $wolves_killed_player_name ({$player->role->getName()}) was killed during the night.";
+
+                if ($player->role->isRole(ROLE::HUNTER)) {
+                    $hunterKilled = true;
+                    $hunterName = $wolves_killed_player_name;
+                }
 
                 $game->killPlayer($lynch_id);
                 $hasKilled = true;
@@ -519,6 +544,12 @@ class GameManager
             $hasKilled = true;
             $numKilled++;
             $game->setWitchPoisonedUserId(null);
+
+            // if killed player was hunter
+            if ($poisoned_player->role->isRole(ROLE::HUNTER)) {
+                $hunterKilled = true;
+                $hunterName = $poisoned_player_name;
+            }
         }
 
         $game->setLastGuardedUserId($game->getGuardedUserId());
@@ -526,11 +557,21 @@ class GameManager
 
         if ($hasKilled) {
             $this->sendMessageToChannel($game, $killMsg);
+
+            // send shoot command to hunter if in game
+            if ($hunterKilled) {
+
+                $game->setHunterNeedsToShoot(true);
+                $hunterMsg = ":bow_and_arrow: " . $hunterName . " you were killed during the night.  As a hunter you can take one other player with you to your grave.  Type !shoot @playername, or !shoot noone.";
+                $this->sendMessageToChannel($game, $hunterMsg);
+            }
         }
 
         if ($numKilled == 0) {
             $this->sendMessageToChannel($game, "There was no deaths in the night!");
         }
+
+        $game->setNightEnded(true);
     }
 
     private function onGameOver(Game $game)

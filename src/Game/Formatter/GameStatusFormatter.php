@@ -11,6 +11,12 @@ class GameStatusFormatter
     {
         $msg = ":memo: Game Status\r\n--------------------------------------------------------------\r\n";
 
+        if ($game->hunterNeedsToShoot) {
+            $msg .= ":bow_and_arrow: Waiting on Hunter to kill someone";
+            $msg .= "\r\n--------------------------------------------------------------\r\n";
+            return $msg;
+        }
+
         switch($game->state) {
 
             case GameState::DAY:
