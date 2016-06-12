@@ -497,8 +497,6 @@ class GameManager
         $hunterName = "";
         $killMsg = ":skull_and_crossbones: ";
 
-        $wolves_killed_player_name = "";
-
         foreach ($votes as $lynch_id => $voters) {
             $player = $game->getPlayerById($lynch_id);
 
@@ -510,12 +508,11 @@ class GameManager
             }
             else {
 
-                $wolves_killed_player_name = $player->getUsername();
-                $killMsg = ":skull_and_crossbones: $wolves_killed_player_name ({$player->role->getName()}) was killed during the night.";
+                $killMsg .= " @{$player->getUsername()} ({$player->role->getName()})";
 
                 if ($player->role->isRole(ROLE::HUNTER)) {
                     $hunterKilled = true;
-                    $hunterName = $wolves_killed_player_name;
+                    $hunterName = $player->getUsername();
                 }
 
                 $game->killPlayer($lynch_id);
@@ -532,15 +529,13 @@ class GameManager
             $poisoned_player_name = $poisoned_player->getUsername();
             $poisoned_player_role = (string) $poisoned_player->role->getName();
 
-            if ($numKilled == 0) {
-                $killMsg = "$poisoned_player_name ( $poisoned_player_role) was killed during the night.";
+            if ($numKilled > 0) {
+                $killMsg .= " and";
             }
-            elseif($poisoned_player_name != $wolves_killed_player_name) {
-                $killMsg .= "  $poisoned_player_name ( $poisoned_player_role) was killed during the night.";
-            }
+
+            $killMsg .= " @{$poisoned_player->getUsername()} ($poisoned_player_role)";
 
             $game->killPlayer($poisoned_player_id);
-
             $hasKilled = true;
             $numKilled++;
             $game->setWitchPoisonedUserId(null);
@@ -551,6 +546,12 @@ class GameManager
                 $hunterName = $poisoned_player_name;
             }
         }
+
+        $wasOrWere = "was";
+        if ($numKilled > 1) {
+            $wasOrWere = "were";
+        }
+        $killMsg .= " $wasOrWere killed during the night.";
 
         $game->setLastGuardedUserId($game->getGuardedUserId());
         $game->setGuardedUserId(null);
