@@ -335,7 +335,6 @@ class Game
     public function changeState($state) {
         $this->state = $state;
         $this->clearVotes();
-        $this->hunterNeedsToShoot = false;
         $this->seerSeen = false;
         $this->wolvesVoted = false;
         $this->witchHealed = false;

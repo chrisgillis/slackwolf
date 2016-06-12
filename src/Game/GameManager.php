@@ -98,7 +98,7 @@ class GameManager
                });
     }
 
-    public function changeGameState($gameId, $newGameState)
+    public function changeGameState($gameId, $newGameState, $skipNightEnd=false)
     {
         $game = $this->getGame($gameId);
 
@@ -145,12 +145,18 @@ class GameManager
                 return;
             }
 
-            $this->onNightEnd($game);
+            if (!$skipNightEnd) {
+                $this->onNightEnd($game);
+            }
 
             if ($game->isOver()) {
                 $this->onGameOver($game);
                 return;
             }
+        }
+
+        if ($game->hunterNeedsToShoot) {
+            return;
         }
 
         $game->changeState($newGameState);

@@ -150,11 +150,12 @@ class ShootCommand extends Command
                });
         }
 
-        if ($this->game->getState() == GameState::NIGHT) {
-          $this->gameManager->changeGameState($this->game->getId(), GameState::DAY);
+        if ($this->game->getState() == GameState::DAY) {
+          $this->gameManager->changeGameState($this->game->getId(), GameState::NIGHT);
         }
         else {
-          $this->gameManager->changeGameState($this->game->getId(), GameState::NIGHT);
+          $skipNightEnd = true;
+          $this->gameManager->changeGameState($this->game->getId(), GameState::DAY, $skipNightEnd);
         }
     }
 }
