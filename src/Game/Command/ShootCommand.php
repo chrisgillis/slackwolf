@@ -30,6 +30,11 @@ class ShootCommand extends Command
             throw new Exception("No game in progress.");
         }
 
+        if (!$this->game->hunterNeedsToShoot) {
+          $this->gameManager->sendMessageToChannel($this->game, ":warning: Invalid !shoot command.");
+          throw new Exception("Hunter cant shoot yet.");
+        }
+
         if ($this->channel[0] == 'D') {
             $this->gameManager->sendMessageToChannel($this->game, "Please !shoot in the public channel.");
             throw new Exception("You may not !shoot privately.");

@@ -147,12 +147,12 @@ class GameManager
 
             $this->onNightEnd($game);
 
-            if ($game->hunterNeedsToShoot) {
+            if ($game->isOver()) {
+                $this->onGameOver($game);
                 return;
             }
 
-            if ($game->isOver()) {
-                $this->onGameOver($game);
+            if ($game->hunterNeedsToShoot) {
                 return;
             }
         }
