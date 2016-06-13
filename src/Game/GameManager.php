@@ -273,6 +273,10 @@ class GameManager
             return;
         }
 
+        if ($game->dayEnded) {
+            return;
+        }
+
         if ($game->hasPlayerVoted($voterId)) {
             //If changeVote is not enabled and player has already voted, do not allow another vote
             if (!$this->optionsManager->getOptionValue(OptionName::changevote))
@@ -347,6 +351,7 @@ class GameManager
             $this->sendMessageToChannel($game, $hunterMsg);
         }
 
+        $game->setDayEnded(true);
         $this->changeGameState($game->getId(), GameState::NIGHT);
     }
 
@@ -395,7 +400,7 @@ class GameManager
         $msg .= "Possible Roles: {$game->getRoleStrategy()->getRoleListMsg()}\r\n\r\n";
 
         if ($this->optionsManager->getOptionValue(OptionName::role_seer)) {
-            $msg .= ":crescent_moon: :zzz: It is the middle of the night and the village is sleeping.";
+            $msg .= ":moon: :zzz: It is the middle of the night and the village is sleeping.";
             $msg .= " The game will begin when the Seer chooses someone.";
         }
         $this->sendMessageToChannel($game, $msg);
@@ -427,12 +432,12 @@ class GameManager
     private function onNight(Game $game)
     {
         $client = $this->client;
-        $nightMsg = ":crescent_moon: :zzz: The sun sets and the villagers go to sleep.";
+        $nightMsg = ":moon: :zzz: The sun sets and the villagers go to sleep.";
         $this->sendMessageToChannel($game, $nightMsg);
 
         $wolves = $game->getWerewolves();
 
-        $wolfMsg = ":crescent_moon: It is night and it is time to hunt. Type !kill #channel @player to make your choice. ";
+        $wolfMsg = ":moon: It is night and it is time to hunt. Type !kill #channel @player to make your choice. ";
 
         foreach ($wolves as $wolf)
         {
@@ -442,7 +447,7 @@ class GameManager
                   });
         }
 
-        $seerMsg = ":mag_right: Seer, select a player by saying !see #channel @username.";
+        $seerMsg = ":crystal_ball: Seer, select a player by saying !see #channel @username.";
 
         $seers = $game->getPlayersOfRole(Role::SEER);
 
@@ -454,7 +459,7 @@ class GameManager
                  });
         }
 
-        $bodyGuardMsg = ":muscle: Bodyguard, you may guard someone once per night. That player cannot be eliminated. Type !guard #channel @user";
+        $bodyGuardMsg = ":shield: Bodyguard, you may guard someone once per night. That player cannot be eliminated. Type !guard #channel @user";
 
         $bodyguards = $game->getPlayersOfRole(Role::BODYGUARD);
 
@@ -468,7 +473,7 @@ class GameManager
         $witches = $game->getPlayersOfRole(Role::WITCH);
 
         if (count($witches) > 0) {
-            $witch_msg = ":wine_glass:  You may poison someone once for the entire game.  Type \"!poison #channel @user\" to poison someone \r\nor \"!poison #channel noone\" to do nothing.  \r\Night will not end until you make a decision.";
+            $witch_msg = ":wine_glass:  You may poison someone once for the entire game.  Type \"!poison #channel @user\" to poison someone \r\nor \"!poison #channel noone\" to do nothing.  \r\n:warning: Night will not end until you make a decision.";
 
             if ($game->getWitchPoisonPotion() > 0) {
                 foreach ($witches as $witch) {

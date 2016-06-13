@@ -7,7 +7,7 @@ class KillFormatter
 {
     public static function format(Game $game)
     {
-        $msg = ":memo: Werewolf Kill Vote\r\n-----------------------------------------\r\n";
+        $msg = ":memo: Werewolf Kill Vote\r\n- - - - - - - - - - - - - - - - - - - - - - - -\r\n";
 
         foreach ($game->getVotes() as $voteForId => $voters)
         {
@@ -28,7 +28,7 @@ class KillFormatter
             $msg .= implode(', ', $voterNames) . "\r\n";
         }
 
-        $msg .= "\r\n--------------------------------------------------------------\r\n:hourglass: Remaining Voters: ";
+        $msg .= "\r\n- - - - - - - - - - - - - - - - - - - - - - - -\r\n:hourglass: Remaining Voters: ";
 
         $playerNames = [];
 
@@ -45,7 +45,7 @@ class KillFormatter
             $msg .= "None";
         }
 
-        $msg .= "\r\n--------------------------------------------------------------\r\n";
+        $msg .= "\r\n- - - - - - - - - - - - - - - - - - - - - - - -\r\n";
 
         return $msg;
     }

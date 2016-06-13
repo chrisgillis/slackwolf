@@ -9,11 +9,11 @@ class GameStatusFormatter
 {
     public static function format(Game $game)
     {
-        $msg = ":memo: Game Status\r\n--------------------------------------------------------------\r\n";
+        $msg = ":memo: Game Status\r\n- - - - - - - - - - - - - - - - - - - - - - - -\r\n";
 
         if ($game->hunterNeedsToShoot) {
-            $msg .= ":bow_and_arrow: Waiting on Hunter to kill someone";
-            $msg .= "\r\n--------------------------------------------------------------\r\n";
+            $msg .= "_...waiting on the_ :bow_and_arrow: Hunter";
+            $msg .= "\r\n- - - - - - - - - - - - - - - - - - - - - - - -\r\n";
             return $msg;
         }
 
@@ -28,27 +28,27 @@ class GameStatusFormatter
 
             case GameState::FIRST_NIGHT:
             case GameState::NIGHT:
-                $msg .= ":crescent_moon:  The night lingers on ... \r\n \r\n";
+                $msg .= ":moon:  The night lingers on ... \r\n \r\n";
 
                 $numSeer = $game->getNumRole(Role::SEER);
                 $numBodyguard = $game->getNumRole(Role::BODYGUARD);
                 $numWitch = $game->getNumRole(Role::WITCH);
 
                 if ($numSeer > 0 && !$game->seerSeen) {
-                    $msg .= " - Waiting on Seer\r\n";
+                    $msg .= "_...waiting on the_ :crystal_ball: *Seer*\r\n";
                 }
 
                 if ($game->state == GameState::NIGHT) {
                     if (!$game->wolvesVoted) {
-                        $msg .= " - Waiting on Wolves\r\n";
+                        $msg .= "_...waiting on the_ :wolf:  *Wolves*\r\n";
                     }
 
                     if ($numWitch > 0 && (!$game->witchPoisoned || !$game->witchHealed)) {
-                        $msg .= " - Waiting on Witch\r\n";
+                        $msg .= "_...waiting on the_ :older_woman::skin-tone-3: *Witch*\r\n";
                     }
 
                     if ($numBodyguard > 0 && !$game->getGuardedUserId()) {
-                        $msg .= " - Waiting on Bodyguard\r\n";
+                        $msg .= "_...waiting on the_ :shield: *Bodyguard*\r\n";
                     }
                 }
                 break;
@@ -56,8 +56,6 @@ class GameStatusFormatter
             default:
                 $msg .= "No Game Running\n";
         }
-
-        $msg .= "\r\n--------------------------------------------------------------\r\n";
 
         return $msg;
     }
