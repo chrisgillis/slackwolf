@@ -23,6 +23,9 @@ class Game
     private $optionsManager;
 
     public $state;
+    public $dayEnded;
+    public $nightEnded;
+    public $hunterNeedsToShoot;
     public $seerSeen;
     public $wolvesVoted;
     public $witchHealed;
@@ -339,8 +342,31 @@ class Game
         $this->witchHealed = false;
         $this->witchPoisoned = false;
 
+        $this->setDayEnded(false);
+        $this->setNightEnded(false);
         $this->setWitchHealedUserId(null);
         $this->setWitchPoisonedUserId(null);
+    }
+
+    /**
+     * @param bool $val
+     */
+    public function setDayEnded($val) {
+        $this->dayEnded = $val;
+    }
+
+    /**
+     * @param bool $val
+     */
+    public function setNightEnded($val) {
+        $this->nightEnded = $val;
+    }
+
+    /**
+     * @param bool $val
+     */
+    public function setHunterNeedsToShoot($val) {
+        $this->hunterNeedsToShoot = $val;
     }
 
     /**

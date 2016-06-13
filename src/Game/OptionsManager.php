@@ -7,11 +7,13 @@ class OptionName
     const changevote = 'changevote';
     const no_lynch = 'no_lynch';
     const mods = 'mods';
-    const role_seer = 'role_seer';
-    const role_tanner = 'role_tanner';
-    const role_lycan = 'role_lycan';
+
     const role_beholder = 'role_beholder';
     const role_bodyguard = 'role_bodyguard';
+    const role_hunter = "role_hunter";
+    const role_lycan = 'role_lycan';
+    const role_seer = 'role_seer';
+    const role_tanner = 'role_tanner';
     const role_witch = 'role_witch';
     const role_wolfman = 'role_wolfman';
 }
@@ -56,14 +58,14 @@ class OptionsManager
     {
         $this->options[] = new Option(OptionName::changevote, OptionType::Bool, "on", "When enabled votes can be changed until the final vote is cast.");
         $this->options[] = new Option(OptionName::no_lynch, OptionType::Bool, "on", "When enabled townsfolk can vote not to lynch anybody.");
-        $this->options[] = new Option(OptionName::role_seer, OptionType::Bool, "on", "Use Seer role in random games.");
-        $this->options[] = new Option(OptionName::role_tanner, OptionType::Bool, "on", "Use Tanner role in random games.");
-        $this->options[] = new Option(OptionName::role_lycan, OptionType::Bool, "on", "Use Lycan role in random games.");
         $this->options[] = new Option(OptionName::role_beholder, OptionType::Bool, "on", "Use Beholder role in random games.");
         $this->options[] = new Option(OptionName::role_bodyguard, OptionType::Bool, "on", "Use Bodyguard role in random games.");
+        $this->options[] = new Option(OptionName::role_hunter, OptionType::Bool, "on", "Use Hunter role in random games.");
+        $this->options[] = new Option(OptionName::role_lycan, OptionType::Bool, "on", "Use Lycan role in random games.");
+        $this->options[] = new Option(OptionName::role_seer, OptionType::Bool, "on", "Use Seer role in random games.");
+        $this->options[] = new Option(OptionName::role_tanner, OptionType::Bool, "on", "Use Tanner role in random games.");
         $this->options[] = new Option(OptionName::role_witch, OptionType::Bool, "on", "Use Witch role in random games.");
         $this->options[] = new Option(OptionName::role_wolfman, OptionType::Bool, "on", "Use Wolf Man role in random games.");
-
 
         $this->loadOptions();
     }
