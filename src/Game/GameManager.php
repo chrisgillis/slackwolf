@@ -112,7 +112,7 @@ class GameManager
         }
 
         if ($game->hunterNeedsToShoot) {
-            $this->sendMessageToChannel($game, "Hunter still needs to kill someone.");
+            $this->sendMessageToChannel($game, "It is still night, and the Hunter still needs to kill someone.");
             return;
         }
 
@@ -571,7 +571,7 @@ class GameManager
             if ($hunterKilled) {
 
                 $game->setHunterNeedsToShoot(true);
-                $hunterMsg = ":bow_and_arrow: " . $hunterName . " you were killed during the night.  As a hunter you can take one other player with you to your grave.  Type !shoot @playername, or !shoot noone.";
+                $hunterMsg = ":bow_and_arrow: " . $hunterName . " you were killed.  The night isn't over, though, because as a hunter you can take one other player with you to your grave.  Type !shoot @playername, or !shoot noone.";
                 $this->sendMessageToChannel($game, $hunterMsg);
             }
         }
