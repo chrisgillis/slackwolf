@@ -327,7 +327,10 @@ class GameManager
 
         if (count($players_to_be_lynched) == 0) {
             $lynchMsg .= ":peace_symbol: The townsfolk decided not to lynch anybody today.";
-        } else {
+        } elseif (count($players_to_be_lynched) > 1) {
+            $lynchMsg .= ":peace_symbol: The townsfolk couldn't agree on who to lynch, so nobody is hung today.";
+         }
+         else {
             $lynchMsg .= ":newspaper: With pitchforks in hand, the townsfolk killed: ";
 
             $lynchedNames = [];
