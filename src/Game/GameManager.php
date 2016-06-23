@@ -398,12 +398,12 @@ class GameManager
         $playerList = PlayerListFormatter::format($game->getLivingPlayers());
         $roleList = RoleListFormatter::format($game->getLivingPlayers());
 
-        $msg = ":wolf: A new game of Werewolf is starting! For a tutorial, type !help.\r\n\r\n";
+        $msg = ":wolf: It is raining, and a new game of Werewolf is starting! For a tutorial, type !help.\r\n\r\n";
         $msg .= "Players: {$playerList}\r\n";
         $msg .= "Possible Roles: {$game->getRoleStrategy()->getRoleListMsg()}\r\n\r\n";
 
         if ($this->optionsManager->getOptionValue(OptionName::role_seer)) {
-            $msg .= ":moon: :zzz: It is the middle of the night and the village is sleeping.";
+            $msg .= ":moon: :rain_cloud: The rain comes down in torrents as the village sleeps, unaware of the horror the lurks outside in the wet. It is the middle of the night.";
             $msg .= " The game will begin when the Seer chooses someone.";
         }
         $this->sendMessageToChannel($game, $msg);
@@ -417,7 +417,7 @@ class GameManager
     {
         $remainingPlayers = PlayerListFormatter::format($game->getLivingPlayers());
 
-        $dayBreakMsg = ":sunrise: The sun rises and the villagers awake.\r\n";
+        $dayBreakMsg = ":sunrise: The sun rises and the villagers awake. It is still raining, but it slows somewhat, allowing momentary respite from the cold, wet hell that we all live in.\r\n";
         $dayBreakMsg .= "Remaining Players: {$remainingPlayers}\r\n\r\n";
         $dayBreakMsg .= "Villagers, find the Werewolves! Type !vote @username to vote to lynch a player.";
         if ($this->optionsManager->getOptionValue(OptionName::changevote))
@@ -435,7 +435,7 @@ class GameManager
     private function onNight(Game $game)
     {
         $client = $this->client;
-        $nightMsg = ":moon: :zzz: The sun sets and the villagers go to sleep.";
+        $nightMsg = ":moon: :zzz: The sun sets, and the hard rain makes it difficult to hear anything outside. Villagers bar their doors, take long pulls of :beer:, and try not to think of what might lurk beyond the feable candlelight. ";
         $this->sendMessageToChannel($game, $nightMsg);
 
         $wolves = $game->getWerewolves();
@@ -462,7 +462,7 @@ class GameManager
                  });
         }
 
-        $bodyGuardMsg = ":shield: Bodyguard, you may guard someone once per night. That player cannot be eliminated. Type !guard #channel @user";
+        $bodyGuardMsg = ":shield: Bodyguard, you may guard someone once per with your grizzled ex-lawman skills. That player cannot be eliminated. Type !guard #channel @user";
 
         $bodyguards = $game->getPlayersOfRole(Role::BODYGUARD);
 
