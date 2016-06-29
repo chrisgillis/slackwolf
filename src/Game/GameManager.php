@@ -106,13 +106,18 @@ class GameManager
             throw new Exception();
         }
 
-        if ($game->isOver()) {
-            $this->onGameOver($game);
+        if ($game->hunterNeedsToShoot) {
+            $this->sendMessageToChannel($game, "Hunter still needs to kill someone.");
             return;
         }
 
         if ($game->hunterNeedsToShoot) {
             $this->sendMessageToChannel($game, "It is still night, and the Hunter still needs to kill someone.");
+            return;
+        }
+
+        if ($game->isOver()) {
+            $this->onGameOver($game);
             return;
         }
 
