@@ -20,6 +20,7 @@ use Slackwolf\Game\Command\StartCommand;
 use Slackwolf\Game\Command\VoteCommand;
 use Slackwolf\Game\Command\SetOptionCommand;
 use Slackwolf\Game\Command\StatusCommand;
+use Slackwolf\Game\Command\WeatherCommand;
 use Slackwolf\Game\GameManager;
 use Slackwolf\Message\Message;
 
@@ -67,6 +68,7 @@ class Slackwolf
             'alive'     => AliveCommand::class,
             'dead'      => DeadCommand::class,
             'status'    => StatusCommand::class,
+            'weather'   => WeatherCommand::class,
         ];
 
         /*
