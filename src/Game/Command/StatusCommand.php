@@ -26,7 +26,7 @@ class StatusCommand extends Command
         if ( ! $this->gameManager->hasGame($this->channel)) {
             $client->getChannelGroupOrDMByID($this->channel)
                ->then(function (ChannelInterface $channel) use ($client) {
-                   $client->send(":warning: Run command this in the game channel.", $channel);
+                   $client->send(":warning: Run this command in the game channel.", $channel);
                });
             return;
         }
