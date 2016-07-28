@@ -15,7 +15,7 @@ class HelpCommand extends Command
         $help_msg .= "Werewolf is a party game of social deduction. Players are private messaged their role when the game begins. ";
         $help_msg .= "If you are a Villager, you must find out who the werewolves are based on their voting and your social deduction skills. ";
         $help_msg .= "if you are a Werewolf, you must pretend you are not a werewolf by lying as best as you can.\r\n";
-        $help_msg .= "The game takes place over several Days and Nights. Each Day all players vote on a player to lynch. The player with the most votes is lynched. If there is a tie, the tied players are lynched. ";
+        $help_msg .= "The game takes place over several Days and Nights. Each Day all players vote on a player to lynch. The player with the most votes is lynched. If there is a tie, nobody is lynched. ";
         $help_msg .= "Each night, the werewolves will be allowed to vote privately on one player to kill. The decision must be unanimous. If its not, you'll keep voting until it is. The bot will private message you.\r\n";
         $help_msg .= "The villagers win if they eliminate all the werewolves. The werewolves win if they equal or outnumber the remaining players.\r\n\r\n";
         $help_msg .= "Special Roles\r\n------------------------\r\n";
