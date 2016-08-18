@@ -63,27 +63,19 @@ class GameManager
     {
         $input = $message->getText();
 
-        if ( ! is_string($input)) {
-            return false;
+        if (!is_string($input) || !isset($input[0]) || $input[0] !== '!') {
+            return FALSE;
         }
 
-        if ( ! isset($input[0])) {
-            return false;
-        }
-
-        if ($input[0] !== '!') {
-            return false;
-        }
-
+        // Example: [!kill, #channel, @name]
         $input_array = explode(' ', $input);
 
-        $command = $input_array[0];
+        // Remove "!" from first element of array and set to lowercase.
+        $command = strtolower(substr($input_array[0], 1));
 
         if (strlen($command) < 2) {
             return false;
         }
-
-        $command = substr($command, 1);
 
         $args = [];
 
@@ -99,8 +91,6 @@ class GameManager
         if ($command == null) {
             return false;
         }
-
-        $command = strtolower($command);
 
         if ( ! isset($this->commandBindings[$command])) {
             return false;
