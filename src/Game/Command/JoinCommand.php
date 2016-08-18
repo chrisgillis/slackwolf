@@ -41,13 +41,16 @@ class JoinCommand extends Command
             })
             ->then(function (array $users) use ($userId, $game) {
                 foreach($users as $key => $user) {
-                    if ($user->getId() == $userId) {
-                        $game->addLobbyPlayer($user);
+                    /* @var $user \Slack\User */
+                    if ($user->getId() == $this->userId) {
+                        if ($this->game->addLobbyPlayer($user)) {
+                            $playersList = PlayerListFormatter::format($this->game->getLobbyPlayers());
+                            $this->gameManager->sendMessageToChannel($this->game, "Current lobby: " . $playersList);
+                        } else {
+                            $this->gameManager->sendMessageToChannel($this->game, "You've already joined, " . $user->getFirstName() . ". Stop trying to spam everyone.");
+                        }
                     }
                 }
             });
-            
-        $playersList = PlayerListFormatter::format($this->game->getLobbyPlayers());
-        $this->gameManager->sendMessageToChannel($this->game, "Current lobby: ".$playersList);
     }
 }
