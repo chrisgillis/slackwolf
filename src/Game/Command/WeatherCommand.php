@@ -6,6 +6,9 @@ use Slack\ChannelInterface;
 use Slackwolf\Game\Formatter\GameStatusFormatter;
 use Slackwolf\Game\Game;
 
+/**
+ * Defines the WeatherCommand class.
+ */
 class WeatherCommand extends Command
 {
 
@@ -19,6 +22,9 @@ class WeatherCommand extends Command
         $this->game = $this->gameManager->getGame($this->channel);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fire()
     {
         $client = $this->client;

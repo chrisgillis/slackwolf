@@ -7,6 +7,9 @@ use Slackwolf\Game\GameState;
 use Slackwolf\Game\Formatter\PlayerListFormatter;
 use Slackwolf\Game\Formatter\UserIdFormatter;
 
+/**
+ * Defines the JoinCommand class.
+ */
 class JoinCommand extends Command
 {
     public function init()
@@ -26,6 +29,9 @@ class JoinCommand extends Command
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fire()
     {
         $userId = $this->userId;

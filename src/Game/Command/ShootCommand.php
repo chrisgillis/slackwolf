@@ -14,6 +14,9 @@ use Slackwolf\Game\Role;
 use Slackwolf\Game\OptionManager;
 use Slackwolf\Game\OptionName;
 
+/**
+ * Defines the ShootCommand class.
+ */
 class ShootCommand extends Command
 {
     /**
@@ -48,6 +51,9 @@ class ShootCommand extends Command
         $this->args[0] = UserIdFormatter::format($this->args[0], $this->game->getOriginalPlayers());
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fire()
     {
         $client = $this->client;

@@ -6,6 +6,11 @@ use Slack\ChannelInterface;
 use Slackwolf\Game\Formatter\PlayerListFormatter;
 use Slackwolf\Game\Game;
 
+/**
+ * Defines the AliveCommand class.
+ *
+ * @package Slackwolf\Game\Command
+ */
 class AliveCommand extends Command
 {
 
@@ -19,6 +24,9 @@ class AliveCommand extends Command
         $this->game = $this->gameManager->getGame($this->channel);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fire()
     {
         $client = $this->client;
