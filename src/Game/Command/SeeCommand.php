@@ -16,10 +16,6 @@ use Zend\Loader\Exception\InvalidArgumentException;
  */
 class SeeCommand extends Command
 {
-    /**
-     * @var Game
-     */
-    private $game;
 
     /**
      * @var string
@@ -97,7 +93,6 @@ class SeeCommand extends Command
             throw new InvalidArgumentException();
         }
 
-        $this->game   = $this->gameManager->getGame($channelId);
         $this->gameId = $channelId;
 
         if (!$this->game) {

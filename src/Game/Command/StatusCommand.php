@@ -13,16 +13,6 @@ class StatusCommand extends Command
 {
 
     /**
-     * @var Game
-     */
-    private $game;
-
-    public function init()
-    {
-        $this->game = $this->gameManager->getGame($this->channel);
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function fire()

@@ -39,6 +39,11 @@ abstract class Command
     protected $args;
 
     /**
+     * @var \Slackwolf\Game\Game $game
+     */
+    protected $game;
+
+    /**
      * Command constructor.
      *
      * @param RealTimeClient $client
@@ -60,6 +65,7 @@ abstract class Command
         $this->userId = $message->getUser();
         $this->channel = $message->getChannel();
         $this->args = $args;
+        $this->game = $this->gameManager->getGame($this->channel);
 
         $this->init();
 

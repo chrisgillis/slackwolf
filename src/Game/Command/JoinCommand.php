@@ -17,8 +17,6 @@ class JoinCommand extends Command
         if ($this->channel[0] == 'D') {
             throw new Exception("Can't join a game lobby by direct message.");
         }
-        
-        $this->game = $this->gameManager->getGame($this->channel);
 
         if ( ! $this->game) {
             throw new Exception("No game in progress.");

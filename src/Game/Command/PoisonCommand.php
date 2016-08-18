@@ -19,10 +19,6 @@ use Slackwolf\Game\OptionName;
  */
 class PoisonCommand extends Command
 {
-    /**
-     * @var Game
-     */
-    private $game;
 
     public function init()
     {
@@ -88,8 +84,6 @@ class PoisonCommand extends Command
                          );
             throw new InvalidArgumentException();
         }
-
-        $this->game = $this->gameManager->getGame($channelId);
 
         if ( ! $this->game) {
             $client->getChannelGroupOrDMByID($this->channel)

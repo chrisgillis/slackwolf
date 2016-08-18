@@ -11,15 +11,12 @@ use Slackwolf\Game\Formatter\PlayerListFormatter;
  */
 class LeaveCommand extends Command
 {
-    private $game;
 
     public function init()
     {
         if ($this->channel[0] == 'D') {
             throw new Exception("Can't leave a game or lobby by direct message.");
         }
-
-        $this->game = $this->gameManager->getGame($this->channel);
 
         if ( ! $this->game) {
             throw new Exception("No game in progress.");

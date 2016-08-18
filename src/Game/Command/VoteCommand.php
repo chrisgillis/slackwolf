@@ -10,7 +10,6 @@ use Zend\Loader\Exception\InvalidArgumentException;
  */
 class VoteCommand extends Command
 {
-    private $game;
 
     public function init()
     {
@@ -21,8 +20,6 @@ class VoteCommand extends Command
         if (count($this->args) < 1) {
             throw new InvalidArgumentException("Must specify a player");
         }
-
-        $this->game = $this->gameManager->getGame($this->channel);
 
         if ( ! $this->game) {
             throw new Exception("No game in progress.");

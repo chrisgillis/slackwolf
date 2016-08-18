@@ -19,15 +19,10 @@ use Slackwolf\Game\OptionName;
  */
 class ShootCommand extends Command
 {
-    /**
-     * @var Game
-     */
-    private $game;
 
     public function init()
     {
         $client = $this->client;
-        $this->game = $this->gameManager->getGame($this->channel);
 
         if ( ! $this->game) {
             throw new Exception("No game in progress.");
