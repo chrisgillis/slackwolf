@@ -27,8 +27,11 @@ class GameManager
      *
      * @var array
      */
-    private $games = [];
+    private $games;
 
+    /**
+     * @var array
+     */
     private $commandBindings;
 
     /**
@@ -52,6 +55,8 @@ class GameManager
         $this->commandBindings = $commandBindings;
         $this->client = $client;
         $this->optionsManager = new OptionsManager();
+
+        $this->games = [];
     }
 
     /**
