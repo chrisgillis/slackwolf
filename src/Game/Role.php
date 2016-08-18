@@ -12,22 +12,47 @@ use Slackwolf\Game\Roles\WolfMan;
 
 class Role
 {
+
+    /**
+     * @return bool
+     */
 	public function appearsAsWerewolf() {
 		return false;
 	}
 
+    /**
+     * @return bool
+     */
 	public function isWerewolfTeam() {
 		return false;
 	}
 
+    /**
+     * Returns the name of the current Role.
+     *
+     * @return string
+     */
 	public function getName() {
 		return null;
 	}
 
+    /**
+     * Returns the description of the Role.
+     *
+     * @return string
+     */
 	public function getDescription() {
 		return null;
 	}
 
+    /**
+     * Returns a bool on whether the Role name matches.
+     *
+     * @param $roleName
+     *   The Role name to compare against.
+     *
+     * @return bool
+     */
 	public function isRole($roleName) {
 		return $roleName == $this->getName();
 	}
