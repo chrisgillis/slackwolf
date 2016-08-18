@@ -32,8 +32,6 @@ abstract class Command
 
     }
 
-    public function fire()
-    {
+    public abstract function fire();
 
-    }
 }
