@@ -9,7 +9,11 @@ use Slackwolf\Game\Roles\Tanner;
 use Slackwolf\Game\Roles\Witch;
 use Slackwolf\Game\Roles\WolfMan;
 
-
+/**
+ * Defines the Role class.
+ *
+ * @package Slackwolf\Game
+ */
 class Role
 {
 

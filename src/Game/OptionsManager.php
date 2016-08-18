@@ -30,6 +30,10 @@ class OptionType
 class Option
 {
     public $name = "";
+
+    /**
+     * @var OptionType $optionType
+     */
     public $optionType;
     public $value;
     public $helpText = "";
@@ -54,6 +58,9 @@ class OptionsManager
     /** @var Option[] $options */
     public $options = [];
 
+    /**
+     * OptionsManager constructor.
+     */
     public function __construct()
     {
         $this->options[] = new Option(OptionName::changevote, OptionType::Bool, "on", "When enabled votes can be changed until the final vote is cast.");
@@ -101,6 +108,10 @@ class OptionsManager
         } catch (Exception $e) {}
     }
 
+    /**
+     * @param array $args
+     * @param $doSave
+     */
     public function setOptionValue(array $args, $doSave)
     {
         if (count($args) < 2) { return; } //minimum name/value required
@@ -166,6 +177,10 @@ class OptionsManager
         }
     }
 
+    /**
+     * @param $optionName
+     * @return null
+     */
     public function getOptionValue($optionName)
     {
         /** @var Option $option */
