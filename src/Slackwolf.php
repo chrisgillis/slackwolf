@@ -24,8 +24,17 @@ use Slackwolf\Game\Command\WeatherCommand;
 use Slackwolf\Game\GameManager;
 use Slackwolf\Message\Message;
 
+/**
+ * Defines Slackwolf class.
+ *
+ * @package Slackwolf
+ */
 class Slackwolf
 {
+
+    /**
+     * Slackwolf constructor.
+     */
     public function __construct()
     {
         /*

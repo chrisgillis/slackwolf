@@ -11,28 +11,34 @@ use Slackwolf\Message\Message;
  */
 abstract class Command
 {
+
     /**
      * @var \Slackwolf\SlackRTMClient $client
      */
     protected $client;
+
     /**
      * @var \Slackwolf\Game\GameManager
      */
     protected $gameManager;
+
     /**
      * @var \Slackwolf\Message\Message
      */
     protected $message;
+
     /**
      * @var \Slack\string
      *   The user ID of the command executor, example: "U0H9HHZ8V"
      */
     protected $userId;
+
     /**
      * @var string
      *   The channel ID, example: "D0HJF2J5L".
      */
     protected $channel;
+
     /**
      * @var array
      */

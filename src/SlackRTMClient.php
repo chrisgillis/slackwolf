@@ -19,6 +19,10 @@ use Slack\RealTimeClient;
  */
 class SlackRTMClient extends RealTimeClient
 {
+
+    /**
+     * @param $channelId
+     */
     public function refreshChannel($channelId)
     {
         /** @var Channel $channel */
