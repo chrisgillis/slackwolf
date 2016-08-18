@@ -14,6 +14,11 @@ use Slackwolf\Game\Roles\Werewolf;
 use Slackwolf\Game\Roles\Witch;
 use Slackwolf\Game\Roles\WolfMan;
 
+/**
+ * Defines the Classic class.
+ *
+ * @package Slackwolf\Game\RoleStrategy
+ */
 class Classic implements RoleStrategyInterface
 {
 
@@ -21,7 +26,7 @@ class Classic implements RoleStrategyInterface
     private $minExtraRolesNumPlayers = 4;
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getRoleListMsg()
     {
@@ -29,6 +34,9 @@ class Classic implements RoleStrategyInterface
     }
 
 
+    /**
+     * {@inheritdoc}
+     */
     public function assign(array $players, $optionsManager)
     {
         $num_players = count($players);
