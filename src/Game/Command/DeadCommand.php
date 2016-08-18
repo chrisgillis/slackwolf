@@ -6,6 +6,9 @@ use Slack\ChannelInterface;
 use Slackwolf\Game\Formatter\PlayerListFormatter;
 use Slackwolf\Game\Game;
 
+/**
+ * Defines the DeadCommand class.
+ */
 class DeadCommand extends Command
 {
 
@@ -19,6 +22,10 @@ class DeadCommand extends Command
         $this->game = $this->gameManager->getGame($this->channel);
     }
 
+
+    /**
+     * {@inheritdoc}
+     */
     public function fire()
     {
         $client = $this->client;

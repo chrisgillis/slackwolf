@@ -5,8 +5,15 @@ use Slack\ChannelInterface;
 use Slack\DirectMessageChannel;
 use Slackwolf\Game\Role;
 
+/**
+ * Defines the HelpCommand class.
+ */
 class HelpCommand extends Command
 {
+
+    /**
+     * {@inheritdoc}
+     */
     public function fire()
     {
         $client = $this->client;

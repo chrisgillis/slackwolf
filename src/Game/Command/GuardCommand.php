@@ -11,6 +11,9 @@ use Slackwolf\Game\Game;
 use Slackwolf\Game\GameState;
 use Slackwolf\Game\Role;
 
+/**
+ * Defines the GuardCommand class.
+ */
 class GuardCommand extends Command
 {
     /**
@@ -96,6 +99,9 @@ class GuardCommand extends Command
         $this->args[1] = UserIdFormatter::format($this->args[1], $this->game->getOriginalPlayers());
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fire()
     {
         $client = $this->client;

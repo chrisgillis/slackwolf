@@ -5,6 +5,9 @@ use Slackwolf\Game\Formatter\UserIdFormatter;
 use Slackwolf\Game\GameState;
 use Zend\Loader\Exception\InvalidArgumentException;
 
+/**
+ * Defines the VoteCommand class.
+ */
 class VoteCommand extends Command
 {
     private $game;
@@ -45,6 +48,9 @@ class VoteCommand extends Command
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fire()
     {
         $this->gameManager->vote($this->game, $this->userId, $this->args[0]);
