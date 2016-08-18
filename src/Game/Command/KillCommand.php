@@ -14,6 +14,9 @@ use Slackwolf\Game\Role;
 use Slackwolf\Game\OptionManager;
 use Slackwolf\Game\OptionName;
 
+/**
+ * Defines the KillCommand class.
+ */
 class KillCommand extends Command
 {
     /**
@@ -99,6 +102,9 @@ class KillCommand extends Command
         $this->args[1] = UserIdFormatter::format($this->args[1], $this->game->getOriginalPlayers());
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fire()
     {
         $client = $this->client;

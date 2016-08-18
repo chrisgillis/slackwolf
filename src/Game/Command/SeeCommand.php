@@ -11,6 +11,9 @@ use Slackwolf\Game\GameState;
 use Slackwolf\Game\Role;
 use Zend\Loader\Exception\InvalidArgumentException;
 
+/**
+ * Defines the SeeCommand class.
+ */
 class SeeCommand extends Command
 {
     /**
@@ -158,6 +161,9 @@ class SeeCommand extends Command
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fire()
     {
         $client = $this->client;

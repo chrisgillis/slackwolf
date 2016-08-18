@@ -4,6 +4,9 @@ use Slack\DirectMessageChannel;
 use Slackwolf\Game;
 use Slackwolf\Game\Formatter\OptionFormatter;
 
+/**
+ * Defines the SetOptionCommand class.
+ */
 class SetOptionCommand extends Command
 {
     public function init()
@@ -15,6 +18,9 @@ class SetOptionCommand extends Command
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fire()
     {
         $client = $this->client;

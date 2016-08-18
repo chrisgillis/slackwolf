@@ -7,6 +7,9 @@ use Slackwolf\Game\Formatter\UserIdFormatter;
 use Slackwolf\Game\RoleStrategy;
 use Slackwolf\Game\GameState;
 
+/**
+ * Defines the StartCommand class.
+ */
 class StartCommand extends Command
 {
     public function init()
@@ -16,6 +19,9 @@ class StartCommand extends Command
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fire()
     {
         $client = $this->client;

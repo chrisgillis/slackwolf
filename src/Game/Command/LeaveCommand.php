@@ -6,6 +6,9 @@ use Slack\ChannelInterface;
 use Slackwolf\Game\GameState;
 use Slackwolf\Game\Formatter\PlayerListFormatter;
 
+/**
+ * Defines the LeaveCommand class.
+ */
 class LeaveCommand extends Command
 {
     private $game;
@@ -27,6 +30,9 @@ class LeaveCommand extends Command
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fire()
     {
         $this->game->removeLobbyPlayer($this->userId);
