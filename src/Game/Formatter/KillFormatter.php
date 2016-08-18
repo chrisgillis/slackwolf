@@ -3,8 +3,17 @@
 use Slackwolf\Game\Game;
 use Slackwolf\Game\Role;
 
+/**
+ * Defines the KillFormatter class.
+ */
 class KillFormatter
 {
+
+    /**
+     * @param Game $game
+     *
+     * @return string
+     */
     public static function format(Game $game)
     {
         $msg = ":memo: Werewolf Kill Vote\r\n- - - - - - - - - - - - - - - - - - - - - - - -\r\n";

@@ -5,8 +5,17 @@ use Slackwolf\Game\GameState;
 use Slackwolf\Game\Role;
 use Slackwolf\Game\Formatter\VoteSummaryFormatter;
 
+/**
+ * Defines the GameStatusFormatter class.
+ */
 class GameStatusFormatter
 {
+
+    /**
+     * @param Game $game
+     *
+     * @return string
+     */
     public static function format(Game $game)
     {
         $msg = ":memo: Game Status\r\n- - - - - - - - - - - - - - - - - - - - - - - -\r\n";

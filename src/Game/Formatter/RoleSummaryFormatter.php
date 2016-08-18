@@ -1,5 +1,8 @@
 <?php namespace Slackwolf\Game\Formatter;
 
+/**
+ * Defines the RoleSummaryFormatter class.
+ */
 class RoleSummaryFormatter
 {
     /**

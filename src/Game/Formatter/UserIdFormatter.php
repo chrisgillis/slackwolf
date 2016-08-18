@@ -1,7 +1,17 @@
 <?php namespace Slackwolf\Game\Formatter;
 
+/**
+ * Defines the UserIdFormatter class.
+ */
 class UserIdFormatter
 {
+
+    /**
+     * @param $userId
+     * @param $users
+     *
+     * @return string
+     */
     public static function format($userId, $users)
     {
         $rtn = trim($userId, "<>@\t\n\r\x0B"); //have to use double quotes for escape to work properly

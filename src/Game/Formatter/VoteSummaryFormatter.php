@@ -2,8 +2,17 @@
 
 use Slackwolf\Game\Game;
 
+/**
+ * Defines the VoteSummaryFormatter class.
+ */
 class VoteSummaryFormatter
 {
+
+    /**
+     * @param Game $game
+     *
+     * @return string
+     */
     public static function format(Game $game)
     {
         $msg = ":memo: Town Ballot\r\n

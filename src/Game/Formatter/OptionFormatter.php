@@ -1,15 +1,19 @@
 <?php namespace Slackwolf\Game\Formatter;
 
+use Slackwolf\Game\Option;
 use Slackwolf\Game\OptionType;
 
+/**
+ * Defines the OptionFormatter class.
+ */
 class OptionFormatter
 {
     /**
-     * @param Slackwolf\Game\Option $option
+     * @param Option $option
      *
      * @return string
      */
-    public static function format($option)
+    public static function format(Option $option)
     {        
         $rtn = "|_  ".$option->name." ";
         switch($option->optionType)

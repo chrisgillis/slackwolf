@@ -1,5 +1,8 @@
 <?php namespace Slackwolf\Game\Formatter;
 
+/**
+ * Defines the RoleListFormatter class.
+ */
 class RoleListFormatter
 {
     /**
