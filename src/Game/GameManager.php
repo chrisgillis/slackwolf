@@ -125,11 +125,10 @@ class GameManager
      */
     public function sendMessageToChannel($game, $msg)
     {
-        $client = $this->client;
-        $client->getChannelGroupOrDMByID($game->getId())
-               ->then(function (ChannelInterface $channel) use ($client,$msg) {
-                   $client->send($msg, $channel);
-               });
+        $this->client->getChannelGroupOrDMByID($game->getId())
+            ->then(function (ChannelInterface $channel) use ($msg) {
+                $this->client->send($msg, $channel);
+            });
     }
 
 

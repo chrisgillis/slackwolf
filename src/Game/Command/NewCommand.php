@@ -33,7 +33,7 @@ class NewCommand extends Command
         if ($this->gameManager->hasGame($this->channel)) {
             $this->client->getChannelGroupOrDMByID($this->channel)->then(function (ChannelInterface $channel) use ($client, $gameManager) {
                 $game = $gameManager->getGame($this->channel);
-                if ($game->getState == GameState::LOBBY) {
+                if ($game->getState() == GameState::LOBBY) {
                     $client->send('A game lobby is already open.  Type !join to play the next game.', $channel);
                 }
                 else {

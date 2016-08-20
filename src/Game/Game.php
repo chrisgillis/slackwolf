@@ -107,7 +107,8 @@ class Game
         if ($this->state == GameState::LOBBY) {
             $player_id = $user->getId();
             if (! isset($this->lobbyPlayers[$player_id])){
-                $this->lobbyPlayers[$player_id] =$user;
+                $this->lobbyPlayers[$player_id] = $user;
+                return TRUE;
             }
         }
     }
@@ -123,7 +124,11 @@ class Game
      */
     public function removeLobbyPlayer($player_id)
     {
-        unset($this->lobbyPlayers[$player_id]);
+        if (isset($this->lobbyPlayers[$player_id])) {
+            unset($this->lobbyPlayers[$player_id]);
+            return TRUE;
+        }
+        return FALSE;
     }
 
     /**
