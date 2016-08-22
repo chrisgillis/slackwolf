@@ -14,12 +14,11 @@ use Slackwolf\Game\Role;
 use Slackwolf\Game\OptionManager;
 use Slackwolf\Game\OptionName;
 
+/**
+ * Defines the KillCommand class.
+ */
 class KillCommand extends Command
 {
-    /**
-     * @var Game
-     */
-    private $game;
 
     public function init()
     {
@@ -86,8 +85,6 @@ class KillCommand extends Command
             throw new InvalidArgumentException();
         }
 
-        $this->game = $this->gameManager->getGame($channelId);
-
         if ( ! $this->game) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
@@ -99,6 +96,9 @@ class KillCommand extends Command
         $this->args[1] = UserIdFormatter::format($this->args[1], $this->game->getOriginalPlayers());
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fire()
     {
         $client = $this->client;

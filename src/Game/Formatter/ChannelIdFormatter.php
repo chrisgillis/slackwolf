@@ -1,7 +1,16 @@
 <?php namespace Slackwolf\Game\Formatter;
 
+/**
+ * Defines the ChannelIdFormatter class.
+ */
 class ChannelIdFormatter
 {
+
+    /**
+     * @param $userId
+     *
+     * @return string
+     */
     public static function format($userId)
     {
         $trimmed = trim($userId, "<>#\t\n\r\x0B");

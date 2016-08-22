@@ -5,6 +5,9 @@ use Slack\Channel;
 use Slack\ChannelInterface;
 use Slackwolf\Game\Formatter\PlayerListFormatter;
 
+/**
+ * Defines the EndCommand class.
+ */
 class EndCommand extends Command
 {
     public function init()
@@ -14,6 +17,9 @@ class EndCommand extends Command
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fire()
     {
         $client = $this->client;

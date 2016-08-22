@@ -7,6 +7,9 @@ use Slackwolf\Game\Formatter\UserIdFormatter;
 use Slackwolf\Game\RoleStrategy;
 use Slackwolf\Game\GameState;
 
+/**
+ * Defines the StartCommand class.
+ */
 class StartCommand extends Command
 {
     public function init()
@@ -16,21 +19,21 @@ class StartCommand extends Command
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fire()
     {
         $client = $this->client;
         $gameManager = $this->gameManager;
         $message = $this->message;
-        /** @var Game $game */
-        $game;
-        
+
         $loadPlayers = true;
         // Check to see that a game does not currently exist
         if ($this->gameManager->hasGame($this->channel)) {
-            $game = $this->gameManager->getGame($this->channel);
-            if ($game->getState() == GameState::LOBBY){    
+            if ($this->game->getState() == GameState::LOBBY){
                 $loadPlayers = false;
-                if (count($this->args) > 0 && count($game->getLobbyPlayers(0)) > 0) {
+                if (count($this->args) > 0 && count($this->game->getLobbyPlayers()) > 0) {
                     $this->client->getChannelGroupOrDMByID($this->channel)->then(function (ChannelInterface $channel) use ($client) {
                         $client->send('A game lobby is open, you must !end the current game before starting a new one specifying players.', $channel);
                     });
@@ -63,7 +66,6 @@ class StartCommand extends Command
 
                     try {
                         $gameManager->newGame($message->getChannel(), $users, new RoleStrategy\Classic());
-                        //$game = $gameManager->getGame($message->getChannel());
                     } catch (Exception $e) {
                         $this->client->getChannelGroupOrDMByID($this->channel)->then(function (ChannelInterface $channel) use ($client,$e) {
                             $client->send($e->getMessage(), $channel);

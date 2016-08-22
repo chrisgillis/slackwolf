@@ -7,6 +7,9 @@ use Slackwolf\Game\GameState;
 use Slackwolf\Game\RoleStrategy;
 use Slackwolf\Game\Formatter\PlayerListFormatter;
 
+/**
+ * Defines the NewCommand class.
+ */
 class NewCommand extends Command
 {
     public function init()
@@ -16,6 +19,9 @@ class NewCommand extends Command
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fire()
     {
         $client = $this->client;
@@ -27,7 +33,7 @@ class NewCommand extends Command
         if ($this->gameManager->hasGame($this->channel)) {
             $this->client->getChannelGroupOrDMByID($this->channel)->then(function (ChannelInterface $channel) use ($client, $gameManager) {
                 $game = $gameManager->getGame($this->channel);
-                if ($game->getState == GameState::LOBBY) {
+                if ($game->getState() == GameState::LOBBY) {
                     $client->send('A game lobby is already open.  Type !join to play the next game.', $channel);
                 }
                 else {

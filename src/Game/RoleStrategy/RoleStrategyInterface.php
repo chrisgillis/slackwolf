@@ -1,10 +1,15 @@
 <?php namespace Slackwolf\Game\RoleStrategy;
 
+/**
+ * Defines the RoleStrategy interface.
+ *
+ * @package Slackwolf\Game\RoleStrategy
+ */
 interface RoleStrategyInterface
 {
     /**
-     * @param array \Slack\User[] $users
-     * @param Slackwolf\Game\OptionManager $optionsManager
+     * @param \Slack\User[] $users
+     * @param \Slackwolf\Game\OptionManager $optionsManager
      *
      * @return \Slack\User[]
      */

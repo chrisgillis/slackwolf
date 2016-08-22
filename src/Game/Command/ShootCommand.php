@@ -14,17 +14,15 @@ use Slackwolf\Game\Role;
 use Slackwolf\Game\OptionManager;
 use Slackwolf\Game\OptionName;
 
+/**
+ * Defines the ShootCommand class.
+ */
 class ShootCommand extends Command
 {
-    /**
-     * @var Game
-     */
-    private $game;
 
     public function init()
     {
         $client = $this->client;
-        $this->game = $this->gameManager->getGame($this->channel);
 
         if ( ! $this->game) {
             throw new Exception("No game in progress.");
@@ -48,6 +46,9 @@ class ShootCommand extends Command
         $this->args[0] = UserIdFormatter::format($this->args[0], $this->game->getOriginalPlayers());
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fire()
     {
         $client = $this->client;

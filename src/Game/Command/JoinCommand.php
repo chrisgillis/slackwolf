@@ -7,6 +7,9 @@ use Slackwolf\Game\GameState;
 use Slackwolf\Game\Formatter\PlayerListFormatter;
 use Slackwolf\Game\Formatter\UserIdFormatter;
 
+/**
+ * Defines the JoinCommand class.
+ */
 class JoinCommand extends Command
 {
     public function init()
@@ -14,8 +17,6 @@ class JoinCommand extends Command
         if ($this->channel[0] == 'D') {
             throw new Exception("Can't join a game lobby by direct message.");
         }
-        
-        $this->game = $this->gameManager->getGame($this->channel);
 
         if ( ! $this->game) {
             throw new Exception("No game in progress.");
@@ -26,6 +27,9 @@ class JoinCommand extends Command
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fire()
     {
         $userId = $this->userId;
@@ -37,13 +41,16 @@ class JoinCommand extends Command
             })
             ->then(function (array $users) use ($userId, $game) {
                 foreach($users as $key => $user) {
-                    if ($user->getId() == $userId) {
-                        $game->addLobbyPlayer($user);
+                    /* @var $user \Slack\User */
+                    if ($user->getId() == $this->userId) {
+                        if ($this->game->addLobbyPlayer($user)) {
+                            $playersList = PlayerListFormatter::format($this->game->getLobbyPlayers());
+                            $this->gameManager->sendMessageToChannel($this->game, "Current lobby: " . $playersList);
+                        } else {
+                            $this->gameManager->sendMessageToChannel($this->game, "You've already joined, " . $user->getFirstName() . ". Stop trying to spam everyone.");
+                        }
                     }
                 }
             });
-            
-        $playersList = PlayerListFormatter::format($this->game->getLobbyPlayers());
-        $this->gameManager->sendMessageToChannel($this->game, "Current lobby: ".$playersList);
     }
 }

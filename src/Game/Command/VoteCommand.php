@@ -5,9 +5,11 @@ use Slackwolf\Game\Formatter\UserIdFormatter;
 use Slackwolf\Game\GameState;
 use Zend\Loader\Exception\InvalidArgumentException;
 
+/**
+ * Defines the VoteCommand class.
+ */
 class VoteCommand extends Command
 {
-    private $game;
 
     public function init()
     {
@@ -18,8 +20,6 @@ class VoteCommand extends Command
         if (count($this->args) < 1) {
             throw new InvalidArgumentException("Must specify a player");
         }
-
-        $this->game = $this->gameManager->getGame($this->channel);
 
         if ( ! $this->game) {
             throw new Exception("No game in progress.");
@@ -45,6 +45,9 @@ class VoteCommand extends Command
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fire()
     {
         $this->gameManager->vote($this->game, $this->userId, $this->args[0]);

@@ -14,46 +14,73 @@ use Slackwolf\Message\Message;
 use Slackwolf\Game\OptionsManager;
 use Slackwolf\Game\OptionName;
 
+/**
+ * Defines the GameManager class.
+ *
+ * @package Slackwolf\Game
+ */
 class GameManager
 {
-    private $games = [];
 
+    /**
+     * An array of all current games.
+     *
+     * @var array
+     */
+    private $games;
+
+    /**
+     * @var array
+     */
     private $commandBindings;
+
+    /**
+     * @var RealTimeClient
+     */
     private $client;
+
+    /**
+     * @var \Slackwolf\Game\OptionsManager
+     */
     public $optionsManager;
 
+    /**
+     * Defines the GameManager constructor.
+     *
+     * @param RealTimeClient $client
+     * @param array $commandBindings
+     */
     public function __construct(RealTimeClient $client, array $commandBindings)
     {
         $this->commandBindings = $commandBindings;
         $this->client = $client;
         $this->optionsManager = new OptionsManager();
+
+        $this->games = [];
     }
 
+    /**
+     * @param Message $message
+     *
+     * @return bool
+     */
     public function input(Message $message)
     {
         $input = $message->getText();
 
-        if ( ! is_string($input)) {
-            return false;
+        if (!is_string($input) || !isset($input[0]) || $input[0] !== '!') {
+            return FALSE;
         }
 
-        if ( ! isset($input[0])) {
-            return false;
-        }
-
-        if ($input[0] !== '!') {
-            return false;
-        }
-
+        // Example: [!kill, #channel, @name]
         $input_array = explode(' ', $input);
 
-        $command = $input_array[0];
+        // Remove "!" from first element of array and set to lowercase.
+        $command = strtolower(substr($input_array[0], 1));
 
         if (strlen($command) < 2) {
             return false;
         }
-
-        $command = substr($command, 1);
 
         $args = [];
 
@@ -69,8 +96,6 @@ class GameManager
         if ($command == null) {
             return false;
         }
-
-        $command = strtolower($command);
 
         if ( ! isset($this->commandBindings[$command])) {
             return false;
@@ -89,15 +114,30 @@ class GameManager
         return true;
     }
 
+    /**
+     * Sends a message to a game.
+     *
+     * @param Game $game
+     *   The game to send the message.
+     *
+     * @param $msg
+     *   The message.
+     */
     public function sendMessageToChannel($game, $msg)
     {
-        $client = $this->client;
-        $client->getChannelGroupOrDMByID($game->getId())
-               ->then(function (ChannelInterface $channel) use ($client,$msg) {
-                   $client->send($msg, $channel);
-               });
+        $this->client->getChannelGroupOrDMByID($game->getId())
+            ->then(function (ChannelInterface $channel) use ($msg) {
+                $this->client->send($msg, $channel);
+            });
     }
 
+
+    /**
+     * @param $gameId
+     * @param $newGameState
+     *
+     * @throws Exception
+     */
     public function changeGameState($gameId, $newGameState)
     {
         $game = $this->getGame($gameId);
@@ -177,6 +217,10 @@ class GameManager
         }
     }
 
+    /**
+     * @param $id
+     * @return bool
+     */
     public function hasGame($id)
     {
         return isset($this->games[$id]);
@@ -196,11 +240,19 @@ class GameManager
         return false;
     }
 
+    /**
+     * @param $id
+     * @param array $users
+     * @param $roleStrategy
+     */
     public function newGame($id, array $users, $roleStrategy)
     {
         $this->addGame(new Game($id, $users, $roleStrategy));
    }
 
+    /**
+     * @param $id
+     */
     public function startGame($id)
     {
         $game = $this->getGame($id);
@@ -218,6 +270,10 @@ class GameManager
         $this->changeGameState($id, GameState::FIRST_NIGHT);
     }
 
+    /**
+     * @param $id
+     * @param null $enderUserId
+     */
     public function endGame($id, $enderUserId = null)
     {
         $game = $this->getGame($id);
@@ -266,6 +322,13 @@ class GameManager
         unset($this->games[$id]);
     }
 
+    /**
+     * @param Game $game
+     * @param $voterId
+     * @param $voteForId
+     *
+     * @throws Exception
+     */
     public function vote(Game $game, $voterId, $voteForId)
     {
         if ( ! $game->isPlayerAlive($voterId)) {
@@ -344,7 +407,7 @@ class GameManager
                 $lynchedNames[] = "@{$player->getUsername()} ({$player->role->getName()})";
                 $game->killPlayer($player_id);
 
-                if ($player->role->isRole(ROLE::HUNTER)) {
+                if ($player->role->isRole(Role::HUNTER)) {
                     $game->setHunterNeedsToShoot(true);
                     $hunterMsg .= ":bow_and_arrow: " . $player->getUsername() .
                         " as hunter you may shoot one person.  Type !shoot @playername, or !shoot noone.";
@@ -363,12 +426,17 @@ class GameManager
         $this->changeGameState($game->getId(), GameState::NIGHT);
     }
 
-
+    /**
+     * @param Game $game
+     */
     private function addGame(Game $game)
     {
         $this->games[$game->getId()] = $game;
     }
 
+    /**
+     * @param Game $game
+     */
     private function onFirstNight(Game $game)
     {
         $client = $this->client;
@@ -418,6 +486,9 @@ class GameManager
         }
     }
 
+    /**
+     * @param Game $game
+     */
     private function onDay(Game $game)
     {
         $remainingPlayers = PlayerListFormatter::format($game->getLivingPlayers());
@@ -437,6 +508,9 @@ class GameManager
         $this->sendMessageToChannel($game, $dayBreakMsg);
     }
 
+    /**
+     * @param Game $game
+     */
     private function onNight(Game $game)
     {
         $client = $this->client;
@@ -497,6 +571,9 @@ class GameManager
         }
     }
 
+    /**
+     * @param Game $game
+     */
     private function onNightEnd(Game $game)
     {
         $votes = $game->getVotes();
@@ -523,7 +600,7 @@ class GameManager
 
                 $killMsg .= " @{$player->getUsername()} ({$player->role->getName()})";
 
-                if ($player->role->isRole(ROLE::HUNTER)) {
+                if ($player->role->isRole(Role::HUNTER)) {
                     $hunterKilled = true;
                     $hunterName = $player->getUsername();
                 }
@@ -554,7 +631,7 @@ class GameManager
             $game->setWitchPoisonedUserId(null);
 
             // if killed player was hunter
-            if ($poisoned_player->role->isRole(ROLE::HUNTER)) {
+            if ($poisoned_player->role->isRole(Role::HUNTER)) {
                 $hunterKilled = true;
                 $hunterName = $poisoned_player_name;
             }
@@ -588,6 +665,9 @@ class GameManager
         $game->setNightEnded(true);
     }
 
+    /**
+     * @param Game $game
+     */
     private function onGameOver(Game $game)
     {
         $game->changeState(GameState::OVER);

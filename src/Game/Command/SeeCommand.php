@@ -11,12 +11,11 @@ use Slackwolf\Game\GameState;
 use Slackwolf\Game\Role;
 use Zend\Loader\Exception\InvalidArgumentException;
 
+/**
+ * Defines the SeeCommand class.
+ */
 class SeeCommand extends Command
 {
-    /**
-     * @var Game
-     */
-    private $game;
 
     /**
      * @var string
@@ -94,7 +93,6 @@ class SeeCommand extends Command
             throw new InvalidArgumentException();
         }
 
-        $this->game   = $this->gameManager->getGame($channelId);
         $this->gameId = $channelId;
 
         if (!$this->game) {
@@ -158,6 +156,9 @@ class SeeCommand extends Command
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fire()
     {
         $client = $this->client;
