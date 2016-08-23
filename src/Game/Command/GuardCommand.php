@@ -16,10 +16,6 @@ use Slackwolf\Game\Role;
  */
 class GuardCommand extends Command
 {
-    /**
-     * @var Game
-     */
-    private $game;
 
     public function init()
     {
