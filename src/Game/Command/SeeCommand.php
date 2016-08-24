@@ -1,14 +1,15 @@
 <?php namespace Slackwolf\Game\Command;
 
 use Exception;
-use Slack\Channel;
 use Slack\ChannelInterface;
 use Slack\DirectMessageChannel;
+use Slack\RealTimeClient;
 use Slackwolf\Game\Formatter\ChannelIdFormatter;
 use Slackwolf\Game\Formatter\UserIdFormatter;
-use Slackwolf\Game\Game;
+use Slackwolf\Game\GameManager;
 use Slackwolf\Game\GameState;
 use Slackwolf\Game\Role;
+use Slackwolf\Message\Message;
 use Zend\Loader\Exception\InvalidArgumentException;
 
 /**
@@ -27,9 +28,14 @@ class SeeCommand extends Command
      */
     private $chosenUserId;
 
-    public function init()
+    /**
+     * {@inheritdoc}
+     *
+     * Constructs a new See command.
+     */
+    public function __construct(RealTimeClient $client, GameManager $gameManager, Message $message, array $args = null)
     {
-        $client = $this->client;
+        parent::__construct($client, $gameManager, $message, $args);
 
         if ($this->channel[0] != 'D') {
             throw new Exception("You may only !see from a DM.");
@@ -93,6 +99,7 @@ class SeeCommand extends Command
             throw new InvalidArgumentException();
         }
 
+        $this->game = $this->gameManager->getGame($channelId);
         $this->gameId = $channelId;
 
         if (!$this->game) {
