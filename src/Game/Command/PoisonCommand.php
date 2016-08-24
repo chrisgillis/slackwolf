@@ -95,6 +95,7 @@ class PoisonCommand extends Command
             throw new InvalidArgumentException();
         }
 
+        $this->game = $this->gameManager->getGame($channelId);
         if ( ! $this->game) {
             $client->getChannelGroupOrDMByID($this->channel)
                    ->then(function (ChannelInterface $channel) use ($client) {
