@@ -13,7 +13,7 @@ use Slackwolf\Game\Game;
 use Slackwolf\Game\GameManager;
 use Slackwolf\Game\GameState;
 use Slackwolf\Game\Role;
-use Slackwolf\Game\OptionManager;
+use Slackwolf\Game\OptionsManager;
 use Slackwolf\Game\OptionName;
 use Slackwolf\Message\Message;
 

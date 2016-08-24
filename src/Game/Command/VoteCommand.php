@@ -1,11 +1,11 @@
 <?php namespace Slackwolf\Game\Command;
 
 use Exception;
-use Slack\Message\Message;
 use Slack\RealTimeClient;
 use Slackwolf\Game\Formatter\UserIdFormatter;
 use Slackwolf\Game\GameManager;
 use Slackwolf\Game\GameState;
+use Slackwolf\Message\Message;
 use Zend\Loader\Exception\InvalidArgumentException;
 
 /**
