@@ -1,7 +1,10 @@
 <?php namespace Slackwolf\Game\Command;
 
 use Exception;
+use Slack\Message\Message;
+use Slack\RealTimeClient;
 use Slackwolf\Game\Formatter\UserIdFormatter;
+use Slackwolf\Game\GameManager;
 use Slackwolf\Game\GameState;
 use Zend\Loader\Exception\InvalidArgumentException;
 
@@ -11,8 +14,15 @@ use Zend\Loader\Exception\InvalidArgumentException;
 class VoteCommand extends Command
 {
 
-    public function init()
+    /**
+     * {@inheritdoc}
+     *
+     * Constructs a new Vote command.
+     */
+    public function __construct(RealTimeClient $client, GameManager $gameManager, Message $message, array $args = null)
     {
+        parent::__construct($client, $gameManager, $message, $args);
+
         if ($this->channel[0] == 'D') {
             throw new Exception("You may not !vote privately.");
         }

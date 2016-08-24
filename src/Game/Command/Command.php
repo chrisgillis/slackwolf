@@ -73,8 +73,6 @@ abstract class Command
         $this->args = $args;
         $this->game = $this->gameManager->getGame($this->channel);
 
-        $this->init();
-
         echo get_called_class() . " " . $this->userId . " " . $this->channel . "\r\n";
     }
 

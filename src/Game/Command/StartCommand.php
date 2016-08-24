@@ -3,17 +3,28 @@
 use Exception;
 use Slack\Channel;
 use Slack\ChannelInterface;
+use Slack\RealTimeClient;
 use Slackwolf\Game\Formatter\UserIdFormatter;
+use Slackwolf\Game\GameManager;
 use Slackwolf\Game\RoleStrategy;
 use Slackwolf\Game\GameState;
+use Slackwolf\Message\Message;
 
 /**
  * Defines the StartCommand class.
  */
 class StartCommand extends Command
 {
-    public function init()
+
+    /**
+     * {@inheritdoc}
+     *
+     * Constructs a new Start command.
+     */
+    public function __construct(RealTimeClient $client, GameManager $gameManager, Message $message, array $args = null)
     {
+        parent::__construct($client, $gameManager, $message, $args);
+
         if ($this->channel[0] == 'D') {
             throw new Exception("Can't start a game by direct message.");
         }

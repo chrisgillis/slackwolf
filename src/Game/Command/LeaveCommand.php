@@ -3,8 +3,11 @@
 use Exception;
 use Slack\Channel;
 use Slack\ChannelInterface;
+use Slack\RealTimeClient;
+use Slackwolf\Game\GameManager;
 use Slackwolf\Game\GameState;
 use Slackwolf\Game\Formatter\PlayerListFormatter;
+use Slackwolf\Message\Message;
 
 /**
  * Defines the LeaveCommand class.
@@ -12,8 +15,15 @@ use Slackwolf\Game\Formatter\PlayerListFormatter;
 class LeaveCommand extends Command
 {
 
-    public function init()
+    /**
+     * {@inheritdoc}
+     *
+     * Constructs a new Leave command.
+     */
+    public function __construct(RealTimeClient $client, GameManager $gameManager, Message $message, array $args = null)
     {
+        parent::__construct($client, $gameManager, $message, $args);
+
         if ($this->channel[0] == 'D') {
             throw new Exception("Can't leave a game or lobby by direct message.");
         }

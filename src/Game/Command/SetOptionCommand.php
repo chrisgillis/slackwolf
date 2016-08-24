@@ -1,16 +1,26 @@
 <?php namespace Slackwolf\Game\Command;
 
 use Slack\DirectMessageChannel;
-use Slackwolf\Game;
+use Slack\RealTimeClient;
+use Slackwolf\Game\GameManager;
 use Slackwolf\Game\Formatter\OptionFormatter;
+use Slackwolf\Message\Message;
 
 /**
  * Defines the SetOptionCommand class.
  */
 class SetOptionCommand extends Command
 {
-    public function init()
+
+    /**
+     * {@inheritdoc}
+     *
+     * Constructs a new SetOption command.
+     */
+    public function __construct(RealTimeClient $client, GameManager $gameManager, Message $message, array $args = null)
     {
+        parent::__construct($client, $gameManager, $message, $args);
+
         if (count($this->args) > 1)
         {
             //Attempt to change an option detected
@@ -30,7 +40,7 @@ class SetOptionCommand extends Command
         $help_msg .= "Available Options\r\n------------------------\r\n";
         foreach($this->gameManager->optionsManager->options as $curOption)
         {
-            /** @var Slackwolf\Game\Option $curOption */
+            /* @var \Slackwolf\Game\Option $curOption */
             $help_msg .= OptionFormatter::format($curOption);
         }
 
