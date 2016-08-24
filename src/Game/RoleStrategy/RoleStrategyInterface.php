@@ -9,7 +9,7 @@ interface RoleStrategyInterface
 {
     /**
      * @param \Slack\User[] $users
-     * @param \Slackwolf\Game\OptionManager $optionsManager
+     * @param \Slackwolf\Game\OptionsManager $optionsManager
      *
      * @return \Slack\User[]
      */
