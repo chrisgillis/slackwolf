@@ -1,5 +1,6 @@
 <?php namespace Slackwolf\Game;
 
+use Slack\User;
 use Slackwolf\Game\RoleStrategy\RoleStrategyInterface;
 
 /**
@@ -96,13 +97,13 @@ class Game
     /**
      * If the lobby is open, adds a user to it.
      *
-     * @param $user
+     * @param User $user
      *   The user to add to the lobby.
      *
      * @return bool
      *   If successful, returns TRUE, otherwise, FALSE.
      */
-    public function addLobbyPlayer($user)
+    public function addLobbyPlayer(User $user)
     {
         if ($this->state == GameState::LOBBY) {
             $player_id = $user->getId();
