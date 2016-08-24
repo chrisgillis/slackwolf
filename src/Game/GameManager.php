@@ -514,7 +514,7 @@ class GameManager
     private function onNight(Game $game)
     {
         $client = $this->client;
-        $nightMsg = ":moon: :zzz: The sun sets, and the hard rain makes it difficult to hear anything outside. Villagers bar their doors, take long pulls of :beer:, and try not to think of what might lurk beyond the feable candlelight. ";
+        $nightMsg = ":moon: :zzz: The sun sets, and the hard rain makes it difficult to hear anything outside. Villagers bar their doors, take long pulls of :beer:, and try not to think of what might lurk beyond the feeble candlelight. ";
         $this->sendMessageToChannel($game, $nightMsg);
 
         $wolves = $game->getWerewolves();
