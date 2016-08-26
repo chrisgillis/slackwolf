@@ -18,13 +18,13 @@ cd slackwolf
 composer install
 ```
 
-Edit the `.env` file with a valid real-time messaging bot token from Slack. Get a valid token from the "Custom Integrations" tab of your Slack "Configure Apps" page. Also be sure to put the correct bot name in the `.env` file as well.
+Rename `.env.default` to `.env` and edit it with a valid real-time messaging bot token from Slack. Get a valid token from the "Custom Integrations" tab of your Slack "Configure Apps" page. Also be sure to put the correct bot name in the `.env` file as well.
 
 To start the bot type `php bot.php`
 
 ## Contributing
 
-Send in pull requests. I wrote this very quickly and it could use some major refactoring of its components. It also needs a lot more roles.
+We're very accepting of pull requests. This is a fun project to get your feet wet with PHP or open source. If you're making a large change, create an Issue first and lets talk about it.
 
 ## License
 
