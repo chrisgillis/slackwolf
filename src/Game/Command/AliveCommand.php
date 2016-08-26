@@ -29,7 +29,7 @@ class AliveCommand extends Command
 
         // build list of players
         $playersList = PlayerListFormatter::format($this->game->getLivingPlayers());
-        $this->gameManager->sendMessageToChannel($this->game, ":ok: Players still alive: " . $playersList);
+        $this->gameManager->sendMessageToChannel($this->game, ":ok: The Living: " . $playersList);
 
     }
 }
