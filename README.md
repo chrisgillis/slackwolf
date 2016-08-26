@@ -7,7 +7,7 @@ Slackwolf is a bot for Slack. After inviting the bot to a channel, you can play 
 Slackwolf currently supports Seer, Bodyguard, Witch, Lycan, Tanner, Beholder, Villager, Wolfman, and Werewolf. You'll need at least a 6 player game in order to see roles other than Seer/Villager/Werewolf given out.
 
 ## How to play
-`/invite` the bot and type !help
+`/invite` the bot (and some friends) to a channel and type !help
 
 ## Installation
 Slackwolf requires PHP 5.5+ and [Composer](https://getcomposer.org/).
