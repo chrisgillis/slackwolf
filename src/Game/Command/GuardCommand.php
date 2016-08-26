@@ -162,7 +162,7 @@ class GuardCommand extends Command
                    ->then(function (ChannelInterface $channel) use ($client) {
                        $client->send(":warning: You cant guard the same player as last night.", $channel);
                    });
-            throw new Exception("You cant guard the same player as last night");
+            throw new Exception("You can't guard the same player as last night");
         }
 
         $this->game->setGuardedUserId($this->args[1]);
