@@ -35,7 +35,7 @@ class DeadCommand extends Command
         }
         else
         {
-            $this->gameManager->sendMessageToChannel($this->game, ":angel: Players who have died: ".$playersList);
+            $this->gameManager->sendMessageToChannel($this->game, ":angel: The Dead: ".$playersList);
         }
     }
 }
