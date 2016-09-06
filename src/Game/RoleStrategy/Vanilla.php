@@ -1,6 +1,6 @@
 <?php namespace Slackwolf\Game\RoleStrategy;
 
-use Slackwolf\Game\Role;
+use Slackwolf\Game\Roles\Seer;
 use Slackwolf\Game\Roles\Villager;
 use Slackwolf\Game\Roles\Werewolf;
 
@@ -11,7 +11,7 @@ class Vanilla implements RoleStrategyInterface
      */
     public function getRoleListMsg()
     {
-        return "Required: [Werewolf, Villager]. No other roles.";
+        return "Required: [Seer, Werewolf, Villager]. No other roles.";
     }
     
     /**
@@ -24,15 +24,20 @@ class Vanilla implements RoleStrategyInterface
         $num_good = $num_players - $num_evil;
         
         $rolePool = [];
-        for($i = 0; i < $num_players; $i++)
+        $rolePool[] = new Seer();
+        for($i = 1; $i < $num_players; $i++)
         {
-            if ($i < $num_good) $rolePool[$i] = new Villager();
-            else $rolePool[$i] = new Werewolf();
+            if ($i < $num_good) $rolePool[] = new Villager();
+            else $rolePool[] = new Werewolf();
         }
         shuffle($rolePool);
-        for($i = 0; i < $num_players; $i++)
+        $i = 0;
+        foreach($players as $player)
         {
-            $players[$i]->role = $rolePool[$i]; 
+            $player->role = $rolePool[$i];
+            $i++; 
         }
+
+        return $players;
     }
 }
