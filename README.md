@@ -23,9 +23,13 @@ Rename `.env.default` to `.env` and edit it with a valid real-time messaging bot
 To start the bot type `php bot.php`
 
 ### Installation via Docker
-Create an `.env` file from `.env.default` and start a container:
 ```
-docker run -d -v "$PWD/.env":/usr/src/slackwolf/.env  --name slackwolf --restart always gillisct/slackwolf
+docker run -d --name slackwolf --restart always \
+   -e "BOT_TOKEN=xoxb-16776859568-RxBtmpeS7iMAQonAEqS1hYLb" \
+   -e "TIMEZONE=America/Los_Angeles" \
+   -e "BOT_NAME=werewolf-moderator" \
+   -e "DEBUG=1" \
+   gillisct/slackwolf
 ```
 
 ## Contributing
