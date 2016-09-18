@@ -10,6 +10,7 @@ Slackwolf currently supports Seer, Bodyguard, Witch, Lycan, Tanner, Beholder, Vi
 `/invite` the bot (and some friends) to a channel and type !help
 
 ## Installation via Docker
+Run the below command to start a container.
 ```
 docker run -d --name slackwolf --restart always \
    -e "BOT_TOKEN=xoxb-16776859568-RxBtmpeS7isMAQonAEqS1hYLb" \
@@ -20,6 +21,8 @@ docker run -d --name slackwolf --restart always \
 ```
 
 ## Source Installation
+If you don't want to use docker, you can install from source. 
+
 Slackwolf requires PHP 5.5+ and [Composer](https://getcomposer.org/).
 
 ```
