@@ -25,7 +25,7 @@ To start the bot type `php bot.php`
 ### Installation via Docker
 ```
 docker run -d --name slackwolf --restart always \
-   -e "BOT_TOKEN=xoxb-16776859568-RxBtmpeS7iMAQonAEqS1hYLb" \
+   -e "BOT_TOKEN=xoxb-16776859568-RxBtmpeS7isMAQonAEqS1hYLb" \
    -e "TIMEZONE=America/Los_Angeles" \
    -e "BOT_NAME=werewolf-moderator" \
    -e "DEBUG=1" \
