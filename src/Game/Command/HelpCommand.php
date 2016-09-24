@@ -41,6 +41,7 @@ class HelpCommand extends Command
         $help_msg .= "`!start @user1 @user2 @user3` - Starts a new game with the specified users participating\r\n";
         $help_msg .= "`!end` - Cause the game to end prematurely\r\n";
         $help_msg .= "`!option` - View or change options.  Use without any parameters for help and current values.\r\n";
+        $help_msg .= "`!remindme` - Remind you of your role in the current game\r\n";
         $help_msg .= "`!dead` - Show dead players\r\n";
         $help_msg .= "`!alive` - Show living players\r\n";
         $help_msg .= "`!status` - Show game status\r\n";
