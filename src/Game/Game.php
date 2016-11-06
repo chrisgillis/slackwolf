@@ -35,6 +35,7 @@ class Game
     public $wolvesVoted;
     public $witchHealed;
     public $witchPoisoned;
+    public $weather;
 
     /**
      * @param                       $id
@@ -606,4 +607,14 @@ class Game
         $this->witchPoisonedUserId = $id;
     }
 
+
+    public function setWeather(){
+        // Randomize the weather 1=rain, 2= cloudy, 3=sunny
+        // Might be better using string instead of int.
+        $this->weather= rand(1,3);
+
+    }
+    public function getWeather(){
+        return $this->weather;
+    }
 }

@@ -10,6 +10,7 @@ use Slackwolf\Game\Formatter\PlayerListFormatter;
 use Slackwolf\Game\Formatter\RoleListFormatter;
 use Slackwolf\Game\Formatter\RoleSummaryFormatter;
 use Slackwolf\Game\Formatter\VoteSummaryFormatter;
+use Slackwolf\Game\Formatter\WeatherFormatter;
 use Slackwolf\Message\Message;
 use Slackwolf\Game\OptionsManager;
 use Slackwolf\Game\OptionName;
@@ -467,16 +468,16 @@ class GameManager
                     }
                 });
         }
-
+        $game->setweather();
         $playerList = PlayerListFormatter::format($game->getLivingPlayers());
         $roleList = RoleListFormatter::format($game->getLivingPlayers());
 
-        $msg = ":wolf: It is raining, and a new game of Werewolf is starting! For a tutorial, type !help.\r\n\r\n";
+        $msg = ":wolf: A new game of Werewolf is starting! For a tutorial, type !help.\r\n\r\n";
         $msg .= "Players: {$playerList}\r\n";
         $msg .= "Possible Roles: {$game->getRoleStrategy()->getRoleListMsg()}\r\n\r\n";
 
         if ($this->optionsManager->getOptionValue(OptionName::role_seer)) {
-            $msg .= ":moon: :rain_cloud: The rain comes down in torrents as the village sleeps, unaware of the horror the lurks outside in the wet. It is the middle of the night.";
+            $msg .= WeatherFormatter::format($game);
             $msg .= " The game will begin when the Seer chooses someone.";
         }
         $this->sendMessageToChannel($game, $msg);
@@ -492,8 +493,8 @@ class GameManager
     private function onDay(Game $game)
     {
         $remainingPlayers = PlayerListFormatter::format($game->getLivingPlayers());
-
-        $dayBreakMsg = ":sunrise: The sun rises and the villagers awake. It is still raining, but it slows somewhat, allowing momentary respite from the cold, wet hell that we all live in.\r\n";
+        $game->setweather();
+        $dayBreakMsg = WeatherFormatter::format($game)."\r\n";
         $dayBreakMsg .= "Remaining Players: {$remainingPlayers}\r\n\r\n";
         $dayBreakMsg .= "Villagers, find the Werewolves! Type !vote @username to vote to lynch a player.";
         if ($this->optionsManager->getOptionValue(OptionName::changevote))
@@ -514,7 +515,7 @@ class GameManager
     private function onNight(Game $game)
     {
         $client = $this->client;
-        $nightMsg = ":moon: :zzz: The sun sets, and the hard rain makes it difficult to hear anything outside. Villagers bar their doors, take long pulls of :beer:, and try not to think of what might lurk beyond the feeble candlelight. ";
+        $nightMsg = WeatherFormatter::format($game);
         $this->sendMessageToChannel($game, $nightMsg);
 
         $wolves = $game->getWerewolves();

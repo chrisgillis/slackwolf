@@ -27,7 +27,22 @@ class WeatherCommand extends Command
             return;
         }
 
-          $this->gameManager->sendMessageToChannel($this->game, ":rain_cloud: It is raining. It is a cold rain, and the freezing drops chill you to the bone." );
-
+        $weather= $this->game->weather;
+        if ($weather!= null){
+          if($weather==1){
+            $this->gameManager->sendMessageToChannel($this->game, ":rain_cloud: It is raining. It is a cold rain, and the freezing drops chill you to the bone." );          
+          }
+          // Cloudy
+          else if($weather==2){
+            $this->gameManager->sendMessageToChannel($this->game, ":cloud: The cloud embrace the sky and cover the sun letting only a few glimmer of light");   
+          }
+          // Sunny
+          else{
+            $this->gameManager->sendMessageToChannel($this->game, ":sunny: The warm sun is shining. Its brightness almost blinds you. You take a moment to appreciate its embrace."); 
+          }
+        }
+        else{
+          $this->gameManager->sendMessageToChannel($this->game,"No Game Running"); 
+        }
     }
 }
