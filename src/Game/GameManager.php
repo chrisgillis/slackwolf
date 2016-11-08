@@ -468,6 +468,7 @@ class GameManager
                     }
                 });
         }
+        
         $game->setweather();
         $playerList = PlayerListFormatter::format($game->getLivingPlayers());
         $roleList = RoleListFormatter::format($game->getLivingPlayers());
@@ -477,7 +478,7 @@ class GameManager
         $msg .= "Possible Roles: {$game->getRoleStrategy()->getRoleListMsg()}\r\n\r\n";
 
         if ($this->optionsManager->getOptionValue(OptionName::role_seer)) {
-            $msg .= WeatherFormatter::format($game);
+            $msg .= WeatherFormatter::format($game)."\r\n";
             $msg .= " The game will begin when the Seer chooses someone.";
         }
         $this->sendMessageToChannel($game, $msg);

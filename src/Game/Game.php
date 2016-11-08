@@ -607,13 +607,16 @@ class Game
         $this->witchPoisonedUserId = $id;
     }
 
-
     public function setWeather(){
         // Randomize the weather 1=rain, 2= cloudy, 3=sunny
         // Might be better using string instead of int.
-        $this->weather= rand(1,3);
+        $this->weather = rand(1,3);
 
     }
+
+    /**
+     * @return mixed
+     */
     public function getWeather(){
         return $this->weather;
     }
