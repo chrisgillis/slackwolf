@@ -1,11 +1,11 @@
 <?php namespace Slackwolf\Game\Command;
-
+/*
 use Exception;
 use Slack\Channel;
 use Slack\ChannelInterface;
 use Slackwolf\Game\Formatter\GameStatusFormatter;
 use Slackwolf\Game\Game;
-
+*/
 /**
  * Defines the WeatherCommand class.
  */
@@ -14,7 +14,7 @@ class WeatherCommand extends Command
 
     /**
      * {@inheritdoc}
-     */
+    */
     public function fire()
     {
         $client = $this->client;
@@ -26,9 +26,6 @@ class WeatherCommand extends Command
                });
             return;
         }
-
-        $weather = $this->game->weather;
-
         if ($weather != null){
 
           if($weather == 1){

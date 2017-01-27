@@ -468,17 +468,16 @@ class GameManager
                     }
                 });
         }
-        
-        $game->setweather();
+        ;
         $playerList = PlayerListFormatter::format($game->getLivingPlayers());
         $roleList = RoleListFormatter::format($game->getLivingPlayers());
 
         $msg = ":wolf: A new game of Werewolf is starting! For a tutorial, type !help.\r\n\r\n";
         $msg .= "Players: {$playerList}\r\n";
         $msg .= "Possible Roles: {$game->getRoleStrategy()->getRoleListMsg()}\r\n\r\n";
-
+        $msg .= WeatherFormatter::format($game)."\r\n";
         if ($this->optionsManager->getOptionValue(OptionName::role_seer)) {
-            $msg .= WeatherFormatter::format($game)."\r\n";
+            
             $msg .= " The game will begin when the Seer chooses someone.";
         }
         $this->sendMessageToChannel($game, $msg);
@@ -494,7 +493,6 @@ class GameManager
     private function onDay(Game $game)
     {
         $remainingPlayers = PlayerListFormatter::format($game->getLivingPlayers());
-        $game->setweather();
         $dayBreakMsg = WeatherFormatter::format($game)."\r\n";
         $dayBreakMsg .= "Remaining Players: {$remainingPlayers}\r\n\r\n";
         $dayBreakMsg .= "Villagers, find the Werewolves! Type !vote @username to vote to lynch a player.";

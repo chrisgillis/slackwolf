@@ -9,64 +9,114 @@ use Slackwolf\Game\GameState;
 class WeatherFormatter
 {
 
+
+    /**
+     * @param $weightedValues
+     *
+     * @return string
+     *
+     * Utility function for getting random values with weighting.
+     * Pass in an associative array, such as array('A'=>5, 'B'=>45, 'C'=>50)
+     * An array like this means that "A" has a 5% chance of being selected, "B" 45%, and "C" 50%.
+    */
+
+    public static function getWeather(array $weightedValues) {
+
+        $rand = mt_rand(1, (int) array_sum($weightedValues));
+
+        foreach ($weightedValues as $key => $value) {
+
+            $rand -= $value;
+            if ($rand <= 0) {
+
+                return $key;
+
+            }
+        }
+    }
+
     /**
      * @param $game
      *
      * @return string
      */
+
     public static function format(Game $game)
     {
         // Send message according to GameState and weather
-        $state= $game->state;
+        $state = $game->state;
+        /** 
+        * Create an associate array with the value as weight.
+        * To modify the weight, just change the value with the integer.
+        * Raining = 25%, cloudy = 50%, sunny= 25%  
+        */
+        $weight = array(
+            "rainy" => 25, 
+            "cloudy" => 50, 
+            "sunny" => 25,
+            );
 
-        if($state == GameState::FIRST_NIGHT){
+        $Weather = WeatherFormatter::getWeather($weight);
+        $messages = array(":rain_cloud:",":cloud:",":sunny:");
 
-            if($game->weather == 1){
-                $msg = ":moon: :rain_cloud: The rain comes down in torrents as the village sleeps, unaware of the horror that lurks outside in the wet. It is the middle of the night.";
+        if ($state == GameState::FIRST_NIGHT){
+
+            if (file_exists("src/Game/Data/first_weather.txt")){
+                $messages = file("src/Game/Data/first_weather.txt");
             }
 
-            else if($game->weather==1){
-                $msg = ":moon: :cloud: The cloud covered the sky blocking even the few glimmering light. ";
+            if ($Weather == "rainy"){
+                $msg = $messages[0];
+            }
+
+            else if ($Weather == "cloudy"){
+                $msg = $messages[1];
             }
 
             else{
-                $msg = ":moon: The village sleeps, unaware of the horror that lurks outside in the dark. It is the middle of the night.";
+                $msg = $messages[2];
             }
 
         }
 
-        if($state == GameState::DAY){
-
-            if($game->weather == 1){
-                $msg = ":sunrise: The sun rises and the villagers awake. It is still raining, but it slows somewhat, allowing momentary respite from the cold, wet hell that we all live in.";
+        if ($state == GameState::DAY){
+            if (file_exists("src/Game/Data/day_weather.txt")){
+                $messages = file("src/Game/Data/day_weather.txt");
             }
 
-            else if($game->weather == 1){
-                $msg = ":cloud: There is no sky today, only a thick layer of cloud blocking the sky. The air was cooler, announcing rain in the day to come.";
+            if ($Weather == "rainy"){
+                $msg = $messages[0];
+            }
+
+            else if ($Weather == "cloudy"){
+                $msg = $messages[1];
             }
 
             else{
-                $msg = ":sunny: The morning came and the sun, high in the sky, gave hope that one day this madness will end.";
+                $msg = $messages[2];
             }
 
         }
 
-        if($state == GameState::NIGHT){
-
-            if($game->weather == 1){
-                $msg = ":moon: :zzz: The sun sets, and the hard rain makes it difficult to hear anything outside. Villagers bar their doors, take long pulls of :beer:, and try not to think of what might lurk beyond the feeble candlelight.";
+        if ($state == GameState::NIGHT){
+            if (file_exists("src/Game/Data/night_weather.txt")){
+                $messages = file("src/Game/Data/night_weather.txt");
             }
 
-            else if($game->weather == 1){
-                $msg = ":moon: :fog: A thick fog covered the village blocking all of the light. The Villagers bar their door waiting without rest until sunrise.";
+            if ($Weather == "rainy"){
+                $msg = $messages[0];
+            }
+
+            else if ($Weather == "cloudy"){
+                $msg = $messages[1];
             }
 
             else{
-                $msg = ":full_moon: The sun set, and the moon lights up the sky giving a glimmer of hope. The Villagers bar their doors waiting in fear until sunrise.";
+                $msg = $messages[2];
             }
 
         }
 
-        return $msg;
+    return $msg;
     }
 }
