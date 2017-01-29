@@ -79,7 +79,7 @@ class Slackwolf
             'alive'     => AliveCommand::class,
             'dead'      => DeadCommand::class,
             'status'    => StatusCommand::class,
-            'weather'   => WeatherCommand::class,
+        //  'weather'   => WeatherCommand::class,
         ];
 
         /*

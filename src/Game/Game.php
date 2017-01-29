@@ -35,6 +35,7 @@ class Game
     public $wolvesVoted;
     public $witchHealed;
     public $witchPoisoned;
+    
 
     /**
      * @param                       $id
@@ -605,5 +606,4 @@ class Game
     public function setWitchPoisonedUserId($id) {
         $this->witchPoisonedUserId = $id;
     }
-
 }
