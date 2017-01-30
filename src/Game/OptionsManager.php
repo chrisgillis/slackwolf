@@ -7,6 +7,7 @@ class OptionName
     const changevote = 'changevote';
     const no_lynch = 'no_lynch';
     const mods = 'mods';
+    const rolestrategy = "rolestrategy";
 
     const role_beholder = 'role_beholder';
     const role_bodyguard = 'role_bodyguard';
@@ -65,6 +66,7 @@ class OptionsManager
     {
         $this->options[] = new Option(OptionName::changevote, OptionType::Bool, "on", "When enabled votes can be changed until the final vote is cast.");
         $this->options[] = new Option(OptionName::no_lynch, OptionType::Bool, "on", "When enabled townsfolk can vote not to lynch anybody.");
+        $this->options[] = new Option(OptionName::rolestrategy, OptionType::String, "classic", "Controls how roles are assigned in a new game. Set to classic or vanilla.");
         $this->options[] = new Option(OptionName::role_beholder, OptionType::Bool, "on", "Use Beholder role in random games.");
         $this->options[] = new Option(OptionName::role_bodyguard, OptionType::Bool, "on", "Use Bodyguard role in random games.");
         $this->options[] = new Option(OptionName::role_hunter, OptionType::Bool, "on", "Use Hunter role in random games.");

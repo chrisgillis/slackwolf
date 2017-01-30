@@ -8,6 +8,8 @@ use Slackwolf\Game\Formatter\UserIdFormatter;
 use Slackwolf\Game\GameManager;
 use Slackwolf\Game\RoleStrategy;
 use Slackwolf\Game\GameState;
+use Slackwolf\Game\OptionsManager;
+use Slackwolf\Game\OptionName;
 use Slackwolf\Message\Message;
 
 /**
@@ -15,6 +17,8 @@ use Slackwolf\Message\Message;
  */
 class StartCommand extends Command
 {
+    private $optionsManager;
+    private $roleStrategyFactory;
 
     /**
      * {@inheritdoc}
@@ -28,6 +32,10 @@ class StartCommand extends Command
         if ($this->channel[0] == 'D') {
             throw new Exception("Can't start a game by direct message.");
         }
+
+        //TODO: This should probably be refactored to be passed within constructor or refactored to allow for per game settings. Leaving here until decision is made on what to do with this.
+        $this->optionsManager = new OptionsManager();
+        $this->roleStrategyFactory = new RoleStrategy\RoleStrategyFactory();
     }
 
     /**
@@ -76,7 +84,9 @@ class StartCommand extends Command
                     }
 
                     try {
-                        $gameManager->newGame($message->getChannel(), $users, new RoleStrategy\Classic());
+                        $roleStrategyOption = $this->optionsManager->getOptionValue(OptionName::rolestrategy);
+                        $roleStrategy = $this->roleStrategyFactory->createRoleStrategy($roleStrategyOption);
+                        $gameManager->newGame($message->getChannel(), $users, $roleStrategy);
                     } catch (Exception $e) {
                         $this->client->getChannelGroupOrDMByID($this->channel)->then(function (ChannelInterface $channel) use ($client,$e) {
                             $client->send($e->getMessage(), $channel);
