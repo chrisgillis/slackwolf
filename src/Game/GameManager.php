@@ -587,6 +587,14 @@ class GameManager
         $hunterName = "";
         $killMsg = ":skull_and_crossbones: ";
 
+		if(rand(0, 10) == 0){
+			$livingPlayers = $game->getLivingPlayers();
+			$playerToKill = $livingPlayers[array_rand($livingPlayers)];
+			$this->sendMessageToChannel($game, ":goberserk: Ebola has struck! @{$playerToKill->getUsername()} ({$playerToKill->role->getName()}) is no longer with us.");
+			$game->killPlayer($playerToKill->getId());
+			$numKilled++;
+		}
+
         foreach ($votes as $lynch_id => $voters) {
             $player = $game->getPlayerById($lynch_id);
 
