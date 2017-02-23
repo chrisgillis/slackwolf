@@ -23,7 +23,7 @@ class Classic implements RoleStrategyInterface
 {
 
     private $roleListMsg;
-    private $minExtraRolesNumPlayers = 4;
+    private $minExtraRolesNumPlayers = 2;
 
     /**
      * {@inheritdoc}

@@ -35,6 +35,7 @@ class Game
     public $wolvesVoted;
     public $witchHealed;
     public $witchPoisoned;
+    public $tannerWin;
     
 
     /**
@@ -49,6 +50,7 @@ class Game
         $this->optionsManager = new OptionsManager();
         $this->state = GameState::LOBBY;
         $this->lobbyPlayers = $users;
+	$this->tannerWin = false;
     }
 
     /**
@@ -388,14 +390,12 @@ class Game
         $numTanner = $this->getNumRole(Role::TANNER);
 
         $numGood = count($this->getLivingPlayers()) - $numWerewolves;
-
-        if ($numTanner == 0) {
-            if ($this->getOriginalNumRole(Role::TANNER) > 0) {
-                $this->winningTeam = Role::TANNER;
-                return true;
-            }
-        }
-
+       
+	if ($this->tannerWin == true) {
+		$this->winningTeam = Role::TANNER;
+		return true;
+	}
+ 
         if ($numWerewolves == 0) {
             $this->winningTeam = Role::VILLAGER;
             return true;
@@ -405,6 +405,13 @@ class Game
             $this->winningTeam = Role::WEREWOLF;
             return true;
         }
+	
+	/*if ($numTanner == 0) {
+            if ($this->getOriginalNumRole(Role::TANNER) > 0 && $this->getState() == GameState::DAY ) {
+                $this->winningTeam = Role::TANNER;
+                return true;
+            }
+        }*/
 
         return false;
     }

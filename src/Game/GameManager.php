@@ -413,6 +413,9 @@ class GameManager
                     $hunterMsg .= ":bow_and_arrow: " . $player->getUsername() .
                         " as hunter you may shoot one person.  Type !shoot @playername, or !shoot noone.";
                 }
+		else if($player->role->isRole(Role::TANNER)) {
+		    $game->tannerWin = true;
+		}
             }
 
             $lynchMsg .= implode(', ', $lynchedNames). "\r\n";
