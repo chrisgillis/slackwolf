@@ -13,6 +13,7 @@ use Slackwolf\Game\Roles\Seer;
 use Slackwolf\Game\Roles\Werewolf;
 use Slackwolf\Game\Roles\Witch;
 use Slackwolf\Game\Roles\WolfMan;
+use Slackwolf\Game\Roles\Fool;
 
 /**
  * Defines the Classic class.
@@ -44,6 +45,7 @@ class Classic implements RoleStrategyInterface
         $num_good = $num_players - $num_evil;
 
         $num_seer = $optionsManager->getOptionValue(OptionName::role_seer) ? 1 : 0;
+        $num_fool = $optionsManager->getOptionValue(OptionName::role_fool) ? 1 : 0;
         $num_witch = $optionsManager->getOptionValue(OptionName::role_witch) ? 1 : 0;
         $num_hunter = $optionsManager->getOptionValue(OptionName::role_hunter) ? 1 : 0;
 
@@ -75,7 +77,7 @@ class Classic implements RoleStrategyInterface
         $optionalRoleListMsg = "";
         if ($num_players >= $this->minExtraRolesNumPlayers) {
 
-            if ($num_seer > 0
+            if (($num_seer > 0 || $num_fool > 0)
                 && $optionsManager->getOptionValue(OptionName::role_beholder)){
                 $optionalRoles[Role::BEHOLDER] = 1;
                 $possibleOptionalRoles[] = new Beholder();
@@ -103,6 +105,13 @@ class Classic implements RoleStrategyInterface
                 $possibleOptionalRoles[] = new Tanner();
                 $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Tanner";
             }
+
+            if ($optionsManager->getOptionValue(OptionName::role_fool)){
+                $optionalRoles[Role::FOOL] = 1;
+                $possibleOptionalRoles[] = new Fool();
+                $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Fool";
+            }
+
         }
 
         shuffle($possibleOptionalRoles);

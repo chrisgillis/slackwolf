@@ -32,6 +32,7 @@ class Game
     public $nightEnded;
     public $hunterNeedsToShoot;
     public $seerSeen;
+    public $foolSeen;
     public $wolvesVoted;
     public $witchHealed;
     public $witchPoisoned;
@@ -433,11 +434,27 @@ class Game
     }
 
     /**
+     * @return mixed
+     */
+    public function foolSeen()
+    {
+        return $this->foolSeen;
+    }
+
+    /**
      * @param $seen
      */
     public function setSeerSeen($seen)
     {
         $this->seerSeen = $seen;
+    }
+
+    /**
+     * @param $seen
+     */
+    public function setFoolSeen($seen)
+    {
+        $this->foolSeen = $seen;
     }
 
     /**
@@ -447,6 +464,7 @@ class Game
         $this->state = $state;
         $this->clearVotes();
         $this->seerSeen = false;
+        $this->foolSeen = false;
         $this->wolvesVoted = false;
         $this->witchHealed = false;
         $this->witchPoisoned = false;
