@@ -98,6 +98,10 @@ class GameManager
             return false;
         }
 
+        if (strcmp($command,'bludgeon') == 0) {
+            $command = 'kill';
+        }
+
         if ( ! isset($this->commandBindings[$command])) {
             return false;
         }
