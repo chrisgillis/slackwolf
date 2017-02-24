@@ -99,7 +99,7 @@ class GameManager
         }
 
         if (strcmp($command,'bludgeon') == 0) {
-            $command = 'kill';
+            $command = 'vote';
         }
 
         if ( ! isset($this->commandBindings[$command])) {
