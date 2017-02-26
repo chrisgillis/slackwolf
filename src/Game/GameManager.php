@@ -587,6 +587,20 @@ class GameManager
         $hunterName = "";
         $killMsg = ":skull_and_crossbones: ";
 
+
+	$ebolaRate = (int)$this->optionsManager->getOptionValue(OptionName::ebola);
+
+	if($ebolaRate > 0){
+		$num = (int) rand(0, $ebolaRate);
+		if($num == 1){
+			$livingPlayers = $game->getLivingPlayers();
+			$playerToKill = $livingPlayers[array_rand($livingPlayers)];
+			$this->sendMessageToChannel($game, ":goberserk: Ebola has struck! @{$playerToKill->getUsername()} ({$playerToKill->role->getName()}) is no longer with us.");
+			$game->killPlayer($playerToKill->getId());
+			$numKilled++;
+		}
+	}
+
         foreach ($votes as $lynch_id => $voters) {
             $player = $game->getPlayerById($lynch_id);
 
