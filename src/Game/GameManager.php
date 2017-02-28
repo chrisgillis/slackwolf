@@ -174,6 +174,11 @@ class GameManager
                 return;
             }
 
+            $numFool = $game->getNumRole(Role::FOOL);
+            if ($numFool && ! $game->foolSeen()) {
+                return;
+            }
+
             $numWolf = count($game->getWerewolves());
 
             if ($numWolf && ! $game->getWolvesVoted()) {
@@ -417,6 +422,9 @@ class GameManager
                     $hunterMsg .= ":bow_and_arrow: " . $player->getUsername() .
                         " as hunter you may shoot one person.  Type !shoot @playername, or !shoot noone.";
                 }
+		else if($player->role->isRole(Role::TANNER)) {
+		    $game->tannerWin = true;
+		}
             }
 
             $lynchMsg .= implode(', ', $lynchedNames). "\r\n";
@@ -447,9 +455,11 @@ class GameManager
         $client = $this->client;
 
         foreach ($game->getLivingPlayers() as $player) {
+            $role = ($player->role->isRole(Role::FOOL) ? Role::SEER : $player->role->getName());
+
             $client->getDMByUserId($player->getId())
                 ->then(function (DirectMessageChannel $dmc) use ($client,$player,$game) {
-                    $client->send("Your role is {$player->role->getName()}", $dmc);
+                    $client->send("Your role is " . ($player->role->isRole(Role::FOOL) ? Role::SEER : $player->role->getName()), $dmc);
 
                     if ($player->role->isWerewolfTeam()) {
                         if (count($game->getWerewolves()) > 1) {
@@ -460,15 +470,20 @@ class GameManager
                         }
                     }
 
-                    if ($player->role->isRole(Role::SEER)) {
+                    if ($player->role->isRole(Role::SEER) || $player->role->isRole(Role::FOOL)) {
                         $client->send("Seer, select a player by saying !see #channel @username.\r\nDO NOT DISCUSS WHAT YOU SEE DURING THE NIGHT, ONLY DISCUSS DURING THE DAY IF YOU ARE NOT DEAD!", $dmc);
                     }
 
                     if ($player->role->isRole(Role::BEHOLDER)) {
                         $seers = $game->getPlayersOfRole(Role::SEER);
-                        $seers = PlayerListFormatter::format($seers);
+                        if(count($seers) > 0) {
+                            $seers = PlayerListFormatter::format($seers);
 
-                        $client->send("The seer is: {$seers}", $dmc);
+                            $client->send("The seer is: {$seers}", $dmc);
+                        }
+                        else {
+                            $client->send("There's no seer", $dmc);
+                        }
                     }
                 });
         }

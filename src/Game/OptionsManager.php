@@ -18,6 +18,7 @@ class OptionName
     const role_tanner = 'role_tanner';
     const role_witch = 'role_witch';
     const role_wolfman = 'role_wolfman';
+    const role_fool = 'role_fool';
 }
 
 class OptionType
@@ -75,6 +76,7 @@ class OptionsManager
         $this->options[] = new Option(OptionName::role_tanner, OptionType::Bool, "on", "Use Tanner role in random games.");
         $this->options[] = new Option(OptionName::role_witch, OptionType::Bool, "on", "Use Witch role in random games.");
         $this->options[] = new Option(OptionName::role_wolfman, OptionType::Bool, "on", "Use Wolf Man role in random games.");
+        $this->options[] = new Option(OptionName::role_fool, OptionType::Bool, "on", "Use Fool role in random games.");
 		$this->options[] = new Option(OptionName::ebola, OptionType::Int, "10", "Ebola will strike 1 in n times, where n is this number. 0 for off.");
         $this->loadOptions();
     }

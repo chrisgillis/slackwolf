@@ -138,7 +138,7 @@ class SeeCommand extends Command
             throw new Exception("Can't See if dead.");
         }
 
-        if (!$player->role->isRole(Role::SEER)) {
+        if (!$player->role->isRole(Role::SEER) && !$player->role->isRole(Role::FOOL)) {
             $this->client->getDMById($this->channel)
                  ->then(
                      function (DirectMessageChannel $dmc) use ($client) {
@@ -169,13 +169,27 @@ class SeeCommand extends Command
     public function fire()
     {
         $client = $this->client;
-
+        $currentPlayer = $this->game->getPlayerById($this->userId);
+        
         foreach ($this->game->getLivingPlayers() as $player) {
             if (! strstr($this->chosenUserId, $player->getId())) {
                 continue;
             }
 
-            if ($player->role->appearsAsWerewolf()) {
+            if ($currentPlayer->role->isRole(Role::FOOL)) {
+                $probs = rand(1, 10);echo ("Probs : $probs\n");
+                if($probs >= 4) {
+                    $appearsAsWerewolf = !$player->role->appearsAsWerewolf();
+                }
+                else {
+                    $appearsAsWerewolf = $player->role->appearsAsWerewolf();
+                }
+            }
+            else {
+                $appearsAsWerewolf = $player->role->appearsAsWerewolf();
+            }
+
+            if ($appearsAsWerewolf) {
                 $msg = "@{$player->getUsername()} is on the side of the Werewolves.";
             } else {
                 $msg = "@{$player->getUsername()} is on the side of the Villagers.";
@@ -188,7 +202,12 @@ class SeeCommand extends Command
                      }
                  );
 
-            $this->game->setSeerSeen(true);
+            if ($currentPlayer->role->isRole(Role::SEER)) {
+                 $this->game->setSeerSeen(true);
+            }
+            else {
+                 $this->game->setFoolSeen(true);
+            }
 
             $this->gameManager->changeGameState($this->game->getId(), GameState::DAY);
 
