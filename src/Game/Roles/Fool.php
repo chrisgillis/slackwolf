@@ -21,6 +21,6 @@ class Fool extends Role
      * {@inheritdoc}
      */
 	public function getDescription() {
-		return "A villager who, once each night, is allowed to see the role of another player. The bot will private message you.";
+		return "Same role as the Seer, but the information given is only correct 30% of the time. The Fool also does not know he is not the (real) Seer. Only Beholder knows who the real Seer is.
 	}
 }

@@ -152,7 +152,7 @@ class SeeCommand extends Command
             throw new Exception("Can only See at night.");
         }
 
-        if ($this->game->seerSeen()) {
+        if ($player->role->isRole(Role::SEER) && $this->game->seerSeen()) {
             $this->client->getDMById($this->channel)
                  ->then(
                      function (DirectMessageChannel $dmc) use ($client) {
@@ -161,6 +161,17 @@ class SeeCommand extends Command
                  );
             throw new Exception("You may only see once each night.");
         }
+
+	if ($player->role->isRole(Role::FOOL) && $this->game->foolSeen()) {
+            $this->client->getDMById($this->channel)
+                 ->then(
+                     function (DirectMessageChannel $dmc) use ($client) {
+                         $this->client->send(":warning: You may only see once each night.", $dmc);
+                     }
+                 );
+            throw new Exception("You may only see once each night.");
+        }
+
     }
 
     /**
