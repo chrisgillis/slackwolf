@@ -44,11 +44,7 @@ class GameStatusFormatter
                 $numWitch = $game->getNumRole(Role::WITCH);
                 $numFool = $game->getNumRole(Role::FOOL);
 
-                if ($numSeer > 0 && !$game->seerSeen) {
-                    $msg .= "_...waiting on the_ :crystal_ball: *Seer*\r\n";
-                }
-		
-		if ($numFool > 0 && !$game->foolSeen) {
+                if (($numSeer > 0 && !$game->seerSeen) || ($numFool > 0 && !$game->foolSeen)) {
                     $msg .= "_...waiting on the_ :crystal_ball: *Seer*\r\n";
                 }
 

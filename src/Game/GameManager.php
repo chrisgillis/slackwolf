@@ -166,8 +166,21 @@ class GameManager
             return;
         }
 
+        // changing from first night to day
+        if ($game->getState() == GameState::FIRST_NIGHT && $newGameState == GameState::DAY) {
+            $numSeer = $game->getNumRole(Role::SEER);
+            if ($numSeer && ! $game->seerSeen()) {
+                return;
+            }
+
+            $numFool = $game->getNumRole(Role::FOOL);
+            if ($numFool && ! $game->foolSeen()) {
+                return;
+            }
+        }
+
         // changing from night to day
-        if ($game->getState() == GameState::NIGHT && $newGameState == GameState::DAY && !$game->nightEnded) {
+        else if ($game->getState() == GameState::NIGHT && $newGameState == GameState::DAY && !$game->nightEnded) {
 
             $numSeer = $game->getNumRole(Role::SEER);
             if ($numSeer && ! $game->seerSeen()) {
@@ -495,13 +508,12 @@ class GameManager
         $msg .= "Players: {$playerList}\r\n";
         $msg .= "Possible Roles: {$game->getRoleStrategy()->getRoleListMsg()}\r\n\r\n";
         $msg .= WeatherFormatter::format($game)."\r\n";
-        if ($this->optionsManager->getOptionValue(OptionName::role_seer)) {
-            
-            $msg .= " The game will begin when the Seer chooses someone.";
+        if ($this->optionsManager->getOptionValue(OptionName::role_seer) || $this->optionsManager->getOptionValue(OptionName::role_fool) ) {
+            $msg .= " The game will begin when the Seer(s) chooses someone.";
         }
         $this->sendMessageToChannel($game, $msg);
 
-        if (!$this->optionsManager->getOptionValue(OptionName::role_seer)) {
+        if (!$this->optionsManager->getOptionValue(OptionName::role_seer) && !$this->optionsManager->getOptionValue(OptionName::role_fool)) {
             $this->changeGameState($game->getId(), GameState::NIGHT);
         }
     }
@@ -559,6 +571,19 @@ class GameManager
                      $client->send($seerMsg, $channel);
                  });
         }
+
+        $foolMsg = ":crystal_ball: Seer, select a player by saying !see #channel @username.";
+
+        $foolss = $game->getPlayersOfRole(Role::FOOL);
+
+        foreach ($foolss as $fool)
+        {
+            $this->client->getDMByUserId($fool->getId())
+                 ->then(function (DirectMessageChannel $channel) use ($client,$foolMsg) {
+                     $client->send($foolMsg, $channel);
+                 });
+        }
+
 
         $bodyGuardMsg = ":shield: Bodyguard, you may guard someone once per with your grizzled ex-lawman skills. That player cannot be eliminated. Type !guard #channel @user";
 
