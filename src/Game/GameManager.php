@@ -489,12 +489,23 @@ class GameManager
 
                     if ($player->role->isRole(Role::BEHOLDER)) {
                         $seers = $game->getPlayersOfRole(Role::SEER);
-                        if(count($seers) > 0) {
+                        $fools = $game->getPlayersOfRole(Role::FOOL);
+
+                        if(count($seers) > 0 && count($fools) > 0) { # Randomly tell the beholder the Seer/Fool is the Seer
+                            if (rand(0,1) == 1) {
+                                $seers = PlayerListFormatter::format($seers);
+                            } else {
+                                $seers = PlayerListFormatter::format($fools);
+                            }
+                            $client->send("The seer is: {$seers}", $dmc);
+                        } else if(count($seers) > 0) { # Tell the beholder the Seer is the Seer
                             $seers = PlayerListFormatter::format($seers);
 
                             $client->send("The seer is: {$seers}", $dmc);
-                        }
-                        else {
+                        } else if(count($fools) > 0) { # Tell the beholder the Fool is the Seer
+                            $seers = PlayerListFormatter::format($fools);
+                            $client->send("The seer is: {$seers}", $dmc);
+                        } else {
                             $client->send("There's no seer", $dmc);
                         }
                     }
