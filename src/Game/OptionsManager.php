@@ -5,6 +5,7 @@ use Exception;
 class OptionName
 {
     const changevote = 'changevote';
+    const game_mode = 'game_mode';
     const no_lynch = 'no_lynch';
     const mods = 'mods';
 
@@ -79,7 +80,8 @@ class OptionsManager
         $this->options[] = new Option(OptionName::role_wolfman, OptionType::Bool, "on", "Use Wolf Man role in random games.");
         $this->options[] = new Option(OptionName::role_fool, OptionType::Bool, "on", "Use Fool role in random games.");
         $this->options[] = new Option(OptionName::role_cursed, OptionType::Bool, "on", "Use Cursed role in random games.");
-		$this->options[] = new Option(OptionName::ebola, OptionType::Int, "10", "Ebola will strike 1 in n times, where n is this number. 0 for off.");
+        $this->options[] = new Option(OptionName::game_mode, OptionType::String, "classic", "Choose game mode, classic or chaos");
+		    $this->options[] = new Option(OptionName::ebola, OptionType::Int, "10", "Ebola will strike 1 in n times, where n is this number. 0 for off.");
         $this->loadOptions();
     }
 

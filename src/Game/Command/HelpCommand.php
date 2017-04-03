@@ -32,6 +32,9 @@ class HelpCommand extends Command
         }
         $help_msg .= "\r\n";
 
+        $help_msg .= "*Game Modes*\r\n------------------------\r\n";
+        $help_msg .= "Classic Mode : Required Roles [Seer, Hunter, Witch, Werewolves]. Seer is able to see someone during the first night\r\n";
+        $help_msg .= "Chaos Mode : Required Roles [Werewolves]. All night roles (e.g. Seer, Witch, Werewolves, Bodyguard) can do their commands since the first night\r\n\r\n";
         $help_msg .= "*Game Commands*\r\n------------------------\r\n";
         $help_msg .= "`!new` - Create a new lobby for players to !join for the next game\r\n";
         $help_msg .= "`!join` - Join the lobby for the next game\r\n";
