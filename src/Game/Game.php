@@ -631,4 +631,12 @@ class Game
     public function setWitchPoisonedUserId($id) {
         $this->witchPoisonedUserId = $id;
     }
+
+     /**
+     * @return string
+     */
+    public function getGameMode() {
+        return $this->optionsManager->getOptionValue(OptionName::game_mode);
+    }
+
 }
