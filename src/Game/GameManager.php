@@ -486,8 +486,16 @@ class GameManager
                     if ($player->role->isRole(Role::SEER) || $player->role->isRole(Role::FOOL)) {
                         $client->send("Seer, select a player by saying !see #channel @username.\r\nDO NOT DISCUSS WHAT YOU SEE DURING THE NIGHT, ONLY DISCUSS DURING THE DAY IF YOU ARE NOT DEAD!", $dmc);
                     }
-
                     if ($player->role->isRole(Role::BEHOLDER)) {
+
+                    }
+                    
+                    if ($player->role->isRole(Role::BEHOLDER)) {
+                        // Original seer assigning method
+                        $seers = $game->getPlayersOfRole(Role::SEER);
+                        $seers = PlayerListFormatter::format($seers);
+                        $client->send("The seer is: {$seers}", $dmc);
+			/* // 50-50 chance the beholder is assigned either the seer or fool
                         $seers = $game->getPlayersOfRole(Role::SEER);
                         $fools = $game->getPlayersOfRole(Role::FOOL);
 
@@ -507,7 +515,7 @@ class GameManager
                             $client->send("The seer is: {$seers}", $dmc);
                         } else {
                             $client->send("There's no seer", $dmc);
-                        }
+                        }*/
                     }
                 });
         }
