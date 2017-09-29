@@ -42,9 +42,12 @@ class GameStatusFormatter
                 $numSeer = $game->getNumRole(Role::SEER);
                 $numBodyguard = $game->getNumRole(Role::BODYGUARD);
                 $numWitch = $game->getNumRole(Role::WITCH);
+                $numFool = $game->getNumRole(Role::FOOL);
 
-                if ($numSeer > 0 && !$game->seerSeen) {
-                    $msg .= "_...waiting on the_ :crystal_ball: *Seer*\r\n";
+                if ($game->getGameMode() != 'chaos') {
+                    if (($numSeer > 0 && !$game->seerSeen) || ($numFool > 0 && !$game->foolSeen)) {
+                        $msg .= "_...waiting on the_ :crystal_ball: *Seer*\r\n";
+                    }
                 }
 
                 if ($game->state == GameState::NIGHT) {
@@ -52,12 +55,14 @@ class GameStatusFormatter
                         $msg .= "_...waiting on the_ :wolf:  *Wolves*\r\n";
                     }
 
-                    if ($numWitch > 0 && (!$game->witchPoisoned || !$game->witchHealed)) {
-                        $msg .= "_...waiting on the_ :older_woman::skin-tone-3: *Witch*\r\n";
-                    }
+                    if ($game->getGameMode() != 'chaos') {
+                        if ($numWitch > 0 && (!$game->witchPoisoned || !$game->witchHealed)) {
+                            $msg .= "_...waiting on the_ :older_woman::skin-tone-3: *Witch*\r\n";
+                        }
 
-                    if ($numBodyguard > 0 && !$game->getGuardedUserId()) {
-                        $msg .= "_...waiting on the_ :shield: *Bodyguard*\r\n";
+                        if ($numBodyguard > 0 && !$game->getGuardedUserId()) {
+                            $msg .= "_...waiting on the_ :shield: *Bodyguard*\r\n";
+                        }
                     }
                 }
                 break;

@@ -9,6 +9,7 @@ use Slackwolf\Game\GameState;
 use Slackwolf\Game\RoleStrategy;
 use Slackwolf\Game\Formatter\PlayerListFormatter;
 use Slackwolf\Message\Message;
+use Slackwolf\Game\OptionName;
 
 /**
  * Defines the NewCommand class.
@@ -56,7 +57,12 @@ class NewCommand extends Command
         }
 
         try {
-            $gameManager->newGame($message->getChannel(), [], new RoleStrategy\Classic());        
+            if($gameManager->optionsManager->getOptionValue(OptionName::game_mode) == 'chaos') {
+                $gameManager->newGame($message->getChannel(), [], new RoleStrategy\Chaos());        
+            }
+            else {
+                $gameManager->newGame($message->getChannel(), [], new RoleStrategy\Classic());        
+            }
             $game = $gameManager->getGame($message->getChannel());
             $this->gameManager->sendMessageToChannel($game, "A new game lobby has been created.  Type !join to play the next game.");
             $userId = $this->userId;

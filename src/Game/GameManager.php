@@ -72,7 +72,7 @@ class GameManager
         if (!is_string($input) || !isset($input[0]) || $input[0] !== '!') {
             return FALSE;
         }
-
+	    
         // Example: [!kill, #channel, @name]
         $input_array = explode(' ', $input);
 
@@ -96,6 +96,10 @@ class GameManager
 
         if ($command == null) {
             return false;
+        }
+
+        if (strcmp($command,'bludgeon') == 0) {
+            $command = 'vote';
         }
 
         if ( ! isset($this->commandBindings[$command])) {
@@ -162,11 +166,29 @@ class GameManager
             return;
         }
 
+        // changing from first night to day
+        if ($game->getState() == GameState::FIRST_NIGHT && $newGameState == GameState::DAY) {
+            $numSeer = $game->getNumRole(Role::SEER);
+            if ($numSeer && ! $game->seerSeen()) {
+                return;
+            }
+
+            $numFool = $game->getNumRole(Role::FOOL);
+            if ($numFool && ! $game->foolSeen()) {
+                return;
+            }
+        }
+
         // changing from night to day
-        if ($game->getState() == GameState::NIGHT && $newGameState == GameState::DAY && !$game->nightEnded) {
+        else if ($game->getState() == GameState::NIGHT && $newGameState == GameState::DAY && !$game->nightEnded) {
 
             $numSeer = $game->getNumRole(Role::SEER);
             if ($numSeer && ! $game->seerSeen()) {
+                return;
+            }
+
+            $numFool = $game->getNumRole(Role::FOOL);
+            if ($numFool && ! $game->foolSeen()) {
                 return;
             }
 
@@ -413,6 +435,9 @@ class GameManager
                     $hunterMsg .= ":bow_and_arrow: " . $player->getUsername() .
                         " as hunter you may shoot one person.  Type !shoot @playername, or !shoot noone.";
                 }
+		else if($player->role->isRole(Role::TANNER)) {
+		    $game->tannerWin = true;
+		}
             }
 
             $lynchMsg .= implode(', ', $lynchedNames). "\r\n";
@@ -443,9 +468,11 @@ class GameManager
         $client = $this->client;
 
         foreach ($game->getLivingPlayers() as $player) {
+            $role = ($player->role->isRole(Role::FOOL) ? Role::SEER : $player->role->getName());
+
             $client->getDMByUserId($player->getId())
                 ->then(function (DirectMessageChannel $dmc) use ($client,$player,$game) {
-                    $client->send("Your role is {$player->role->getName()}", $dmc);
+                    $client->send("Your role is " . ($player->role->isRole(Role::FOOL) ? Role::SEER : $player->role->getName()), $dmc);
 
                     if ($player->role->isWerewolfTeam()) {
                         if (count($game->getWerewolves()) > 1) {
@@ -456,15 +483,39 @@ class GameManager
                         }
                     }
 
-                    if ($player->role->isRole(Role::SEER)) {
+                    if ($player->role->isRole(Role::SEER) || $player->role->isRole(Role::FOOL)) {
                         $client->send("Seer, select a player by saying !see #channel @username.\r\nDO NOT DISCUSS WHAT YOU SEE DURING THE NIGHT, ONLY DISCUSS DURING THE DAY IF YOU ARE NOT DEAD!", $dmc);
                     }
-
                     if ($player->role->isRole(Role::BEHOLDER)) {
+
+                    }
+                    
+                    if ($player->role->isRole(Role::BEHOLDER)) {
+                        // Original seer assigning method
                         $seers = $game->getPlayersOfRole(Role::SEER);
                         $seers = PlayerListFormatter::format($seers);
-
                         $client->send("The seer is: {$seers}", $dmc);
+			/* // 50-50 chance the beholder is assigned either the seer or fool
+                        $seers = $game->getPlayersOfRole(Role::SEER);
+                        $fools = $game->getPlayersOfRole(Role::FOOL);
+
+                        if(count($seers) > 0 && count($fools) > 0) { # Randomly tell the beholder the Seer/Fool is the Seer
+                            if (rand(0,1) == 1) {
+                                $seers = PlayerListFormatter::format($seers);
+                            } else {
+                                $seers = PlayerListFormatter::format($fools);
+                            }
+                            $client->send("The seer is: {$seers}", $dmc);
+                        } else if(count($seers) > 0) { # Tell the beholder the Seer is the Seer
+                            $seers = PlayerListFormatter::format($seers);
+
+                            $client->send("The seer is: {$seers}", $dmc);
+                        } else if(count($fools) > 0) { # Tell the beholder the Fool is the Seer
+                            $seers = PlayerListFormatter::format($fools);
+                            $client->send("The seer is: {$seers}", $dmc);
+                        } else {
+                            $client->send("There's no seer", $dmc);
+                        }*/
                     }
                 });
         }
@@ -476,13 +527,13 @@ class GameManager
         $msg .= "Players: {$playerList}\r\n";
         $msg .= "Possible Roles: {$game->getRoleStrategy()->getRoleListMsg()}\r\n\r\n";
         $msg .= WeatherFormatter::format($game)."\r\n";
-        if ($this->optionsManager->getOptionValue(OptionName::role_seer)) {
-            
-            $msg .= " The game will begin when the Seer chooses someone.";
+      
+        if (($this->optionsManager->getOptionValue(OptionName::role_seer) || $this->optionsManager->getOptionValue(OptionName::role_fool)) && $this->optionsManager->getOptionValue(OptionName::game_mode) != 'chaos') {
+            $msg .= " The game will begin when the Seer(s) (if there is one) chooses someone.";
         }
         $this->sendMessageToChannel($game, $msg);
 
-        if (!$this->optionsManager->getOptionValue(OptionName::role_seer)) {
+        if ((!$this->optionsManager->getOptionValue(OptionName::role_seer) && !$this->optionsManager->getOptionValue(OptionName::role_fool)) || $this->optionsManager->getOptionValue(OptionName::game_mode) == 'chaos') {
             $this->changeGameState($game->getId(), GameState::NIGHT);
         }
     }
@@ -541,6 +592,19 @@ class GameManager
                  });
         }
 
+        $foolMsg = ":crystal_ball: Seer, select a player by saying !see #channel @username.";
+
+        $foolss = $game->getPlayersOfRole(Role::FOOL);
+
+        foreach ($foolss as $fool)
+        {
+            $this->client->getDMByUserId($fool->getId())
+                 ->then(function (DirectMessageChannel $channel) use ($client,$foolMsg) {
+                     $client->send($foolMsg, $channel);
+                 });
+        }
+
+
         $bodyGuardMsg = ":shield: Bodyguard, you may guard someone once per with your grizzled ex-lawman skills. That player cannot be eliminated. Type !guard #channel @user";
 
         $bodyguards = $game->getPlayersOfRole(Role::BODYGUARD);
@@ -586,6 +650,20 @@ class GameManager
 
         $hunterName = "";
         $killMsg = ":skull_and_crossbones: ";
+
+
+	$ebolaRate = (int)$this->optionsManager->getOptionValue(OptionName::ebola);
+
+	if($ebolaRate > 0){
+		$num = (int) rand(0, $ebolaRate);
+		if($num == 1){
+			$livingPlayers = $game->getLivingPlayers();
+			$playerToKill = $livingPlayers[array_rand($livingPlayers)];
+			$this->sendMessageToChannel($game, ":goberserk: Ebola has struck! @{$playerToKill->getUsername()} ({$playerToKill->role->getName()}) is no longer with us.");
+			$game->killPlayer($playerToKill->getId());
+			$numKilled++;
+		}
+	}
 
         foreach ($votes as $lynch_id => $voters) {
             $player = $game->getPlayerById($lynch_id);

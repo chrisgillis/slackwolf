@@ -9,6 +9,7 @@ use Slackwolf\Game\GameManager;
 use Slackwolf\Game\RoleStrategy;
 use Slackwolf\Game\GameState;
 use Slackwolf\Message\Message;
+use Slackwolf\Game\OptionName;
 
 /**
  * Defines the StartCommand class.
@@ -76,7 +77,12 @@ class StartCommand extends Command
                     }
 
                     try {
-                        $gameManager->newGame($message->getChannel(), $users, new RoleStrategy\Classic());
+                        if($gameManager->optionsManager->getOptionValue(OptionName::game_mode) == 'chaos') {
+                            $gameManager->newGame($message->getChannel(), $users, new RoleStrategy\Chaos());        
+                        }
+                        else {
+                            $gameManager->newGame($message->getChannel(), $users, new RoleStrategy\Classic());        
+                        }
                     } catch (Exception $e) {
                         $this->client->getChannelGroupOrDMByID($this->channel)->then(function (ChannelInterface $channel) use ($client,$e) {
                             $client->send($e->getMessage(), $channel);

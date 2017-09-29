@@ -32,9 +32,11 @@ class Game
     public $nightEnded;
     public $hunterNeedsToShoot;
     public $seerSeen;
+    public $foolSeen;
     public $wolvesVoted;
     public $witchHealed;
     public $witchPoisoned;
+    public $tannerWin;
     
 
     /**
@@ -49,6 +51,7 @@ class Game
         $this->optionsManager = new OptionsManager();
         $this->state = GameState::LOBBY;
         $this->lobbyPlayers = $users;
+	$this->tannerWin = false;
     }
 
     /**
@@ -388,14 +391,12 @@ class Game
         $numTanner = $this->getNumRole(Role::TANNER);
 
         $numGood = count($this->getLivingPlayers()) - $numWerewolves;
-
-        if ($numTanner == 0) {
-            if ($this->getOriginalNumRole(Role::TANNER) > 0) {
-                $this->winningTeam = Role::TANNER;
-                return true;
-            }
-        }
-
+       
+	if ($this->tannerWin == true) {
+		$this->winningTeam = Role::TANNER;
+		return true;
+	}
+ 
         if ($numWerewolves == 0) {
             $this->winningTeam = Role::VILLAGER;
             return true;
@@ -405,6 +406,13 @@ class Game
             $this->winningTeam = Role::WEREWOLF;
             return true;
         }
+	
+	/*if ($numTanner == 0) {
+            if ($this->getOriginalNumRole(Role::TANNER) > 0 && $this->getState() == GameState::DAY ) {
+                $this->winningTeam = Role::TANNER;
+                return true;
+            }
+        }*/
 
         return false;
     }
@@ -426,11 +434,27 @@ class Game
     }
 
     /**
+     * @return mixed
+     */
+    public function foolSeen()
+    {
+        return $this->foolSeen;
+    }
+
+    /**
      * @param $seen
      */
     public function setSeerSeen($seen)
     {
         $this->seerSeen = $seen;
+    }
+
+    /**
+     * @param $seen
+     */
+    public function setFoolSeen($seen)
+    {
+        $this->foolSeen = $seen;
     }
 
     /**
@@ -440,6 +464,7 @@ class Game
         $this->state = $state;
         $this->clearVotes();
         $this->seerSeen = false;
+        $this->foolSeen = false;
         $this->wolvesVoted = false;
         $this->witchHealed = false;
         $this->witchPoisoned = false;
@@ -606,4 +631,12 @@ class Game
     public function setWitchPoisonedUserId($id) {
         $this->witchPoisonedUserId = $id;
     }
+
+     /**
+     * @return string
+     */
+    public function getGameMode() {
+        return $this->optionsManager->getOptionValue(OptionName::game_mode);
+    }
+
 }

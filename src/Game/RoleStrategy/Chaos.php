@@ -17,15 +17,15 @@ use Slackwolf\Game\Roles\Fool;
 use Slackwolf\Game\Roles\Cursed;
 
 /**
- * Defines the Classic class.
+ * Defines the Chaos class.
  *
  * @package Slackwolf\Game\RoleStrategy
  */
-class Classic implements RoleStrategyInterface
+class Chaos implements RoleStrategyInterface
 {
 
     private $roleListMsg;
-    private $minExtraRolesNumPlayers = 4;
+    private $minExtraRolesNumPlayers = 2;
 
     /**
      * {@inheritdoc}
@@ -50,74 +50,79 @@ class Classic implements RoleStrategyInterface
         $num_hunter = $optionsManager->getOptionValue(OptionName::role_hunter) ? 1 : 0;
 
         $requiredRoles = [
-            Role::SEER => $num_seer,
             Role::WEREWOLF => $num_evil
         ];
 
+        $optionalRoles = [
+            Role::VILLAGER => max($num_good, 0)
+        ];
+
+
+        $this->roleListMsg = "Required: [Werewolf, Villager]";
+
+        $possibleOptionalRoles = [new Villager()];
+        $optionalRoleListMsg = "";
+
+        // seer role on
+        if ($optionsManager->getOptionValue(OptionName::role_seer)){
+            $optionalRoles[Role::SEER] = 1;
+            $possibleOptionalRoles[] = new Seer();
+            $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Seer";
+        }
+
         // witch role on
         if ($optionsManager->getOptionValue(OptionName::role_witch)){
-            $requiredRoles[Role::WITCH] = 1;
+            $optionalRoles[Role::WITCH] = 1;
+            $possibleOptionalRoles[] = new Witch();
+            $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Witch";
         }
 
         // hunter role on
         if ($optionsManager->getOptionValue(OptionName::role_hunter)){
-            $requiredRoles[Role::HUNTER] = 1;
+            $optionalRoles[Role::HUNTER] = 1;
+            $possibleOptionalRoles[] = new Hunter();
+            $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Hunter";
         }
 
-        $optionalRoles = [
-            Role::VILLAGER => max($num_good - $num_seer + $num_witch + $num_hunter, 0)
-        ];
+        if (($num_seer > 0)
+            && $optionsManager->getOptionValue(OptionName::role_beholder)){
+            $optionalRoles[Role::BEHOLDER] = 1;
+            $possibleOptionalRoles[] = new Beholder();
+            $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Beholder";
+        }
 
-        $this->roleListMsg = "Required: [".($num_seer > 0 ? "Seer, " : "").
-            ($num_witch > 0 ? "Witch, " : "").
-            ($num_hunter > 0 ? "Hunter, " : "").
-            "Werewolf, Villager]";
+        if ($optionsManager->getOptionValue(OptionName::role_bodyguard)){
+            $optionalRoles[Role::BODYGUARD] = 1;
+            $possibleOptionalRoles[] = new Bodyguard();
+            $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Bodyguard";
+        }
 
-        $possibleOptionalRoles = [new Villager()];
-        $optionalRoleListMsg = "";
-        if ($num_players >= $this->minExtraRolesNumPlayers) {
+        if ($optionsManager->getOptionValue(OptionName::role_lycan)){
+            $optionalRoles[Role::LYCAN] = 1;
+            $possibleOptionalRoles[] = new Lycan();
+            $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Lycan";
+        }
 
-            if (($num_seer > 0)
-                && $optionsManager->getOptionValue(OptionName::role_beholder)){
-                $optionalRoles[Role::BEHOLDER] = 1;
-                $possibleOptionalRoles[] = new Beholder();
-                $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Beholder";
-            }
+        if ($optionsManager->getOptionValue(OptionName::role_wolfman)){
+            $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Wolfman";
+        }
 
-            if ($optionsManager->getOptionValue(OptionName::role_bodyguard)){
-                $optionalRoles[Role::BODYGUARD] = 1;
-                $possibleOptionalRoles[] = new Bodyguard();
-                $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Bodyguard";
-            }
+        if ($optionsManager->getOptionValue(OptionName::role_tanner)){
+            $optionalRoles[Role::TANNER] = 1;
+            $possibleOptionalRoles[] = new Tanner();
+            $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Tanner";
+        }
 
-            if ($optionsManager->getOptionValue(OptionName::role_lycan)){
-                $optionalRoles[Role::LYCAN] = 1;
-                $possibleOptionalRoles[] = new Lycan();
-                $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Lycan";
-            }
-
-            if ($optionsManager->getOptionValue(OptionName::role_wolfman)){
-                $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Wolfman";
-            }
-
-            if ($optionsManager->getOptionValue(OptionName::role_tanner)){
-                $optionalRoles[Role::TANNER] = 1;
-                $possibleOptionalRoles[] = new Tanner();
-                $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Tanner";
-            }
-
-            if ($optionsManager->getOptionValue(OptionName::role_fool)){
-                $optionalRoles[Role::FOOL] = 1;
-                $possibleOptionalRoles[] = new Fool();
-                $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Fool";
-            }
-            
-            if ($optionsManager->getOptionValue(OptionName::role_cursed)){
-                $optionalRoles[Role::CURSED] = 1;
-                $possibleOptionalRoles[] = new Cursed();
-                $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Cursed";
-            }
-
+        if ($optionsManager->getOptionValue(OptionName::role_fool)){
+            $optionalRoles[Role::FOOL] = 1;
+            $possibleOptionalRoles[] = new Fool();
+            $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Fool";
+        }
+        
+        if ($optionsManager->getOptionValue(OptionName::role_cursed)){
+            $optionalRoles[Role::CURSED] = 1;
+            $possibleOptionalRoles[] = new Cursed();
+            $optionalRoleListMsg .= (strlen($optionalRoleListMsg) > 0 ? ", " : "")."Cursed";
         }
 
         shuffle($possibleOptionalRoles);
@@ -131,14 +136,8 @@ class Classic implements RoleStrategyInterface
         foreach ($requiredRoles as $role => $num_role) {
             for ($i = 0; $i < $num_role; $i++) {
                 if (count($rolePool) < $num_players) {
-                    if($role == Role::SEER)
-                        $rolePool[] = new Seer();
                     if($role == Role::WEREWOLF)
                         $rolePool[] = new Werewolf();
-                    if($role == Role::WITCH)
-                        $rolePool[] = new Witch();
-                    if($role == Role::HUNTER)
-                        $rolePool[] = new Hunter();
                 }
             }
         }
