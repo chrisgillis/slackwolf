@@ -533,8 +533,12 @@ class GameManager
         }
         $this->sendMessageToChannel($game, $msg);
 
-        if ((!$this->optionsManager->getOptionValue(OptionName::role_seer) && !$this->optionsManager->getOptionValue(OptionName::role_fool)) || $this->optionsManager->getOptionValue(OptionName::game_mode) == 'chaos') {
-            $this->changeGameState($game->getId(), GameState::NIGHT);
+        if ((!$this->optionsManager->getOptionValue(OptionName::role_seer) && !$this->optionsManager->getOptionValue(OptionName::role_fool))) {
+            if ($this->optionsManager->getOptionValue(OptionName::game_mode) == 'chaos') {
+                $this->changeGameState($game->getId(), GameState::NIGHT);
+            } else {
+                $this->changeGameState($game->getId(), GameState::DAY);
+            }
         }
     }
 
