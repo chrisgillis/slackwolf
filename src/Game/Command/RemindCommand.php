@@ -35,19 +35,18 @@ class RemindCommand extends Command
             return;
         }
 
-        // Look for current game and player
-        $game = $this->gameManager->getGame($this->channel);
-        $player = $game->getPlayerById($this->userId);
-
-        $roleName = $player->role->getName();
-        $roleDescription = $player->role->getDescription();
-
-        // DM the player his current role and description
-        $reminder_msg = "Your current role is:\r\n" . '_' . $roleName . '_ - ' . $roleDescription;
-
-        $client->getDMByUserID($player->getId())
-            ->then(function(DirectMessageChannel $dm) use ($client, $reminder_msg) {
-                $client->send($reminder_msg,$dm);
-            });
+        try {// Look for current game and player
+            $game = $this->gameManager->getGame($this->channel);
+            $player = $game->getPlayerById($this->userId);
+            $roleName = $player->role->getName();
+            $roleDescription = $player->role->getDescription();// DM the player his current role and description
+            $reminder_msg = "Your current role is:\r\n" . '_' . $roleName . '_ - ' . $roleDescription;
+            $client->getDMByUserID($player->getId())
+                ->then(function (DirectMessageChannel $dm) use ($client, $reminder_msg) {
+                    $client->send($reminder_msg, $dm);
+                });
+        } catch (Exception $e) {
+            error_log($e);
+        }
     }
 }

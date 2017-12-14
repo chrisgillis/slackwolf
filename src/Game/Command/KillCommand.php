@@ -160,7 +160,7 @@ class KillCommand extends Command
 
         if ($this->game->hasPlayerVoted($this->userId)) {
             //If changeVote is not enabled and player has already voted, do not allow another vote
-            if (!$this->gameManager->optionsManager->getOptionValue(OptionName::changevote))
+            if (!$this->gameManager->optionsManager->getOptionValue(OptionName::CHANGE_VOTE))
             {
                 throw new Exception("Vote change not allowed.");
             }

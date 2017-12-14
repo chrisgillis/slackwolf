@@ -636,7 +636,7 @@ class Game
      * @return string
      */
     public function getGameMode() {
-        return $this->optionsManager->getOptionValue(OptionName::game_mode);
+        return $this->optionsManager->getOptionValue(OptionName::GAME_MODE);
     }
 
 }

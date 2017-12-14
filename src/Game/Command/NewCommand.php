@@ -57,7 +57,7 @@ class NewCommand extends Command
         }
 
         try {
-            if($gameManager->optionsManager->getOptionValue(OptionName::game_mode) == 'chaos') {
+            if($gameManager->optionsManager->getOptionValue(OptionName::GAME_MODE) == 'chaos') {
                 $gameManager->newGame($message->getChannel(), [], new RoleStrategy\Chaos());        
             }
             else {
