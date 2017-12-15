@@ -29,21 +29,25 @@ class RemindCommand extends Command
 
         if ( ! $this->gameManager->hasGame($this->channel)) {
             $client->getChannelGroupOrDMByID($this->channel)
-               ->then(function (ChannelInterface $channel) use ($client) {
-                   $client->send(":warning: No game in progress.", $channel);
-               });
+                ->then(function (ChannelInterface $channel) use ($client) {
+                    $client->send(":warning: No game in progress.", $channel);
+                });
             return;
         }
 
         // Look for current game and player
         $game = $this->gameManager->getGame($this->channel);
         $player = $game->getPlayerById($this->userId);
+
         $roleName = $player->role->getName();
-        $roleDescription = $player->role->getDescription();// DM the player his current role and description
+        $roleDescription = $player->role->getDescription();
+
+        // DM the player his current role and description
         $reminder_msg = "Your current role is:\r\n" . '_' . $roleName . '_ - ' . $roleDescription;
+
         $client->getDMByUserID($player->getId())
-            ->then(function (DirectMessageChannel $dm) use ($client, $reminder_msg) {
-                $client->send($reminder_msg, $dm);
+            ->then(function(DirectMessageChannel $dm) use ($client, $reminder_msg) {
+                $client->send($reminder_msg,$dm);
             });
     }
 }
