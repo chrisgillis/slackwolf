@@ -1,7 +1,7 @@
 <?php namespace Slackwolf\Game\RoleStrategy;
 
+use Slackwolf\Game\GameState;
 use Slackwolf\Game\Role;
-use Slackwolf\Game\OptionsManager;
 use Slackwolf\Game\OptionName;
 use Slackwolf\Game\Roles\Villager;
 use Slackwolf\Game\Roles\Tanner;
@@ -177,5 +177,11 @@ class Chaos implements RoleStrategyInterface
         }
 
         return $players;
+    }
+
+    public function firstNight($gameManager, $game, $msg)
+    {
+        $gameManager->sendMessageToChannel($game, $msg);
+        $gameManager->changeGameState($game->getId(), GameState::NIGHT);
     }
 }

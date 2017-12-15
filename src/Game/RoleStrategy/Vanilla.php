@@ -1,12 +1,13 @@
 <?php namespace Slackwolf\Game\RoleStrategy;
 
 
+use Slackwolf\Game\GameState;
 use Slackwolf\Game\Roles\Villager;
 use Slackwolf\Game\Roles\Werewolf;
 
 
 /**
- * Defines the Classic class.
+ * Defines the Vanilla class.
  *
  * @package Slackwolf\Game\RoleStrategy
  */
@@ -58,5 +59,10 @@ class Vanilla implements RoleStrategyInterface
         }
 
         return $players;
+    }
+
+    public function firstNight($gameManager, $game, $msg) {
+        $gameManager->sendMessageToChannel($game, $msg);
+        $gameManager->changeGameState($game->getId(), GameState::DAY);
     }
 }

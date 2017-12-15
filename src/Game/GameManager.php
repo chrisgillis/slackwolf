@@ -528,18 +528,7 @@ class GameManager
         $msg .= "Possible Roles: {$game->getRoleStrategy()->getRoleListMsg()}\r\n\r\n";
         $msg .= WeatherFormatter::format($game)."\r\n";
 
-        if ($this->optionsManager->getOptionValue(OptionName::GAME_MODE) != 'chaos') {
-            if ($this->optionsManager->getOptionValue(OptionName::ROLE_SEER) || $this->optionsManager->getOptionValue(OptionName::ROLE_FOOL)) {
-                $msg .= " The game will begin when the Seer(s) (if there is one) chooses someone.";
-                $this->sendMessageToChannel($game, $msg);
-            } else {
-                $this->sendMessageToChannel($game, $msg);
-                $this->changeGameState($game->getId(), GameState::DAY);
-            }
-        } else {
-            $this->sendMessageToChannel($game, $msg);
-            $this->changeGameState($game->getId(), GameState::NIGHT);
-        }
+        $game->getRoleStrategy()->firstNight($this, $game, $msg);
     }
 
     /**

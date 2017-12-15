@@ -43,7 +43,7 @@ class StartCommand extends Command
         $loadPlayers = true;
         // Check to see that a game does not currently exist
         if ($this->gameManager->hasGame($this->channel)) {
-            if ($this->game->getState() == GameState::LOBBY){
+            if ($this->game->getState() == GameState::LOBBY) {
                 $loadPlayers = false;
                 if (count($this->args) > 0 && count($this->game->getLobbyPlayers()) > 0) {
                     $this->client->getChannelGroupOrDMByID($this->channel)->then(function (ChannelInterface $channel) use ($client) {
@@ -68,7 +68,7 @@ class StartCommand extends Command
                     /** @var \Slack\User[] $users */
                     $this->filterChosen($users);
 
-                    if(count($users) < 3) {
+                    if (count($users) < 3) {
                         $this->client->getChannelGroupOrDMByID($this->channel)
                             ->then(function (ChannelInterface $channel) use ($client) {
                                 $client->send("Cannot start a game with less than 3 players.", $channel);
@@ -77,14 +77,15 @@ class StartCommand extends Command
                     }
 
                     try {
-                        if($gameManager->optionsManager->getOptionValue(OptionName::GAME_MODE) == 'chaos') {
-                            $gameManager->newGame($message->getChannel(), $users, new RoleStrategy\Chaos());        
-                        }
-                        else {
-                            $gameManager->newGame($message->getChannel(), $users, new RoleStrategy\Classic());        
+                        if ($gameManager->optionsManager->isGameMode(OptionName::GAME_MODE_CHAOS)) {
+                            $gameManager->newGame($message->getChannel(), $users, new RoleStrategy\Chaos());
+                        } else if ($gameManager->optionsManager->isGameMode(OptionName::GAME_MODE_VANILLA)) {
+                            $gameManager->newGame($message->getChannel(), $users, new RoleStrategy\Vanilla());
+                        } else {
+                            $gameManager->newGame($message->getChannel(), $users, new RoleStrategy\Classic());
                         }
                     } catch (Exception $e) {
-                        $this->client->getChannelGroupOrDMByID($this->channel)->then(function (ChannelInterface $channel) use ($client,$e) {
+                        $this->client->getChannelGroupOrDMByID($this->channel)->then(function (ChannelInterface $channel) use ($client, $e) {
                             $client->send($e->getMessage(), $channel);
                         });
                     }
@@ -123,7 +124,7 @@ class StartCommand extends Command
                     }
                 }
 
-                if ( ! $userFound) {
+                if (!$userFound) {
                     unset($users[$key]);
                 }
             }

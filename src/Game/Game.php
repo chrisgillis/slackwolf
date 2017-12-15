@@ -632,11 +632,12 @@ class Game
         $this->witchPoisonedUserId = $id;
     }
 
-     /**
-     * @return string
+    /**
+     * @param $gameMode
+     * @return bool
      */
-    public function getGameMode() {
-        return $this->optionsManager->getOptionValue(OptionName::GAME_MODE);
+    public function isGameMode($gameMode) {
+        return $this->optionsManager->isGameMode($gameMode);
     }
 
 }

@@ -1,7 +1,7 @@
 <?php namespace Slackwolf\Game\RoleStrategy;
 
+use Slackwolf\Game\GameState;
 use Slackwolf\Game\Role;
-use Slackwolf\Game\OptionsManager;
 use Slackwolf\Game\OptionName;
 use Slackwolf\Game\Roles\Villager;
 use Slackwolf\Game\Roles\Tanner;
@@ -178,5 +178,16 @@ class Classic implements RoleStrategyInterface
         }
 
         return $players;
+    }
+
+    public function firstNight($gameManager, $game, $msg)
+    {
+        if ($gameManager->optionsManager->getOptionValue(OptionName::ROLE_SEER) || $gameManager->optionsManager->getOptionValue(OptionName::ROLE_FOOL)) {
+            $msg .= " The game will begin when the Seer(s) (if there is one) chooses someone.";
+            $gameManager->sendMessageToChannel($game, $msg);
+        } else {
+            $gameManager->sendMessageToChannel($game, $msg);
+            $gameManager->changeGameState($game->getId(), GameState::DAY);
+        }
     }
 }
