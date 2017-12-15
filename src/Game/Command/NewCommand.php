@@ -57,11 +57,14 @@ class NewCommand extends Command
         }
 
         try {
-            if($gameManager->optionsManager->getOptionValue(OptionName::game_mode) == 'chaos') {
+            if($gameManager->optionsManager->isGameMode(OptionName::GAME_MODE_CHAOS)) {
                 $gameManager->newGame($message->getChannel(), [], new RoleStrategy\Chaos());        
             }
+            else if($gameManager->optionsManager->isGameMode(OptionName::GAME_MODE_VANILLA)) {
+                $gameManager->newGame($message->getChannel(), [], new RoleStrategy\Vanilla());
+            }
             else {
-                $gameManager->newGame($message->getChannel(), [], new RoleStrategy\Classic());        
+                $gameManager->newGame($message->getChannel(), [], new RoleStrategy\Classic());
             }
             $game = $gameManager->getGame($message->getChannel());
             $this->gameManager->sendMessageToChannel($game, "A new game lobby has been created.  Type !join to play the next game.");

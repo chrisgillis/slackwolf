@@ -359,7 +359,7 @@ class GameManager
         }
 
         if ( ! $game->isPlayerAlive($voteForId)
-                && ($voteForId != 'noone' || !$this->optionsManager->getOptionValue(OptionName::no_lynch))
+                && ($voteForId != 'noone' || !$this->optionsManager->getOptionValue(OptionName::NO_LYNCH))
                 && $voteForId != 'clear') {
             return;
         }
@@ -370,7 +370,7 @@ class GameManager
 
         if ($game->hasPlayerVoted($voterId)) {
             //If changeVote is not enabled and player has already voted, do not allow another vote
-            if (!$this->optionsManager->getOptionValue(OptionName::changevote))
+            if (!$this->optionsManager->getOptionValue(OptionName::CHANGE_VOTE))
             {
                 throw new Exception("Vote change not allowed.");
             }
@@ -528,18 +528,7 @@ class GameManager
         $msg .= "Possible Roles: {$game->getRoleStrategy()->getRoleListMsg()}\r\n\r\n";
         $msg .= WeatherFormatter::format($game)."\r\n";
 
-        if ($this->optionsManager->getOptionValue(OptionName::game_mode) != 'chaos') {
-            if ($this->optionsManager->getOptionValue(OptionName::role_seer) || $this->optionsManager->getOptionValue(OptionName::role_fool)) {
-                $msg .= " The game will begin when the Seer(s) (if there is one) chooses someone.";
-                $this->sendMessageToChannel($game, $msg);
-            } else {
-                $this->sendMessageToChannel($game, $msg);
-                $this->changeGameState($game->getId(), GameState::DAY);
-            }
-        } else {
-            $this->sendMessageToChannel($game, $msg);
-            $this->changeGameState($game->getId(), GameState::NIGHT);
-        }
+        $game->getRoleStrategy()->firstNight($this, $game, $msg);
     }
 
     /**
@@ -551,11 +540,11 @@ class GameManager
         $dayBreakMsg = WeatherFormatter::format($game)."\r\n";
         $dayBreakMsg .= "Remaining Players: {$remainingPlayers}\r\n\r\n";
         $dayBreakMsg .= "Villagers, find the Werewolves! Type !vote @username to vote to lynch a player.";
-        if ($this->optionsManager->getOptionValue(OptionName::changevote))
+        if ($this->optionsManager->getOptionValue(OptionName::CHANGE_VOTE))
         {
             $dayBreakMsg .= "\r\nYou may change your vote at any time before voting closes. Type !vote clear to remove your vote.";
         }
-        if ($this->optionsManager->getOptionValue(OptionName::no_lynch))
+        if ($this->optionsManager->getOptionValue(OptionName::NO_LYNCH))
         {
             $dayBreakMsg .= "\r\nType !vote noone to vote to not lynch anybody today.";
         }
@@ -656,7 +645,7 @@ class GameManager
         $killMsg = ":skull_and_crossbones: ";
 
 
-	$ebolaRate = (int)$this->optionsManager->getOptionValue(OptionName::ebola);
+	$ebolaRate = (int)$this->optionsManager->getOptionValue(OptionName::EBOLA);
 
 	if($ebolaRate > 0){
 		$num = (int) rand(0, $ebolaRate);

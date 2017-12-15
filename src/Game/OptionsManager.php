@@ -4,23 +4,28 @@ use Exception;
 
 class OptionName
 {
-    const changevote = 'changevote';
-    const game_mode = 'game_mode';
-    const no_lynch = 'no_lynch';
-    const mods = 'mods';
+    const CHANGE_VOTE = 'changevote';
 
-	const ebola = 'ebola';
+    const GAME_MODE = 'game_mode';
+    const GAME_MODE_CHAOS = 'chaos';
+    const GAME_MODE_VANILLA = 'vanilla';
+    const GAME_MODE_CLASSIC = 'classic';
 
-    const role_beholder = 'role_beholder';
-    const role_bodyguard = 'role_bodyguard';
-    const role_hunter = "role_hunter";
-    const role_lycan = 'role_lycan';
-    const role_seer = 'role_seer';
-    const role_tanner = 'role_tanner';
-    const role_witch = 'role_witch';
-    const role_wolfman = 'role_wolfman';
-    const role_fool = 'role_fool';
-    const role_cursed = 'role_cursed';
+    const NO_LYNCH = 'no_lynch';
+    const MODS = 'mods';
+
+    const EBOLA = 'ebola';
+
+    const ROLE_BEHOLDER = 'role_beholder';
+    const ROLE_BODYGUARD = 'role_bodyguard';
+    const ROLE_HUNTER = "role_hunter";
+    const ROLE_LYCAN = 'role_lycan';
+    const ROLE_SEER = 'role_seer';
+    const ROLE_TANNER = 'role_tanner';
+    const ROLE_WITCH = 'role_witch';
+    const ROLE_WOLFMAN = 'role_wolfman';
+    const ROLE_FOOL = 'role_fool';
+    const ROLE_CURSED = 'role_cursed';
 }
 
 class OptionType
@@ -68,20 +73,20 @@ class OptionsManager
      */
     public function __construct()
     {
-        $this->options[] = new Option(OptionName::changevote, OptionType::Bool, "on", "When enabled votes can be changed until the final vote is cast.");
-        $this->options[] = new Option(OptionName::no_lynch, OptionType::Bool, "on", "When enabled townsfolk can vote not to lynch anybody.");
-        $this->options[] = new Option(OptionName::role_beholder, OptionType::Bool, "on", "Use Beholder role in random games.");
-        $this->options[] = new Option(OptionName::role_bodyguard, OptionType::Bool, "on", "Use Bodyguard role in random games.");
-        $this->options[] = new Option(OptionName::role_hunter, OptionType::Bool, "on", "Use Hunter role in random games.");
-        $this->options[] = new Option(OptionName::role_lycan, OptionType::Bool, "on", "Use Lycan role in random games.");
-        $this->options[] = new Option(OptionName::role_seer, OptionType::Bool, "on", "Use Seer role in random games.");
-        $this->options[] = new Option(OptionName::role_tanner, OptionType::Bool, "on", "Use Tanner role in random games.");
-        $this->options[] = new Option(OptionName::role_witch, OptionType::Bool, "on", "Use Witch role in random games.");
-        $this->options[] = new Option(OptionName::role_wolfman, OptionType::Bool, "on", "Use Wolf Man role in random games.");
-        $this->options[] = new Option(OptionName::role_fool, OptionType::Bool, "on", "Use Fool role in random games.");
-        $this->options[] = new Option(OptionName::role_cursed, OptionType::Bool, "on", "Use Cursed role in random games.");
-        $this->options[] = new Option(OptionName::game_mode, OptionType::String, "classic", "Choose game mode, classic or chaos");
-		    $this->options[] = new Option(OptionName::ebola, OptionType::Int, "10", "Ebola will strike 1 in n times, where n is this number. 0 for off.");
+        $this->options[OptionName::CHANGE_VOTE] = new Option(OptionName::CHANGE_VOTE, OptionType::Bool, "on", "When enabled votes can be changed until the final vote is cast.");
+        $this->options[OptionName::NO_LYNCH] = new Option(OptionName::NO_LYNCH, OptionType::Bool, "on", "When enabled townsfolk can vote not to lynch anybody.");
+        $this->options[OptionName::ROLE_BEHOLDER] = new Option(OptionName::ROLE_BEHOLDER, OptionType::Bool, "on", "Use Beholder role in random games.");
+        $this->options[OptionName::ROLE_BODYGUARD] = new Option(OptionName::ROLE_BODYGUARD, OptionType::Bool, "on", "Use Bodyguard role in random games.");
+        $this->options[OptionName::ROLE_HUNTER] = new Option(OptionName::ROLE_HUNTER, OptionType::Bool, "on", "Use Hunter role in random games.");
+        $this->options[OptionName::ROLE_LYCAN] = new Option(OptionName::ROLE_LYCAN, OptionType::Bool, "on", "Use Lycan role in random games.");
+        $this->options[OptionName::ROLE_SEER] = new Option(OptionName::ROLE_SEER, OptionType::Bool, "on", "Use Seer role in random games.");
+        $this->options[OptionName::ROLE_TANNER] = new Option(OptionName::ROLE_TANNER, OptionType::Bool, "on", "Use Tanner role in random games.");
+        $this->options[OptionName::ROLE_WITCH] = new Option(OptionName::ROLE_WITCH, OptionType::Bool, "on", "Use Witch role in random games.");
+        $this->options[OptionName::ROLE_WOLFMAN] = new Option(OptionName::ROLE_WOLFMAN, OptionType::Bool, "on", "Use Wolf Man role in random games.");
+        $this->options[OptionName::ROLE_FOOL] = new Option(OptionName::ROLE_FOOL, OptionType::Bool, "on", "Use Fool role in random games.");
+        $this->options[OptionName::ROLE_CURSED] = new Option(OptionName::ROLE_CURSED, OptionType::Bool, "on", "Use Cursed role in random games.");
+        $this->options[OptionName::GAME_MODE] = new Option(OptionName::GAME_MODE, OptionType::String, "classic", "Choose game mode: classic, chaos, vanilla");
+        $this->options[OptionName::EBOLA] = new Option(OptionName::EBOLA, OptionType::Int, "10", "Ebola will strike 1 in n times, where n is this number. 0 for off.");
         $this->loadOptions();
     }
 
@@ -93,27 +98,25 @@ class OptionsManager
         if (file_exists(OptionsManager::optionsFileName)) {
             try {
                 $optionsLoaded = json_decode(file_get_contents(OptionsManager::optionsFileName));
-                foreach($optionsLoaded as $loadedOption)
-                {
+                foreach ($optionsLoaded as $loadedOption) {
                     /** @var Option $loadedOption */
-                    if ($loadedOption->optionType == OptionType::Bool)
-                    {
+                    if ($loadedOption->optionType == OptionType::Bool) {
                         $this->setOptionValue([$loadedOption->name, $loadedOption->value ? "on" : "off"], false);
-                    }
-                    else
-                    {
+                    } else {
                         $this->setOptionValue([$loadedOption->name, $loadedOption->value], false);
                     }
                 }
-            } catch(Exception $e) { }
+            } catch (Exception $e) {
+            }
         }
     }
 
     public function saveOptions()
     {
         try {
-            file_put_contents(OptionsManager::optionsFileName,json_encode($this->options));
-        } catch (Exception $e) {}
+            file_put_contents(OptionsManager::optionsFileName, json_encode($this->options));
+        } catch (Exception $e) {
+        }
     }
 
     /**
@@ -122,61 +125,63 @@ class OptionsManager
      */
     public function setOptionValue(array $args, $doSave)
     {
-        if (count($args) < 2) { return; } //minimum name/value required
+        if (count($args) < 2) {
+            return;
+        } //minimum name/value required
         /** @var Option $option */
         $option = null;
 
-        foreach ($this->options as $searchOption)
-        {
+        foreach ($this->options as $searchOption) {
             /** @var Option $searchOption */
-            if ($searchOption->name == $args[0]){
+            if ($searchOption->name == $args[0]) {
                 $option = $searchOption;
                 break;
             }
         }
 
-        if ($option==null) { return; }
+        if ($option == null) {
+            return;
+        }
         $newValue = $option->value;
         $setValue = $args[1];
-        switch($option->optionType)
-        {
-          case OptionType::Bool:
-              $newValue = strcasecmp($setValue, "on") == 0 ? true : false;
-              break;
-          case OptionType::Int:
-              $newValue = ctype_digit($setValue) ? intval($setValue) : $option->value;
-              break;
-          case OptionType::String:
-              $newValue = $setValue;
-              break;
-          case OptionType::StringArray:
-          case OptionType::UserArray:
-              if (count($args) < 3) { return; } //name add|remove value, all required
-              if ($option->optionType == OptionType::UserArray)
-              {
-                  $this->client->getChannelGroupOrDMByID($this->channel)
-                    ->then(function (Channel $channel) {
-                        return $channel->getMembers();
-                    })
-                    ->then(function (array $users) use ($gameManager, $message, $client) {
-                        /** @var \Slack\User[] $users */
-                        $setValue = UserIdFormatter::format($setValue, $users);
-                      });
-              }
-              switch(strtolower($args[1]))
-              {
-                  //TODO: Work!
-                  case "add":
+        switch ($option->optionType) {
+            case OptionType::Bool:
+                $newValue = strcasecmp($setValue, "on") == 0 ? true : false;
+                break;
+            case OptionType::Int:
+                $newValue = ctype_digit($setValue) ? intval($setValue) : $option->value;
+                break;
+            case OptionType::String:
+                $newValue = $setValue;
+                break;
+            case OptionType::StringArray:
+            case OptionType::UserArray:
+                if (count($args) < 3) {
+                    return;
+                } //name add|remove value, all required
+                if ($option->optionType == OptionType::UserArray) {
+                    $this->client->getChannelGroupOrDMByID($this->channel)
+                        ->then(function (Channel $channel) {
+                            return $channel->getMembers();
+                        })
+                        ->then(function (array $users) use ($gameManager, $message, $client) {
+                            /** @var \Slack\User[] $users */
+                            $setValue = UserIdFormatter::format($setValue, $users);
+                        });
+                }
+                switch (strtolower($args[1])) {
+                    //TODO: Work!
+                    case "add":
                         $newValue[] = $args[2];
                         break;
-                  case "remove":
+                    case "remove":
                         //TODO: if option name ='mods' user is same username as .env admin, do not allow removal
                         unset($newValue[$args[2]]);
                         break;
-                  default:
+                    default:
                         return;
-              }
-              break;
+                }
+                break;
         }
         $option->value = $newValue;
 
@@ -192,17 +197,19 @@ class OptionsManager
     public function getOptionValue($optionName)
     {
         /** @var Option $option */
-        $option = null;
+        $option = $this->options[$optionName];
 
-        foreach ($this->options as $searchOption)
-        {
-            /** @var Option $searchOption */
-            if ($searchOption->name == $optionName){
-                $option = $searchOption;
-                break;
-            }
-        }
+        return ($option == null ? null : $option->value);
+    }
 
-        return ($option==null ? null : $option->value);
+    /**
+     * @param $gameMode
+     * @return bool
+     */
+    public function isGameMode($gameMode)
+    {
+        /** @var $optionValue */
+        $optionValue = $this->getOptionValue(OptionName::GAME_MODE);
+        return $optionValue == $gameMode;
     }
 }

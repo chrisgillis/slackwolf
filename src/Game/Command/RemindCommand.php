@@ -29,9 +29,9 @@ class RemindCommand extends Command
 
         if ( ! $this->gameManager->hasGame($this->channel)) {
             $client->getChannelGroupOrDMByID($this->channel)
-               ->then(function (ChannelInterface $channel) use ($client) {
-                   $client->send(":warning: No game in progress.", $channel);
-               });
+                ->then(function (ChannelInterface $channel) use ($client) {
+                    $client->send(":warning: No game in progress.", $channel);
+                });
             return;
         }
 
