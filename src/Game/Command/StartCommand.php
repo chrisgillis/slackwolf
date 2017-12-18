@@ -66,7 +66,7 @@ class StartCommand extends Command
                 })
                 ->then(function (array $users) use ($gameManager, $message, $client) {
                     /** @var \Slack\User[] $users */
-                    $this->filterChosen($users);
+                    $cmdLineArgs = $this->filterArgs($users);
 
                     if (count($users) < 3) {
                         $this->client->getChannelGroupOrDMByID($this->channel)
@@ -77,13 +77,14 @@ class StartCommand extends Command
                     }
 
                     try {
-                        if ($gameManager->optionsManager->isGameMode(OptionName::GAME_MODE_CHAOS)) {
-                            $gameManager->newGame($message->getChannel(), $users, new RoleStrategy\Chaos());
-                        } else if ($gameManager->optionsManager->isGameMode(OptionName::GAME_MODE_VANILLA)) {
-                            $gameManager->newGame($message->getChannel(), $users, new RoleStrategy\Vanilla());
-                        } else {
-                            $gameManager->newGame($message->getChannel(), $users, new RoleStrategy\Classic());
+                        $gameMode = $cmdLineArgs[OptionName::GAME_MODE];
+                        if ($gameMode == null) {
+                            $gameMode = $gameManager->optionsManager->getOptionValue(OptionName::GAME_MODE);
                         }
+
+                        $roleStrategy = RoleStrategy\RoleStrategyFactory::build($gameMode);
+
+                        $gameManager->newGame($message->getChannel(), $users, $roleStrategy);
                     } catch (Exception $e) {
                         $this->client->getChannelGroupOrDMByID($this->channel)->then(function (ChannelInterface $channel) use ($client, $e) {
                             $client->send($e->getMessage(), $channel);
@@ -96,14 +97,20 @@ class StartCommand extends Command
 
     /**
      * @param \Slack\User[] $users
+     * @return array of other args
      */
-    private function filterChosen(&$users)
+    private function filterArgs(&$users)
     {
         $chosenUsers = [];
+        $cmdLineArgs = [];
 
-        foreach ($this->args as $chosenUser) {
-            $chosenUser = UserIdFormatter::format($chosenUser, $users);
-            $chosenUsers[] = $chosenUser;
+        foreach ($this->args as $arg) {
+            if (in_array($arg, OptionName::START_MODE_OPTIONS)) {
+                $cmdLineArgs[OptionName::GAME_MODE] = $arg;
+            } else {
+                $arg = UserIdFormatter::format($arg, $users);
+                $chosenUsers[] = $arg;
+            }
         }
 
         // Remove the bot from the player list
@@ -118,8 +125,8 @@ class StartCommand extends Command
             foreach ($users as $key => $user) {
                 $userFound = false;
 
-                foreach ($chosenUsers as $chosenUser) {
-                    if (strpos($chosenUser, $user->getId()) !== false) {
+                foreach ($chosenUsers as $arg) {
+                    if (strpos($arg, $user->getId()) !== false) {
                         $userFound = true;
                     }
                 }
@@ -129,5 +136,7 @@ class StartCommand extends Command
                 }
             }
         }
+
+        return $cmdLineArgs;
     }
 }

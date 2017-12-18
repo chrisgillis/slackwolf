@@ -40,7 +40,6 @@ class NewCommand extends Command
         $gameManager = $this->gameManager;
         $message = $this->message;
         
-        $loadPlayers = true;
         // Check to see that a game does not currently exist
         if ($this->gameManager->hasGame($this->channel)) {
             $this->client->getChannelGroupOrDMByID($this->channel)->then(function (ChannelInterface $channel) use ($client, $gameManager) {
@@ -57,15 +56,15 @@ class NewCommand extends Command
         }
 
         try {
-            if($gameManager->optionsManager->isGameMode(OptionName::GAME_MODE_CHAOS)) {
-                $gameManager->newGame($message->getChannel(), [], new RoleStrategy\Chaos());        
+            $cmdLineArgs = $this->filterArgs();
+            $gameMode = $cmdLineArgs[OptionName::GAME_MODE];
+            if ($gameMode == null) {
+                $gameMode = $gameManager->optionsManager->getOptionValue(OptionName::GAME_MODE);
             }
-            else if($gameManager->optionsManager->isGameMode(OptionName::GAME_MODE_VANILLA)) {
-                $gameManager->newGame($message->getChannel(), [], new RoleStrategy\Vanilla());
-            }
-            else {
-                $gameManager->newGame($message->getChannel(), [], new RoleStrategy\Classic());
-            }
+
+            $roleStrategy = RoleStrategy\RoleStrategyFactory::build($gameMode);
+            $gameManager->newGame($message->getChannel(), [], $roleStrategy);
+
             $game = $gameManager->getGame($message->getChannel());
             $this->gameManager->sendMessageToChannel($game, "A new game lobby has been created.  Type !join to play the next game.");
             $userId = $this->userId;
@@ -88,6 +87,22 @@ class NewCommand extends Command
             $this->client->getChannelGroupOrDMByID($this->channel)->then(function (ChannelInterface $channel) use ($client,$e) {
                 $client->send($e->getMessage(), $channel);
             });
-        }        
+        }
+    }
+
+    /**
+     * @return array of valid args
+     */
+    private function filterArgs()
+    {
+        $cmdLineArgs = [];
+
+        foreach ($this->args as $arg) {
+            if (in_array($arg, OptionName::NEW_MODE_OPTIONS)) {
+                $cmdLineArgs[OptionName::GAME_MODE] = $arg;
+            }
+        }
+
+        return $cmdLineArgs;
     }
 }
