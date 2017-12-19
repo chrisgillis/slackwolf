@@ -5,6 +5,8 @@ use Slack\Channel;
 use Slack\ChannelInterface;
 use Slack\DirectMessageChannel;
 use Slackwolf\Game\Game;
+use Slackwolf\Game\GameState;
+use Slackwolf\Game\OptionName;
 
 /**
  * Defines the RemindCommand class.
@@ -27,7 +29,7 @@ class RemindCommand extends Command
             return;
         }
 
-        if ( ! $this->gameManager->hasGame($this->channel)) {
+        if (!$this->gameManager->hasGame($this->channel) || $this->game->state == GameState::LOBBY) {
             $client->getChannelGroupOrDMByID($this->channel)
                 ->then(function (ChannelInterface $channel) use ($client) {
                     $client->send(":warning: No game in progress.", $channel);
