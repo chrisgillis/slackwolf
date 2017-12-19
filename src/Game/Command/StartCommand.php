@@ -103,6 +103,7 @@ class StartCommand extends Command
     {
         $chosenUsers = [];
         $cmdLineArgs = [];
+        $cmdLineArgs[OptionName::GAME_MODE] = null;
 
         foreach ($this->args as $arg) {
             if (in_array($arg, OptionName::START_MODE_OPTIONS)) {

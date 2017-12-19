@@ -96,6 +96,7 @@ class NewCommand extends Command
     private function filterArgs()
     {
         $cmdLineArgs = [];
+        $cmdLineArgs[OptionName::GAME_MODE] = null;
 
         foreach ($this->args as $arg) {
             if (in_array($arg, OptionName::NEW_MODE_OPTIONS)) {

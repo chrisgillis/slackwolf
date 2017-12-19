@@ -89,8 +89,6 @@ class GameManager
         {
             if ($i == 0) { continue; } // Skip the command
 
-            if (empty($arg)) { continue; }
-
             $args[] = $arg;
         }
 
