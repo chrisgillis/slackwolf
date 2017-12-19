@@ -131,80 +131,85 @@ class OptionsManager
 
     public function saveOptions()
     {
-        try {
-            file_put_contents(OptionsManager::optionsFileName, json_encode($this->options));
-        } catch (Exception $e) {
-        }
+        file_put_contents(OptionsManager::optionsFileName, json_encode($this->options));
     }
 
     /**
      * @param array $args
      * @param $doSave
+     * @return String message
      */
     public function setOptionValue(array $args, $doSave)
     {
-        if (count($args) < 2) {
-            return;
-        } //minimum name/value required
-        /** @var Option $option */
-        $option = null;
 
-        foreach ($this->options as $searchOption) {
-            /** @var Option $searchOption */
-            if ($searchOption->name == $args[0]) {
-                $option = $searchOption;
-                break;
+        try {
+            if (count($args) < 2) {
+                return "minimum name/value required";
             }
-        }
-
-        if ($option == null) {
-            return;
-        }
-        $newValue = $option->value;
-        $setValue = $args[1];
-        switch ($option->optionType) {
-            case OptionType::Bool:
-                $newValue = strcasecmp($setValue, "on") == 0 ? true : false;
-                break;
-            case OptionType::Int:
-                $newValue = ctype_digit($setValue) ? intval($setValue) : $option->value;
-                break;
-            case OptionType::String:
-                $newValue = $setValue;
-                break;
-            case OptionType::StringArray:
-            case OptionType::UserArray:
-                if (count($args) < 3) {
-                    return;
-                } //name add|remove value, all required
-                if ($option->optionType == OptionType::UserArray) {
-                    $this->client->getChannelGroupOrDMByID($this->channel)
-                        ->then(function (Channel $channel) {
-                            return $channel->getMembers();
-                        })
-                        ->then(function (array $users) use ($gameManager, $message, $client) {
-                            /** @var \Slack\User[] $users */
-                            $setValue = UserIdFormatter::format($setValue, $users);
-                        });
+            /** @var Option $option */
+            $option = null;
+            foreach ($this->options as $searchOption) {
+                /** @var Option $searchOption */
+                if ($searchOption->name == $args[0]) {
+                    $option = $searchOption;
+                    break;
                 }
-                switch (strtolower($args[1])) {
-                    //TODO: Work!
-                    case "add":
-                        $newValue[] = $args[2];
-                        break;
-                    case "remove":
-                        //TODO: if option name ='mods' user is same username as .env admin, do not allow removal
-                        unset($newValue[$args[2]]);
-                        break;
-                    default:
-                        return;
+            }
+            if ($option == null) {
+                return $args[0] . " is an invalid option";
+            }
+            $newValue = $option->value;
+            $setValue = $args[1];
+            switch ($option->optionType) {
+                case OptionType::Bool:
+                    $newValue = strcasecmp($setValue, "on") == 0 ? true : false;
+                    break;
+                case OptionType::Int:
+                    $newValue = ctype_digit($setValue) ? intval($setValue) : $option->value;
+                    break;
+                case OptionType::String:
+                    $newValue = $setValue;
+                    break;
+                case OptionType::StringArray:
+                case OptionType::UserArray:
+                    if (count($args) < 3) {
+                        return "name add|remove value, all required for " . $option->name;
+                    }
+                    if ($option->optionType == OptionType::UserArray) {
+                        $this->client->getChannelGroupOrDMByID($this->channel)
+                            ->then(function (Channel $channel) {
+                                return $channel->getMembers();
+                            })
+                            ->then(function (array $users) use ($gameManager, $message, $client) {
+                                /** @var \Slack\User[] $users */
+                                $setValue = UserIdFormatter::format($setValue, $users);
+                            });
+                    }
+                    switch (strtolower($args[1])) {
+                        //TODO: Work!
+                        case "add":
+                            $newValue[] = $args[2];
+                            break;
+                        case "remove":
+                            //TODO: if option name ='mods' user is same username as .env admin, do not allow removal
+                            unset($newValue[$args[2]]);
+                            break;
+                        default:
+                            return "invalid action for " . $option->name;
+                    }
+                    break;
+            }
+            $option->value = $newValue;
+            if ($doSave) {
+                try {
+                    $this->saveOptions();
+                } catch (Exception $e) {
+                    return "failed to save option " . $option->name;
                 }
-                break;
-        }
-        $option->value = $newValue;
-
-        if ($doSave) {
-            $this->saveOptions();
+            }
+            return $option->name . " option change successful to " . $setValue;
+        } catch (Exception $e) {
+            return "failed to modify option value for " . $e;
         }
     }
 
