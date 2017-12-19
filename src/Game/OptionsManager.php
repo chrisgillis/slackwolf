@@ -12,8 +12,8 @@ class OptionName
     const GAME_MODE_CLASSIC = 'classic';
 
     const NO_LYNCH = 'no_lynch';
-    const MODS = 'mods';
 
+    const MODS = 'mods';
     const EBOLA = 'ebola';
 
     const ROLE_BEHOLDER = 'role_beholder';
@@ -26,6 +26,9 @@ class OptionName
     const ROLE_WOLFMAN = 'role_wolfman';
     const ROLE_FOOL = 'role_fool';
     const ROLE_CURSED = 'role_cursed';
+
+    const START_MODE_OPTIONS = array(OptionName::GAME_MODE_CHAOS, OptionName::GAME_MODE_VANILLA, OptionName::GAME_MODE_CLASSIC);
+    const NEW_MODE_OPTIONS = array(OptionName::GAME_MODE_CHAOS, OptionName::GAME_MODE_VANILLA, OptionName::GAME_MODE_CLASSIC);
 }
 
 class OptionType
@@ -73,20 +76,35 @@ class OptionsManager
      */
     public function __construct()
     {
-        $this->options[OptionName::CHANGE_VOTE] = new Option(OptionName::CHANGE_VOTE, OptionType::Bool, "on", "When enabled votes can be changed until the final vote is cast.");
-        $this->options[OptionName::NO_LYNCH] = new Option(OptionName::NO_LYNCH, OptionType::Bool, "on", "When enabled townsfolk can vote not to lynch anybody.");
-        $this->options[OptionName::ROLE_BEHOLDER] = new Option(OptionName::ROLE_BEHOLDER, OptionType::Bool, "on", "Use Beholder role in random games.");
-        $this->options[OptionName::ROLE_BODYGUARD] = new Option(OptionName::ROLE_BODYGUARD, OptionType::Bool, "on", "Use Bodyguard role in random games.");
-        $this->options[OptionName::ROLE_HUNTER] = new Option(OptionName::ROLE_HUNTER, OptionType::Bool, "on", "Use Hunter role in random games.");
-        $this->options[OptionName::ROLE_LYCAN] = new Option(OptionName::ROLE_LYCAN, OptionType::Bool, "on", "Use Lycan role in random games.");
-        $this->options[OptionName::ROLE_SEER] = new Option(OptionName::ROLE_SEER, OptionType::Bool, "on", "Use Seer role in random games.");
-        $this->options[OptionName::ROLE_TANNER] = new Option(OptionName::ROLE_TANNER, OptionType::Bool, "on", "Use Tanner role in random games.");
-        $this->options[OptionName::ROLE_WITCH] = new Option(OptionName::ROLE_WITCH, OptionType::Bool, "on", "Use Witch role in random games.");
-        $this->options[OptionName::ROLE_WOLFMAN] = new Option(OptionName::ROLE_WOLFMAN, OptionType::Bool, "on", "Use Wolf Man role in random games.");
-        $this->options[OptionName::ROLE_FOOL] = new Option(OptionName::ROLE_FOOL, OptionType::Bool, "on", "Use Fool role in random games.");
-        $this->options[OptionName::ROLE_CURSED] = new Option(OptionName::ROLE_CURSED, OptionType::Bool, "on", "Use Cursed role in random games.");
-        $this->options[OptionName::GAME_MODE] = new Option(OptionName::GAME_MODE, OptionType::String, "classic", "Choose game mode: classic, chaos, vanilla");
-        $this->options[OptionName::EBOLA] = new Option(OptionName::EBOLA, OptionType::Int, "10", "Ebola will strike 1 in n times, where n is this number. 0 for off.");
+        $this->options[OptionName::CHANGE_VOTE] = new Option(OptionName::CHANGE_VOTE, OptionType::Bool, "on",
+            "When enabled votes can be changed until the final vote is cast.");
+        $this->options[OptionName::NO_LYNCH] = new Option(OptionName::NO_LYNCH, OptionType::Bool, "on",
+            "When enabled townsfolk can vote not to lynch anybody.");
+        $this->options[OptionName::ROLE_BEHOLDER] = new Option(OptionName::ROLE_BEHOLDER, OptionType::Bool, "on",
+            "Use Beholder role in random games.");
+        $this->options[OptionName::ROLE_BODYGUARD] = new Option(OptionName::ROLE_BODYGUARD, OptionType::Bool, "on",
+            "Use Bodyguard role in random games.");
+        $this->options[OptionName::ROLE_HUNTER] = new Option(OptionName::ROLE_HUNTER, OptionType::Bool, "on",
+            "Use Hunter role in random games.");
+        $this->options[OptionName::ROLE_LYCAN] = new Option(OptionName::ROLE_LYCAN, OptionType::Bool, "on",
+            "Use Lycan role in random games.");
+        $this->options[OptionName::ROLE_SEER] = new Option(OptionName::ROLE_SEER, OptionType::Bool, "on",
+            "Use Seer role in random games.");
+        $this->options[OptionName::ROLE_TANNER] = new Option(OptionName::ROLE_TANNER, OptionType::Bool, "on",
+            "Use Tanner role in random games.");
+        $this->options[OptionName::ROLE_WITCH] = new Option(OptionName::ROLE_WITCH, OptionType::Bool, "on",
+            "Use Witch role in random games.");
+        $this->options[OptionName::ROLE_WOLFMAN] = new Option(OptionName::ROLE_WOLFMAN, OptionType::Bool, "on",
+            "Use Wolf Man role in random games.");
+        $this->options[OptionName::ROLE_FOOL] = new Option(OptionName::ROLE_FOOL, OptionType::Bool, "on",
+            "Use Fool role in random games.");
+        $this->options[OptionName::ROLE_CURSED] = new Option(OptionName::ROLE_CURSED, OptionType::Bool, "on",
+            "Use Cursed role in random games.");
+        $this->options[OptionName::GAME_MODE] = new Option(OptionName::GAME_MODE, OptionType::String, "classic",
+            "Choose game mode: classic, chaos, vanilla");
+        $this->options[OptionName::EBOLA] = new Option(OptionName::EBOLA, OptionType::Int, "10",
+            "Ebola will strike 1 in n times, where n is this number. 0 for off.");
+
         $this->loadOptions();
     }
 
