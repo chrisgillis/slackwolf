@@ -50,10 +50,19 @@ class SlackRTMClient extends RealTimeClient
                  * result.
                  */
                 if(property_exists($this, 'pong_response')){
-                    if($this->pong_response){
-                        echo "Pong Acknowledged...\r\n";
-                    } else{
-                        echo "Pong Missing...\r\n";
+                    if (!$this->pong_response){
+                        echo "Pong Not Recived...\r\n";
+                        echo "Attempting to reconnet...\r\n";
+                        /*
+                         * Recall the connect function on the slack API
+                         */
+                        $this->connect()->then(function() {
+                            echo "Reconnected.\n";
+                        }, function(ConnectionException $e) {
+                            echo $e->getMessage();
+                            exit();
+                        });
+
                     }
                 }
                 /*
