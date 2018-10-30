@@ -20,8 +20,34 @@ docker run -d --name slackwolf --restart always \
    gillisct/slackwolf
 ```
 
+## Development via Docker
+In order to use a docker container for development of this project, first build
+the container with the following command:
+```
+docker build -t {namespace}/slackwolf .
+```
+Substituting `namespace` for a relevant namespace you wish to refer the
+container in, commonly your dockerhub username. Then modify following command
+with your Slack Credentials and chosen namespace:  
+
+```
+docker run -it --name slackwolf \
+-e "BOT_TOKEN=" \
+-e "TIMEZONE=" \
+-e "BOT_NAME=" \
+-e "DEBUG=1" \
+{namespace}/slackwolf \
+-v "$(pwd)/src":/usr/src/slackwolf/src \
+/bin/bash
+```
+This will provide you wish a shell inside the container, while still having the
+changes made within the `src` directory reflected within the container
+environment.
+
+To start the bot within the container type `php bot.php`
+
 ## Source Installation
-If you don't want to use docker, you can install from source. 
+If you don't want to use docker, you can install from source.
 
 Slackwolf requires PHP 5.5+ and [Composer](https://getcomposer.org/).
 
