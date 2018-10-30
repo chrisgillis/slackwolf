@@ -44,20 +44,30 @@ class SlackRTMClient extends RealTimeClient
                     $this->pong_response = True;
                 });
         })->then(function () {
-            $this->loop->addPeriodicTimer(5, function () {
+            $this->loop->addPeriodicTimer(5, function ($timer) {
                 /*
                  * Check if a liveness test has been called before and look the the
                  * result.
                  */
+                $this->reconnecting = False;
                 if(property_exists($this, 'pong_response')){
                     if (!$this->pong_response){
                         echo "Pong Not Recived...\r\n";
                         echo "Attempting to reconnet...\r\n";
+                        $this->reconnecting = True;
                         /*
-                         * Recall the connect function on the slack API
+                         * We think this websocket is dead so try and close it
+                         * from the  client end.
                          */
-                        $this->connect()->then(function() {
+                        $this->websocket->close();
+                        /*
+                         * Recall the connect function on the slack API. And reset
+                         * out state to the initial state.
+                         */
+                        parent::connect()->then(function() {
                             echo "Reconnected.\n";
+                            $this->reconnecting = False;
+                            unset($this->pong_response);
                         }, function(ConnectionException $e) {
                             echo $e->getMessage();
                             exit();
@@ -69,13 +79,15 @@ class SlackRTMClient extends RealTimeClient
                  * Send the ping request down the web socket in order to check the
                  * liveness.
                  */
-                $data = [
-                    'id' => ++$this->lastMessageId,
-                    'type' => 'ping',
-                ];
-                $this->pong_response = False;
-                $this->websocket->send(json_encode($data));
-                echo "Ping sent...\r\n";
+                if(!$this->reconnecting){
+                    $data = [
+                        'id' => ++$this->lastMessageId,
+                        'type' => 'ping',
+                    ];
+                    $this->pong_response = False;
+                    $this->websocket->send(json_encode($data));
+                    echo "Ping sent...\r\n";
+                }
             });
 
         });
