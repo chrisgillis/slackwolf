@@ -86,7 +86,6 @@ class SlackRTMClient extends RealTimeClient
                     ];
                     $this->pong_response = False;
                     $this->websocket->send(json_encode($data));
-                    echo "Ping sent...\r\n";
                 }
             });
 
