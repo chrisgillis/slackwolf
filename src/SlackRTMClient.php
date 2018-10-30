@@ -25,7 +25,6 @@ use Slackwolf\Message\Message;
  */
 class SlackRTMClient extends RealTimeClient
 {
-
     public function connect()
     {
         /*
@@ -90,9 +89,7 @@ class SlackRTMClient extends RealTimeClient
             });
 
         });
-
         return $deferred;
-
     }
     /**
      * @param $channelId
@@ -107,5 +104,4 @@ class SlackRTMClient extends RealTimeClient
             $this->channels[$channel->getId()] = $channel;
         });
     }
-
 }
