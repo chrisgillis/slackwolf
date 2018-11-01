@@ -37,7 +37,7 @@ class Game
     public $witchHealed;
     public $witchPoisoned;
     public $tannerWin;
-    
+
 
     /**
      * @param                       $id
@@ -221,7 +221,7 @@ class Game
         $villagers = [];
 
         foreach ($this->livingPlayers as $player) {
-            if (!$player->role->isWerewolfTeam()) {
+            if ($player->role->isRole(Role::VILLAGER) || $player->role->isRole(Role::LYCAN)) {
                 $villagers[] = $player;
             }
         }
@@ -391,12 +391,18 @@ class Game
         $numTanner = $this->getNumRole(Role::TANNER);
 
         $numGood = count($this->getLivingPlayers()) - $numWerewolves;
-       
-	if ($this->tannerWin == true) {
-		$this->winningTeam = Role::TANNER;
-		return true;
-	}
- 
+        $numVillager = $this->getVillageTeam();
+
+        if ($numVillager <= 0) {
+            $this->winningTeam = Role::WEREWOLF;
+            return true;
+        }
+
+        if ($this->tannerWin == true) {
+            $this->winningTeam = Role::TANNER;
+            return true;
+        }
+
         if ($numWerewolves == 0) {
             $this->winningTeam = Role::VILLAGER;
             return true;
@@ -406,13 +412,13 @@ class Game
             $this->winningTeam = Role::WEREWOLF;
             return true;
         }
-	
-	/*if ($numTanner == 0) {
-            if ($this->getOriginalNumRole(Role::TANNER) > 0 && $this->getState() == GameState::DAY ) {
-                $this->winningTeam = Role::TANNER;
-                return true;
-            }
-        }*/
+
+        /*if ($numTanner == 0) {
+                if ($this->getOriginalNumRole(Role::TANNER) > 0 && $this->getState() == GameState::DAY ) {
+                    $this->winningTeam = Role::TANNER;
+                    return true;
+                }
+            }*/
 
         return false;
     }
