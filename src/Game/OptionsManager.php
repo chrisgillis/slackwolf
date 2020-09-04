@@ -11,7 +11,7 @@ class OptionName
     const GAME_MODE_VANILLA = 'vanilla';
     const GAME_MODE_CLASSIC = 'classic';
 
-    const NO_LYNCH = 'no_lynch';
+    const NO_KILL = 'no_kill';
 
     const MODS = 'mods';
     const EBOLA = 'ebola';
@@ -78,8 +78,8 @@ class OptionsManager
     {
         $this->options[OptionName::CHANGE_VOTE] = new Option(OptionName::CHANGE_VOTE, OptionType::Bool, "on",
             "When enabled votes can be changed until the final vote is cast.");
-        $this->options[OptionName::NO_LYNCH] = new Option(OptionName::NO_LYNCH, OptionType::Bool, "on",
-            "When enabled townsfolk can vote not to lynch anybody.");
+        $this->options[OptionName::NO_KILL] = new Option(OptionName::NO_KILL, OptionType::Bool, "on",
+            "When enabled townsfolk can vote not to kill anybody.");
         $this->options[OptionName::ROLE_BEHOLDER] = new Option(OptionName::ROLE_BEHOLDER, OptionType::Bool, "on",
             "Use Beholder role in random games.");
         $this->options[OptionName::ROLE_BODYGUARD] = new Option(OptionName::ROLE_BODYGUARD, OptionType::Bool, "on",
