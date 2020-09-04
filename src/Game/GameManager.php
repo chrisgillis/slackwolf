@@ -397,7 +397,7 @@ class GameManager
             $vote_count[$kill_player_id] += count($voters);
         }
 
-        $players_to_be_kill[];
+        $players_to_be_killed[];
 
         $max = 0;
         foreach ($vote_count as $kill_player_id => $num_votes) {
@@ -407,7 +407,7 @@ class GameManager
         }
         foreach ($vote_count as $kill_player_id => $num_votes) {
             if ($num_votes == $max && $kill_player_id != 'noone') {
-                $players_to_be_kill[] = $kill_player_id;
+                $players_to_be_killed[] = $kill_player_id;
             }
         }
 
