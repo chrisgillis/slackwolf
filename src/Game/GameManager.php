@@ -72,7 +72,7 @@ class GameManager
         if (!is_string($input) || !isset($input[0]) || $input[0] !== '!') {
             return FALSE;
         }
-	    
+
         // Example: [!kill, #channel, @name]
         $input_array = explode(' ', $input);
 
@@ -357,7 +357,7 @@ class GameManager
         }
 
         if ( ! $game->isPlayerAlive($voteForId)
-                && ($voteForId != 'noone' || !$this->optionsManager->getOptionValue(OptionName::NO_LYNCH))
+                && ($voteForId != 'noone' || !$this->optionsManager->getOptionValue(OptionName::NO_KILL))
                 && $voteForId != 'clear') {
             return;
         }
@@ -389,43 +389,43 @@ class GameManager
         $votes = $game->getVotes();
 
         $vote_count = [];
-        foreach ($votes as $lynch_player_id => $voters) {
-            if ( ! isset($vote_count[$lynch_player_id])) {
-                $vote_count[$lynch_player_id] = 0;
+        foreach ($votes as $kill_player_id => $voters) {
+            if ( ! isset($vote_count[$kill_player_id])) {
+                $vote_count[$kill_player_id] = 0;
             }
 
-            $vote_count[$lynch_player_id] += count($voters);
+            $vote_count[$kill_player_id] += count($voters);
         }
 
-        $players_to_be_lynched = [];
+        $players_to_be_killed = [];
 
         $max = 0;
-        foreach ($vote_count as $lynch_player_id => $num_votes) {
+        foreach ($vote_count as $kill_player_id => $num_votes) {
             if ($num_votes > $max) {
                 $max = $num_votes;
             }
         }
-        foreach ($vote_count as $lynch_player_id => $num_votes) {
-            if ($num_votes == $max && $lynch_player_id != 'noone') {
-                $players_to_be_lynched[] = $lynch_player_id;
+        foreach ($vote_count as $kill_player_id => $num_votes) {
+            if ($num_votes == $max && $kill_player_id != 'noone') {
+                $players_to_be_killed[] = $kill_player_id;
             }
         }
 
-        $lynchMsg = "\r\n";
+        $killMsg = "\r\n";
         $hunterMsg = "\r\n";
 
-        if (count($players_to_be_lynched) == 0) {
-            $lynchMsg .= ":peace_symbol: The townsfolk decided not to lynch anybody today.";
-        } elseif (count($players_to_be_lynched) > 1) {
-            $lynchMsg .= ":peace_symbol: The townsfolk couldn't agree on who to lynch, so nobody is hung today.";
+        if (count($players_to_be_killed) == 0) {
+            $killMsg .= ":peace_symbol: The townsfolk decided not to kill anybody today.";
+        } elseif (count($players_to_be_killed) > 1) {
+            $killMsg .= ":peace_symbol: The townsfolk couldn't agree on who to kill, so nobody is hung today.";
          }
          else {
-            $lynchMsg .= ":newspaper: With pitchforks in hand, the townsfolk killed: ";
+            $killMsg .= ":newspaper: With pitchforks in hand, the townsfolk killed: ";
 
-            $lynchedNames = [];
-            foreach ($players_to_be_lynched as $player_id) {
+            $killedNames = [];
+            foreach ($players_to_be_killed as $player_id) {
                 $player = $game->getPlayerById($player_id);
-                $lynchedNames[] = "@{$player->getUsername()} ({$player->role->getName()})";
+                $killedNames[] = "@{$player->getUsername()} ({$player->role->getName()})";
                 $game->killPlayer($player_id);
 
                 if ($player->role->isRole(Role::HUNTER)) {
@@ -438,9 +438,9 @@ class GameManager
 		}
             }
 
-            $lynchMsg .= implode(', ', $lynchedNames). "\r\n";
+            $killMsg .= implode(', ', $killedNames). "\r\n";
         }
-        $this->sendMessageToChannel($game,$lynchMsg);
+        $this->sendMessageToChannel($game,$killMsg);
 
         if ($game->hunterNeedsToShoot) {
             $this->sendMessageToChannel($game, $hunterMsg);
@@ -487,7 +487,7 @@ class GameManager
                     if ($player->role->isRole(Role::BEHOLDER)) {
 
                     }
-                    
+
                     if ($player->role->isRole(Role::BEHOLDER)) {
                         // Original seer assigning method
                         $seers = $game->getPlayersOfRole(Role::SEER);
@@ -537,14 +537,14 @@ class GameManager
         $remainingPlayers = PlayerListFormatter::format($game->getLivingPlayers());
         $dayBreakMsg = WeatherFormatter::format($game)."\r\n";
         $dayBreakMsg .= "Remaining Players: {$remainingPlayers}\r\n\r\n";
-        $dayBreakMsg .= "Villagers, find the Werewolves! Type !vote @username to vote to lynch a player.";
+        $dayBreakMsg .= "Villagers, find the Werewolves! Type !vote @username to vote to kill a player.";
         if ($this->optionsManager->getOptionValue(OptionName::CHANGE_VOTE))
         {
             $dayBreakMsg .= "\r\nYou may change your vote at any time before voting closes. Type !vote clear to remove your vote.";
         }
-        if ($this->optionsManager->getOptionValue(OptionName::NO_LYNCH))
+        if ($this->optionsManager->getOptionValue(OptionName::NO_KILL))
         {
-            $dayBreakMsg .= "\r\nType !vote noone to vote to not lynch anybody today.";
+            $dayBreakMsg .= "\r\nType !vote noone to vote to not kill anybody today.";
         }
 
         $this->sendMessageToChannel($game, $dayBreakMsg);
@@ -656,13 +656,13 @@ class GameManager
 		}
 	}
 
-        foreach ($votes as $lynch_id => $voters) {
-            $player = $game->getPlayerById($lynch_id);
+        foreach ($votes as $kill_id => $voters) {
+            $player = $game->getPlayerById($kill_id);
 
-            if ($lynch_id == $game->getGuardedUserId()) {
+            if ($kill_id == $game->getGuardedUserId()) {
                 $hasGuarded = true;
             }
-            elseif($lynch_id == $game->getWitchHealedUserId()) {
+            elseif($kill_id == $game->getWitchHealedUserId()) {
                 $hasHealed = true;
             }
             else {
@@ -674,7 +674,7 @@ class GameManager
                     $hunterName = $player->getUsername();
                 }
 
-                $game->killPlayer($lynch_id);
+                $game->killPlayer($kill_id);
                 $hasKilled = true;
                 $numKilled++;
             }

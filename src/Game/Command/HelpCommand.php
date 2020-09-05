@@ -22,7 +22,7 @@ class HelpCommand extends Command
         $help_msg .= "Werewolf is a party game of social deduction. Players are private messaged their role when the game begins. \r\n\r\n";
         $help_msg .= "_If you are a Villager_, you must find out who the werewolves are based on their voting and your social deduction skills.\r\n ";
         $help_msg .= "_If you are a Werewolf_, you must pretend you are not a werewolf by lying as best as you can.\r\n\r\n";
-        $help_msg .= "The game takes place over several Days and Nights. Each Day all players vote on a player to eliminate. The player with the most votes is eliminated. If there is a tie, nobody is lynched. \r\n";
+        $help_msg .= "The game takes place over several Days and Nights. Each Day all players vote on a player to eliminate. The player with the most votes is eliminated. If there is a tie, nobody is killed. \r\n";
         $help_msg .= "_Each night_, the werewolves will be allowed to vote privately on one player to eliminate. The decision must be unanimous. If its not, you'll keep voting until it is. The bot will private message you.\r\n";
         $help_msg .= "The villagers win if they eliminate all the werewolves. The werewolves win if they equal or outnumber the remaining players.\r\n\r\n";
         $help_msg .= "*Special Roles*\r\n------------------------\r\n";
@@ -50,7 +50,7 @@ class HelpCommand extends Command
         $help_msg .= "`!status` - Show game status\r\n";
 
         $help_msg .= "\r\n*Villager Commands*\r\n----------------------\r\n";
-        $help_msg .= "`!vote @user1|noone|clear` - During the day, Vote for a @player, no one (no lynch), or clear your existing vote (changevote option must be enabled).\r\n";
+        $help_msg .= "`!vote @user1|noone|clear` - During the day, Vote for a @player, no one (no kill), or clear your existing vote (changevote option must be enabled).\r\n";
 
         $help_msg .= "\r\n*Werewolf Commands*\r\n----------------------\r\n";
         $help_msg .= "`!kill #channel @user1` - As a werewolf, in a PM to the bot, you can vote to kill a user each night. Must be unanimous amongst all werewolves.\r\n";

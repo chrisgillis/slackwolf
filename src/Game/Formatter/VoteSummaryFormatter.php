@@ -24,9 +24,9 @@ class VoteSummaryFormatter
             $numVoters = count($voters);
 
             if ($voteForId == 'noone'){
-                $msg .= ":peace_symbol: No lynch\t\t | ({$numVoters}) | ";
+                $msg .= ":peace_symbol: No kill\t\t | ({$numVoters}) | ";
             } else {
-                $msg .= ":coffin: Lynch @{$voteForPlayer->getUsername()}\t\t | ({$numVoters}) | ";
+                $msg .= ":coffin: Kill @{$voteForPlayer->getUsername()}\t\t | ({$numVoters}) | ";
             }
 
             $voterNames = [];
