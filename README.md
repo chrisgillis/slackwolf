@@ -1,6 +1,6 @@
 # Slackwolf
 
-**This project is not actively maintained any longer: ** I have not been diligently maintaining this project for several years. If you're interested in updating or maintaining Slackwolf, please send me a message! 
+**This project is not actively maintained any longer:** I have not been diligently maintaining this project for several years. If you're interested in updating or maintaining Slackwolf, please send me a message! 
 
 Slackwolf is a bot for Slack. After inviting the bot to a channel, you can play the timeless game of [Werewolf (also called Mafia)](https://en.wikipedia.org/wiki/Mafia_(party_game)).
 
